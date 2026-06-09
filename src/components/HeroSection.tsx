@@ -177,7 +177,7 @@ export default function HeroSection({ onOpenContact, onScrollToSection }: HeroSe
                     </div>
                     {/* Model print */}
                     <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400">
-                      RTX 5090 / 4095 RECOVERY
+                      RTX 5090 / 4090 RECOVERY
                     </span>
                     {/* Fan spinners mockup */}
                     <div className="flex h-7 w-7 rounded-full border border-blue-500/40 items-center justify-center bg-slate-900 shadow">

@@ -25,7 +25,7 @@ export interface InventoryItem {
 const INITIAL_INVENTORY: InventoryItem[] = [
   // GPUs
   { id: "gpu-01", name: "微星 RTX 5090 SUPRIM X 32G", category: "GPU", price: 29500, quantity: 2, condition: "全新", specs: "32GB GDDR7 | 显存带宽高达 1.8 TB/s", status: "库存紧张", wattage: 600 },
-  { id: "gpu-02", name: "影驰 RTX 4095 金属大师 24G", category: "GPU", price: 18800, quantity: 5, condition: "全新", specs: "24GB GDDR6X | 经典全金属无光 shroud", status: "有货", wattage: 450 },
+  { id: "gpu-02", name: "影驰 RTX 4090 金属大师 24G", category: "GPU", price: 18800, quantity: 5, condition: "全新", specs: "24GB GDDR6X | 经典全金属无光 shroud", status: "有货", wattage: 450 },
   { id: "gpu-03", name: "七彩虹 RTX 4090 Vulcan OC 24G", category: "GPU", price: 19500, quantity: 3, condition: "99新", specs: "附带原盒及旋转磁吸小副屏(极品成色)", status: "有货", wattage: 450 },
   { id: "gpu-04", name: "华硕 ROG STRIX RTX 4080 SUPER 16G", category: "GPU", price: 9200, quantity: 8, condition: "全新", specs: "16GB GDDR6X | 神光同步顶级非公", status: "有货", wattage: 320 },
   { id: "gpu-05", name: "影驰 RTX 3090 24G 骁将", category: "GPU", price: 6100, quantity: 12, condition: "95新", specs: "24GB 大显存 | 深度学习入门必选(包无矿无啸叫)", status: "有货", wattage: 350 },
