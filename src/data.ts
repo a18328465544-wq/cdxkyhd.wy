@@ -4,7 +4,7 @@ export const GPU_PRICES_DATA: GpuPrice[] = [
   {
     name: 'NVIDIA RTX 5090',
     category: 'both',
-    basePrice: '27xxx',
+    basePrice: '28xxx',
     trend: 'stable',
     popular: true,
     specs: { vram: '32GB GDDR7', tdp: '600W', cuda: '21760' }
@@ -20,35 +20,43 @@ export const GPU_PRICES_DATA: GpuPrice[] = [
   {
     name: 'NVIDIA RTX 4080 SUPER',
     category: 'gaming',
-    basePrice: '62xx',
+    basePrice: '82xx',
     trend: 'stable',
     specs: { vram: '16GB GDDR6X', tdp: '320W', cuda: '10240' }
   },
   {
     name: 'NVIDIA RTX 4080',
     category: 'gaming',
-    basePrice: '56xx',
+    basePrice: '71xx',
     trend: 'down',
     specs: { vram: '16GB GDDR6X', tdp: '320W', cuda: '9728' }
   },
   {
     name: 'NVIDIA RTX 3090',
     category: 'both',
-    basePrice: '43xx',
+    basePrice: '58xx',
     trend: 'stable',
     specs: { vram: '24GB GDDR6X', tdp: '350W', cuda: '10496' }
   },
   {
-    name: 'NVIDIA RTX 3080',
-    category: 'gaming',
-    basePrice: '28xx',
-    trend: 'down',
-    specs: { vram: '10GB/12GB', tdp: '320W', cuda: '8704' }
+    name: 'NVIDIA RTX PRO 6000 工作站',
+    category: 'ai',
+    basePrice: '51xxx',
+    trend: 'stable',
+    popular: true,
+    specs: { vram: '48GB GDDR6', tdp: '300W', cuda: '18176' }
+  },
+  {
+    name: 'NVIDIA RTX PRO 6000 服务器',
+    category: 'ai',
+    basePrice: '55xxx',
+    trend: 'stable',
+    specs: { vram: '48GB GDDR6', tdp: '300W', cuda: '18176' }
   },
   {
     name: 'NVIDIA RTX A6000',
     category: 'ai',
-    basePrice: '25500',
+    basePrice: '24500',
     trend: 'stable',
     popular: true,
     specs: { vram: '48GB GDDR6', tdp: '300W', cuda: '10752' }
@@ -56,14 +64,14 @@ export const GPU_PRICES_DATA: GpuPrice[] = [
   {
     name: 'NVIDIA RTX A5000',
     category: 'ai',
-    basePrice: '15500',
+    basePrice: '12500',
     trend: 'stable',
     specs: { vram: '24GB GDDR6', tdp: '230W', cuda: '8192' }
   },
   {
     name: 'NVIDIA RTX A4000',
     category: 'ai',
-    basePrice: '6300',
+    basePrice: '3950',
     trend: 'down',
     specs: { vram: '16GB GDDR6', tdp: '140W', cuda: '6144' }
   }

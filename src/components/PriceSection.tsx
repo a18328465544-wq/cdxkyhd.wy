@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, TrendingDown, TrendingUp, Minus, HelpCircle, AlertCircle, Sparkles, MessageSquare, Calculator } from 'lucide-react';
 import { GPU_PRICES_DATA } from '../data';
 import { GpuPrice } from '../types';
@@ -8,8 +8,23 @@ interface PriceSectionProps {
 }
 
 export default function PriceSection({ onOpenContact }: PriceSectionProps) {
+  const [gpuPrices, setGpuPrices] = useState<GpuPrice[]>(GPU_PRICES_DATA);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<'all' | 'gaming' | 'ai'>('all');
+
+  // Fetch real-time market pricing from Express ERP endpoints
+  useEffect(() => {
+    fetch('/api/prices')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.prices)) {
+          setGpuPrices(data.prices);
+        }
+      })
+      .catch((err) => {
+        console.warn('API /api/prices is loading or offline, defaulting to static cache:', err);
+      });
+  }, []);
 
   // Interactive Estimator state codes
   const [selectedGpuName, setSelectedGpuName] = useState(GPU_PRICES_DATA[1].name); // RTX 4090 as default
@@ -18,7 +33,7 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
 
   // Filter prices data based on search and selected category
   const filteredPrices = useMemo(() => {
-    return GPU_PRICES_DATA.filter((gpu) => {
+    return gpuPrices.filter((gpu) => {
       const matchesSearch = gpu.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory =
         activeCategory === 'all' ||
@@ -26,24 +41,19 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
         (activeCategory === 'ai' && (gpu.category === 'ai' || gpu.category === 'both'));
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, activeCategory]);
+  }, [gpuPrices, searchQuery, activeCategory]);
 
   // Dynamic estimate calculator logic
   const estimatedValue = useMemo(() => {
-    const matchedGpu = GPU_PRICES_DATA.find((g) => g.name === selectedGpuName);
+    const matchedGpu = gpuPrices.find((g) => g.name === selectedGpuName);
     if (!matchedGpu) return '微信详询';
 
-    // Extract core base price. If format has range, get high value, if "27xxx" or "18xxx", parse roughly
+    // Extract core base price. Replace 'x' with '0' to handle both 'xxx' and 'xx' prefixes seamlessly (e.g., "82xx" -> 8200)
     let basePriceNum = 0;
     const baseStr = matchedGpu.basePrice;
     
-    if (baseStr.endsWith('xxx')) {
-      // 27xxx -> 27000, 18xxx -> 18000
-      const prefix = baseStr.replace('xxx', '');
-      basePriceNum = parseInt(prefix) * 1000 + 500; // middle value
-    } else {
-      basePriceNum = parseFloat(baseStr);
-    }
+    const cleanStr = baseStr.toLowerCase().replace(/x/g, '0');
+    basePriceNum = parseFloat(cleanStr);
 
     if (isNaN(basePriceNum)) return '微信详询';
 
@@ -66,7 +76,7 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
 
     // Return with a formatted look
     return `约 ${rawCalculated.toLocaleString()} 元`;
-  }, [selectedGpuName, condition, brandTier]);
+  }, [gpuPrices, selectedGpuName, condition, brandTier]);
 
   return (
     <section
@@ -259,7 +269,7 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
                 onChange={(e) => setSelectedGpuName(e.target.value)}
                 className="w-full bg-slate-800/80 border border-slate-700/60 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-hidden focus:ring-1 focus:ring-blue-500"
               >
-                {GPU_PRICES_DATA.map((gpu, i) => (
+                {gpuPrices.map((gpu, i) => (
                   <option key={i} value={gpu.name} className="bg-slate-950">
                     {gpu.name}
                   </option>

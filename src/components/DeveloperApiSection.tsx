@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Terminal, Send, Copy, Check, Info, Code, Play, RefreshCw, Key, Shield } from "lucide-react";
 
 export default function DeveloperApiSection() {
-  const [selectedEndpoint, setSelectedEndpoint] = useState<"get-inventory" | "update-stock" | "test-pc-builder" | "submit-quote">("get-inventory");
+  const [selectedEndpoint, setSelectedEndpoint] = useState<"get-inventory" | "update-stock" | "get-prices" | "update-price" | "test-pc-builder">("get-inventory");
   const [responseJson, setResponseJson] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -11,41 +11,43 @@ export default function DeveloperApiSection() {
     "get-inventory": {
       method: "GET",
       url: "/api/inventory?inStock=true",
-      desc: "获取门店实时在库显卡及硬件配置货量明细",
-      curl: "curl -X GET 'https://chengdu-gpu-no1.com/api/inventory?inStock=true'",
+      desc: "获取门店实时在库显卡及其硬件配置的现货货量明细",
+      curl: "curl -X GET 'https://cdgpu.cn/api/inventory?inStock=true'",
       payload: null
     },
     "update-stock": {
       method: "POST",
       url: "/api/inventory/update-stock",
-      desc: "【高权接口】通知物理POS扣减/补足硬件现货余量（用于第三方ERP自动同步）",
-      curl: `curl -X POST 'https://chengdu-gpu-no1.com/api/inventory/update-stock' \\
+      desc: "【高权接口】通知成都一号店物理 POS 扣/加硬件现货余量（用于第三方 ERP 自动同步）",
+      curl: `curl -X POST 'https://cdgpu.cn/api/inventory/update-stock' \\
 -H 'Content-Type: application/json' \\
 -d '{"id": "gpu-01", "quantityChange": -1}'`,
       payload: { id: "gpu-01", quantityChange: -1 }
     },
+    "get-prices": {
+      method: "GET",
+      url: "/api/prices",
+      desc: "抓取回收一号店当前的每日官方公开报价和行情波动走势",
+      curl: "curl -X GET 'https://cdgpu.cn/api/prices'",
+      payload: null
+    },
+    "update-price": {
+      method: "POST",
+      url: "/api/prices/update-price",
+      desc: "【高权接口】允许第三方 ERP 进销存后台修改和同步覆盖今日最新报价、趋势(up/down/stable)",
+      curl: `curl -X POST 'https://cdgpu.cn/api/prices/update-price' \\
+-H 'Content-Type: application/json' \\
+-d '{"name": "NVIDIA RTX 4090", "basePrice": "18880", "trend": "stable"}'`,
+      payload: { name: "NVIDIA RTX 4090", basePrice: "18880", trend: "stable" }
+    },
     "test-pc-builder": {
       method: "POST",
       url: "/api/pc-builder/build",
-      desc: "验证整机各硬件间物理规范、针脚、供电电源及AI算力级别的兼容情况",
-      curl: `curl -X POST 'https://chengdu-gpu-no1.com/api/pc-builder/build' \\
+      desc: "整机算力微调验证：检查各配件间物理规格、接口插槽及供电额定功率的物理兼容情况",
+      curl: `curl -X POST 'https://cdgpu.cn/api/pc-builder/build' \\
 -H 'Content-Type: application/json' \\
--d '{"cpuId": "cpu-01", "gpuId": "gpu-01", "mbId": "mb-01"}'`,
-      payload: { cpuId: "cpu-01", gpuId: "gpu-01", mbId: "mb-01" }
-    },
-    "submit-quote": {
-      method: "POST",
-      url: "/api/pc-builder/quote",
-      desc: "推送客户自定加固套件及联系人信息至一号店POS锁单后台",
-      curl: `curl -X POST 'https://chengdu-gpu-no1.com/api/pc-builder/quote' \\
--H 'Content-Type: application/json' \\
--d '{"userName": "王老师", "userPhone": "18300000000", "userWechat": "WeChat99", "buildData": {"totalPrice": 38100}}'`,
-      payload: {
-        userName: "王老师",
-        userPhone: "18300000000",
-        userWechat: "WeChat99",
-        buildData: { totalPrice: 38100 }
-      }
+-d '{"cpuId": "cpu-01", "gpuId": "gpu-02", "mbId": "mb-01"}'`,
+      payload: { cpuId: "cpu-01", gpuId: "gpu-02", mbId: "mb-01" }
     }
   };
 
@@ -89,8 +91,8 @@ export default function DeveloperApiSection() {
         
         {/* Header Titles */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 sm:mb-16">
-          <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 font-mono">
-            <Terminal className="h-3.5 w-3.5" /> Developer SDK Hub · 开放 API 对接
+          <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
+            <Terminal className="h-3.5 w-3.5" /> 开放级 API 云对接中心
           </span>
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight sm:text-4xl">
             提供标准可对接 RESTful 接口
@@ -105,8 +107,8 @@ export default function DeveloperApiSection() {
           {/* Left: Endpoint Selector and description */}
           <div className="lg:col-span-5 flex flex-col justify-between bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6">
             <div className="space-y-4">
-              <span className="text-[10px] tracking-widest text-slate-400 uppercase font-black block font-mono">
-                API GATEWAY ROUTER · 开放接口目录
+              <span className="text-[10px] tracking-widest text-slate-400 uppercase font-black block">
+                开放式 API 网关目录
               </span>
 
               {/* API Buttons */}
@@ -174,7 +176,7 @@ export default function DeveloperApiSection() {
                     <span className="h-3 w-3 bg-amber-500 rounded-full" />
                     <span className="h-3 w-3 bg-emerald-500 rounded-full" />
                   </div>
-                  <span className="text-[11px] font-mono text-slate-400 ml-2">Terminal Shell Mockup</span>
+                  <span className="text-[11px] text-slate-400 ml-2">终端控制台沙箱</span>
                 </div>
 
                 <div className="flex items-center gap-2">

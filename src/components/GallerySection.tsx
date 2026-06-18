@@ -48,6 +48,7 @@ export default function GallerySection() {
                   src={photo.mockUrl}
                   alt={photo.title}
                   referrerPolicy="no-referrer"
+                  loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
                 />
                 

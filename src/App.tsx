@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import PriceSection from './components/PriceSection';
@@ -14,6 +15,21 @@ import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import FloatingContactButton from './components/FloatingContactButton';
 import ContactModal from './components/ContactModal';
+
+// Reusable elegant scroll reveal transition component
+function ScrollReveal({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12, margin: "0px 0px -50px 0px" }}
+      transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }} // smooth, high-end easeOutCubic
+      className="w-full"
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -49,31 +65,51 @@ export default function App() {
       <Header onOpenContact={handleOpenContact} />
 
       {/* 2. Page Core Structure Content modules */}
-      <main className="flex-1">
+      <main className="flex-1 overflow-hidden">
         <HeroSection
           onOpenContact={handleOpenContact}
           onScrollToSection={handleScrollToSection}
         />
         
-        <PriceSection onOpenContact={handleOpenContact} />
+        <ScrollReveal>
+          <PriceSection onOpenContact={handleOpenContact} />
+        </ScrollReveal>
 
-        <InventorySection />
+        <ScrollReveal>
+          <InventorySection />
+        </ScrollReveal>
 
-        <PcBuilderSection />
+        <ScrollReveal>
+          <PcBuilderSection />
+        </ScrollReveal>
         
-        <ProcessSection />
+        <ScrollReveal>
+          <ProcessSection />
+        </ScrollReveal>
         
-        <AdvantageSection />
+        <ScrollReveal>
+          <AdvantageSection />
+        </ScrollReveal>
         
-        <AiWorkstationSection onOpenContact={handleOpenContact} />
+        <ScrollReveal>
+          <AiWorkstationSection onOpenContact={handleOpenContact} />
+        </ScrollReveal>
         
-        <CaseSection />
+        <ScrollReveal>
+          <CaseSection />
+        </ScrollReveal>
         
-        <GallerySection />
+        <ScrollReveal>
+          <GallerySection />
+        </ScrollReveal>
         
-        <FAQSection />
+        <ScrollReveal>
+          <FAQSection />
+        </ScrollReveal>
         
-        <ContactSection onOpenContact={handleOpenContact} />
+        <ScrollReveal>
+          <ContactSection onOpenContact={handleOpenContact} />
+        </ScrollReveal>
       </main>
 
       {/* 3. Footer Statement footprint */}

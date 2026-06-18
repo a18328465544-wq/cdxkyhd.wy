@@ -12,6 +12,8 @@ interface PartItem {
   pinCode?: string;
   ramType?: string;
   wattage?: number;
+  quantity?: number;
+  status?: string;
 }
 
 interface BuildResults {
@@ -173,14 +175,14 @@ export default function PcBuilderSection() {
   };
 
   const categories = [
-    { key: "CPU", label: "核心处理器 CPU", state: selectedCpuId, callback: setSelectedCpuId },
-    { key: "GPU", label: "图形显卡 GPU", state: selectedGpuId, callback: setSelectedGpuId },
-    { key: "Motherboard", label: "适配主板 Motherboard", state: selectedMbId, callback: setSelectedMbId },
-    { key: "RAM", label: "系统内存 RAM", state: selectedRamId, callback: setSelectedRamId },
-    { key: "SSD", label: "固态硬盘 NVMe SSD", state: selectedSsdId, callback: setSelectedSsdId },
-    { key: "PSU", label: "金牌电源 PSU", state: selectedPsuId, callback: setSelectedPsuId },
-    { key: "Cooler", label: "散热散热 Cooler", state: selectedCoolerId, callback: setSelectedCoolerId },
-    { key: "Case", label: "科技机箱 Chassis Case", state: selectedCaseId, callback: setSelectedCaseId }
+    { key: "CPU", label: "核心处理器", state: selectedCpuId, callback: setSelectedCpuId },
+    { key: "GPU", label: "图形显卡", state: selectedGpuId, callback: setSelectedGpuId },
+    { key: "Motherboard", label: "适配主板", state: selectedMbId, callback: setSelectedMbId },
+    { key: "RAM", label: "系统内存", state: selectedRamId, callback: setSelectedRamId },
+    { key: "SSD", label: "固态硬盘", state: selectedSsdId, callback: setSelectedSsdId },
+    { key: "PSU", label: "金牌电源", state: selectedPsuId, callback: setSelectedPsuId },
+    { key: "Cooler", label: "散热组件", state: selectedCoolerId, callback: setSelectedCoolerId },
+    { key: "Case", label: "科技机箱", state: selectedCaseId, callback: setSelectedCaseId }
   ];
 
   return (
@@ -195,8 +197,8 @@ export default function PcBuilderSection() {
         
         {/* Module Header Title */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 sm:mb-20">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 px-3.5 py-1.5 text-xs font-bold text-blue-400 font-mono">
-            <Cpu className="h-3.5 w-3.5 animate-spin" /> Custom Rig Builder · 在线智能装机
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 px-3.5 py-1.5 text-xs font-bold text-blue-400">
+            <Cpu className="h-3.5 w-3.5 animate-spin" /> 在线智能选配装机系统
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
             定制专属 AI 工作站与至强主机
@@ -212,8 +214,8 @@ export default function PcBuilderSection() {
           {/* Left selectors Panel */}
           <div className="lg:col-span-7 space-y-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 font-mono uppercase">
-                Hardware Assembly Configuration · 硬件选配
+              <span className="text-xs font-bold text-slate-400">
+                自主组装定制硬件选配
               </span>
               <button
                 onClick={handleClearAll}
@@ -239,25 +241,54 @@ export default function PcBuilderSection() {
                         className="flex-1 bg-slate-900 border border-slate-800 text-xs rounded-xl px-3 py-2.5 text-white focus:outline-hidden focus:ring-1 focus:ring-blue-500"
                       >
                         <option value="">-- 点击选择 {cat.key} 型号 --</option>
-                        {categoryParts.map(part => (
-                          <option key={part.id} value={part.id}>
-                            {part.name} - ({part.condition}) | ¥{part.price.toLocaleString()}
-                          </option>
-                        ))}
+                        {categoryParts.map(part => {
+                          const qty = part.quantity ?? 0;
+                          const stockText = qty <= 0 
+                            ? "缺货" 
+                            : qty <= 3 
+                              ? `仅剩 ${qty} 件` 
+                              : `在库充足`;
+                          return (
+                            <option key={part.id} value={part.id}>
+                              {part.name} - ({part.condition}) | ¥{part.price.toLocaleString()} ({stockText})
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
 
                     {/* Show quick selected part characteristics */}
-                    {cat.state && (
-                      <div className="mt-2 text-[10px] text-slate-400 font-mono flex items-center justify-between">
-                        <span>
-                          {parts.find(p => p.id === cat.state)?.specs}
-                        </span>
-                        <span>
-                          ¥{parts.find(p => p.id === cat.state)?.price.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
+                    {cat.state && (() => {
+                      const selectedPart = parts.find(p => p.id === cat.state);
+                      if (!selectedPart) return null;
+                      const isOutOfStock = (selectedPart.quantity ?? 0) <= 0;
+                      const isLowStock = (selectedPart.quantity ?? 0) > 0 && (selectedPart.quantity ?? 0) <= 3;
+                      return (
+                        <div className="mt-2 text-[10.5px] p-2 bg-slate-900/40 rounded-lg border border-slate-850 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <span className="text-slate-400 font-sans text-left">
+                            <strong>在库规格:</strong> {selectedPart.specs}
+                          </span>
+                          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                            {isOutOfStock ? (
+                              <span className="text-[10px] bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold px-2 py-0.5 rounded-md shrink-0">
+                                暂时缺货
+                              </span>
+                            ) : isLowStock ? (
+                              <span className="text-[10px] bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-md shrink-0">
+                                货源紧张 (剩{selectedPart.quantity}件)
+                              </span>
+                            ) : (
+                              <span className="text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-md shrink-0">
+                                现货 (在库 {selectedPart.quantity} 件)
+                              </span>
+                            )}
+                            <span className="text-slate-200 font-mono font-bold">
+                              ¥{selectedPart.price.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}
@@ -272,8 +303,8 @@ export default function PcBuilderSection() {
               <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-blue-500/5 blur-3xl" />
               
               <div className="space-y-6 relative z-15">
-                <span className="text-[10px] tracking-widest text-blue-400 uppercase font-black block font-mono">
-                  LIVE BUILD REPORT · 整机测算看板
+                <span className="text-[10px] tracking-widest text-blue-400 uppercase font-black block">
+                  整机实时分析与功耗对齐诊断看板
                 </span>
 
                 {/* Big Price Tag */}
@@ -319,7 +350,7 @@ export default function PcBuilderSection() {
                   <div className="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-1.5">
                     <div className="flex items-center gap-1.5">
                       <span className="h-2 w-2 rounded-full bg-blue-500 animate-ping" />
-                      <span className="text-xs font-black text-blue-300 font-mono uppercase">
+                      <span className="text-xs font-black text-blue-300 uppercase">
                         AI算力性能级别: {buildData.aiRating}
                       </span>
                     </div>
@@ -331,8 +362,8 @@ export default function PcBuilderSection() {
 
                 {/* Intel compatibility engine output diagnostics */}
                 <div className="space-y-3 pt-2 border-t border-slate-850">
-                  <span className="text-[10px] text-slate-400 uppercase font-black font-mono block">
-                    接口及物理限制自检诊断 (`CudaEngine-v1.2`)
+                  <span className="text-[10px] text-slate-400 uppercase font-black block">
+                    设备接口及核心电压规格自检诊断系统
                   </span>
 
                   {calculating ? (

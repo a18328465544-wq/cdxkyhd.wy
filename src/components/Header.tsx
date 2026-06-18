@@ -85,8 +85,8 @@ export default function Header({ onOpenContact }: HeaderProps) {
               <span className="text-lg font-bold text-gray-900 tracking-tight sm:text-xl block">
                 成都显卡一号店
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-blue-600 font-semibold block -mt-1">
-                Chengdu GPU No.1
+              <span className="text-[10px] uppercase tracking-wider text-blue-600 font-semibold block -mt-1">
+                实体仓储 · 同城极速发货
               </span>
             </div>
           </div>

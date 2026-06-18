@@ -70,6 +70,98 @@ const INITIAL_INVENTORY: InventoryItem[] = [
 // Let's duplicate list in RAM for state persistence during process execution
 let currentInventory = [...INITIAL_INVENTORY];
 
+export interface GpuPrice {
+  name: string;
+  category: 'gaming' | 'ai' | 'both';
+  basePrice: string; // e.g., "18xxx" or "18,500 - 19,500"
+  trend: 'up' | 'down' | 'stable';
+  popular?: boolean;
+  specs: {
+    vram: string; // e.g., "24GB GDDR6X"
+    tdp: string; // e.g., "450W"
+    cuda?: string; // CUDA cores count
+  };
+}
+
+const INITIAL_PRICES: GpuPrice[] = [
+  {
+    name: 'NVIDIA RTX 5090',
+    category: 'both',
+    basePrice: '28xxx',
+    trend: 'stable',
+    popular: true,
+    specs: { vram: '32GB GDDR7', tdp: '600W', cuda: '21760' }
+  },
+  {
+    name: 'NVIDIA RTX 4090',
+    category: 'both',
+    basePrice: '18xxx',
+    trend: 'down',
+    popular: true,
+    specs: { vram: '24GB GDDR6X', tdp: '450W', cuda: '16384' }
+  },
+  {
+    name: 'NVIDIA RTX 4080 SUPER',
+    category: 'gaming',
+    basePrice: '82xx',
+    trend: 'stable',
+    specs: { vram: '16GB GDDR6X', tdp: '320W', cuda: '10240' }
+  },
+  {
+    name: 'NVIDIA RTX 4080',
+    category: 'gaming',
+    basePrice: '71xx',
+    trend: 'down',
+    specs: { vram: '16GB GDDR6X', tdp: '320W', cuda: '9728' }
+  },
+  {
+    name: 'NVIDIA RTX 3090',
+    category: 'both',
+    basePrice: '58xx',
+    trend: 'stable',
+    specs: { vram: '24GB GDDR6X', tdp: '350W', cuda: '10496' }
+  },
+  {
+    name: 'NVIDIA RTX PRO 6000 工作站',
+    category: 'ai',
+    basePrice: '51xxx',
+    trend: 'stable',
+    popular: true,
+    specs: { vram: '48GB GDDR6', tdp: '300W', cuda: '18176' }
+  },
+  {
+    name: 'NVIDIA RTX PRO 6000 服务器',
+    category: 'ai',
+    basePrice: '55xxx',
+    trend: 'stable',
+    specs: { vram: '48GB GDDR6', tdp: '300W', cuda: '18176' }
+  },
+  {
+    name: 'NVIDIA RTX A6000',
+    category: 'ai',
+    basePrice: '24500',
+    trend: 'stable',
+    popular: true,
+    specs: { vram: '48GB GDDR6', tdp: '300W', cuda: '10752' }
+  },
+  {
+    name: 'NVIDIA RTX A5000',
+    category: 'ai',
+    basePrice: '12500',
+    trend: 'stable',
+    specs: { vram: '24GB GDDR6', tdp: '230W', cuda: '8192' }
+  },
+  {
+    name: 'NVIDIA RTX A4000',
+    category: 'ai',
+    basePrice: '3950',
+    trend: 'down',
+    specs: { vram: '16GB GDDR6', tdp: '140W', cuda: '6144' }
+  }
+];
+
+let currentPrices = [...INITIAL_PRICES];
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -143,6 +235,46 @@ async function startServer() {
     });
   });
 
+  // GET /api/prices - Retrieve today's pricing quotes
+  app.get("/api/prices", (req, res) => {
+    res.json({
+      success: true,
+      lastUpdated: new Date().toLocaleTimeString(),
+      totalCount: currentPrices.length,
+      prices: currentPrices
+    });
+  });
+
+  // POST /api/prices/update-price - Update a specific model's price and trend from ERP
+  app.post("/api/prices/update-price", (req, res) => {
+    const { name, basePrice, trend } = req.body;
+    if (!name) {
+      return res.status(400).json({ success: false, error: "请提供英伟达显卡型号名称 (name)" });
+    }
+
+    const item = currentPrices.find(p => p.name.toLowerCase() === name.toLowerCase());
+    if (!item) {
+      return res.status(404).json({ success: false, error: `未找到名称为 [${name}] 的对应显卡型号` });
+    }
+
+    if (basePrice !== undefined) {
+      item.basePrice = String(basePrice);
+    }
+    if (trend !== undefined) {
+      if (trend === "up" || trend === "down" || trend === "stable") {
+        item.trend = trend;
+      } else {
+        return res.status(400).json({ success: false, error: "trend 参数必须是 'up' | 'down' | 'stable' 之一" });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `显卡 [${item.name}] 的行情价格已成功通过 ERP 系统同步更新！`,
+      updatedPrice: item
+    });
+  });
+
   // GET PC Parts - Returns parts list explicitly for the PC Builder categories
   app.get("/api/pc-parts", (req, res) => {
     res.json({
@@ -174,16 +306,32 @@ async function startServer() {
     let actualPowerSupply = 0;
 
     // Accumulate base prices
-    Object.values(partsMap).forEach(part => {
+    let selectedCount = 0;
+    let outOfStockCount = 0;
+    
+    Object.entries(partsMap).forEach(([key, part]) => {
       if (part) {
+        selectedCount++;
         totalPrice += part.price;
         if (part.category === "CPU" || part.category === "GPU") {
           totalWattageNeed += part.wattage || 100;
         } else {
           totalWattageNeed += 25; // standard base load for board, RAM, fan RGB
         }
+
+        // Real-time Inventory matching check
+        if (part.quantity <= 0) {
+          outOfStockCount++;
+          warnings.push(`❌ 缺货警报: 您选配的 ${part.category === "CPU" ? "处理器" : part.category === "GPU" ? "显卡" : part.category === "Motherboard" ? "主板" : part.category === "RAM" ? "内存" : part.category === "SSD" ? "固态硬盘" : part.category === "PSU" ? "电源" : part.category === "Cooler" ? "散热" : "机箱"} [${part.name}] 武侯实体总仓目前显示缺货中，我们将优先调度周边转网，建议更改为其它现货！`);
+        } else if (part.quantity <= 3) {
+          warnings.push(`⚠️ 货源紧张: 所选的 [${part.name}] 今日库存极度紧张，当前仅存 ${part.quantity} 件，建议尽快提报锁定！`);
+        }
       }
     });
+
+    if (selectedCount > 0 && outOfStockCount === 0) {
+      successes.push(`✅ 货源充足: 已调配核验武侯大仓，所选 ${selectedCount} 款软硬件组件目前均有全新现货充足，可闪电装配发货！`);
+    }
 
     // 1. CPU & Motherboard Pin compatibility
     if (partsMap.cpu && partsMap.mb) {
