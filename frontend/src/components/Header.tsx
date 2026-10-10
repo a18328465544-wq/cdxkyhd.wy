@@ -87,13 +87,13 @@ export default function Header({ onOpenContact }: HeaderProps) {
           <div
             id="brand-logo-container"
             onClick={() => scrollToSection('home')}
-            className="flex items-center gap-2.5 cursor-pointer group"
+            className="flex shrink-0 items-center gap-2.5 whitespace-nowrap cursor-pointer group"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-500/10 group-hover:scale-105 transition duration-300">
               <Cpu className="h-5 w-5 animate-pulse" />
             </div>
             <div>
-              <span className="text-lg font-bold text-gray-900 tracking-tight sm:text-xl block">
+              <span className="text-lg font-bold text-gray-900 tracking-tight sm:text-xl block whitespace-nowrap">
                 成都显卡一号店
               </span>
               <span className="text-[10px] uppercase tracking-wider text-blue-600 font-semibold block -mt-1">
@@ -108,7 +108,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                className={`shrink-0 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-medium transition-colors cursor-pointer xl:px-3 xl:text-sm ${
                   activeSection === item.id
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-650 hover:text-blue-600 hover:bg-gray-50'
@@ -120,10 +120,10 @@ export default function Header({ onOpenContact }: HeaderProps) {
           </nav>
 
           {/* Call-to-actions Header Buttons */}
-          <div id="header-actions" className="hidden sm:flex items-center gap-3">
+          <div id="header-actions" className="hidden shrink-0 items-center gap-2 sm:flex xl:gap-3">
             <a
               href={phoneHref}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-655 hover:text-blue-600 hover:bg-slate-50 transition"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-1.5 text-xs font-semibold text-gray-655 transition hover:bg-slate-50 hover:text-blue-600 xl:px-3"
             >
               <Phone className="h-3.5 w-3.5 text-blue-600" />
               {phoneDisplay}
@@ -132,8 +132,8 @@ export default function Header({ onOpenContact }: HeaderProps) {
               href="/gpu-sn.php"
               aria-current={isGpuSnPage ? 'page' : undefined}
               className={isGpuSnPage
-                ? 'hidden lg:flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition'
-                : 'hidden lg:flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700'}
+                ? 'hidden lg:flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 text-xs font-semibold text-blue-700 transition xl:px-3'
+                : 'hidden lg:flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 xl:px-3'}
             >
               <ScanLine className="h-3.5 w-3.5 text-blue-600" />
               SN 日期查询
@@ -141,7 +141,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
             <button
               id="header-quick-estimate"
               onClick={onOpenContact}
-              className="flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 text-sm font-semibold shadow-sm transition hover:scale-101 active:scale-99 cursor-pointer"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:scale-101 hover:bg-blue-700 active:scale-99 cursor-pointer xl:px-5 xl:text-sm"
             >
               <MessageSquare className="h-4 w-4" />
               微信估价
