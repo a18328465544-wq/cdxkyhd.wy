@@ -1,0 +1,36 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit",
+    "test:pagination": "node --import tsx src/lib/pagination.test.ts",
+    "test:review-fixes": "node --import tsx src/lib/review-fixes.test.ts",
+    "test:inventory-categories": "node --import tsx src/lib/inventoryCategories.test.ts",
+    "test:part-search": "node --import tsx --test src/lib/partSearch.test.ts",
+    "test:part-select-render": "node --import tsx --test src/components/searchablePartSelectRender.test.tsx",
+    "test:contact": "node --import tsx src/lib/contact.test.ts"
+  },
+  "dependencies": {
+    "@cdxkyhd/shared": "file:../shared",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "lucide-react": "^0.546.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3",
+    "motion": "^12.23.24"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "tailwindcss": "^4.1.14",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
+  }
+}

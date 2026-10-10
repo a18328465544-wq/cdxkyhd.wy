@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="storefront scene">
+  <rect width="800" height="600" fill="#eef4fb"/>
+  <rect x="86" y="120" width="628" height="340" rx="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="8"/>
+  <rect x="126" y="170" width="548" height="74" rx="14" fill="#0f172a"/>
+  <text x="400" y="217" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#ffffff">GPU SERVICE STORE</text>
+  <rect x="146" y="278" width="168" height="182" rx="10" fill="#dbeafe"/>
+  <rect x="344" y="278" width="310" height="182" rx="10" fill="#eff6ff"/>
+  <rect x="378" y="316" width="244" height="28" rx="8" fill="#2563eb"/>
+  <rect x="378" y="368" width="180" height="22" rx="8" fill="#94a3b8"/>
+  <circle cx="230" cy="370" r="48" fill="#2563eb" opacity=".9"/>
+  <path d="M205 370h50M230 345v50" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <rect x="0" y="464" width="800" height="136" fill="#cbd5e1"/>
+  <path d="M80 520h640" stroke="#94a3b8" stroke-width="10" stroke-linecap="round"/>
+</svg>

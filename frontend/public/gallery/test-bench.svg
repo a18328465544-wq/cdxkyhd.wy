@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="test bench scene">
+  <rect width="800" height="600" fill="#f8fafc"/>
+  <rect x="90" y="110" width="620" height="360" rx="26" fill="#0f172a"/>
+  <rect x="130" y="150" width="250" height="170" rx="16" fill="#1e293b" stroke="#334155" stroke-width="6"/>
+  <rect x="420" y="150" width="250" height="170" rx="16" fill="#1e293b" stroke="#334155" stroke-width="6"/>
+  <circle cx="255" cy="235" r="56" fill="#2563eb"/>
+  <circle cx="545" cy="235" r="56" fill="#22c55e"/>
+  <path d="M205 398h390" stroke="#64748b" stroke-width="26" stroke-linecap="round"/>
+  <path d="M230 235h50M255 210v50M520 235h50M545 210v50" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+  <text x="400" y="412" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#e2e8f0">GPU TEST BENCH</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="shipping scene">
+  <rect width="800" height="600" fill="#f1f5f9"/>
+  <rect x="130" y="230" width="310" height="190" rx="18" fill="#dbeafe" stroke="#2563eb" stroke-width="8"/>
+  <path d="M440 286h116l74 72v62H440z" fill="#0f172a"/>
+  <circle cx="240" cy="438" r="38" fill="#2563eb"/>
+  <circle cx="555" cy="438" r="38" fill="#2563eb"/>
+  <path d="M180 280h210M180 330h160" stroke="#1e3a8a" stroke-width="18" stroke-linecap="round"/>
+  <path d="M112 476h576" stroke="#94a3b8" stroke-width="12" stroke-linecap="round"/>
+  <text x="400" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#0f172a">INSURED SHIPPING</text>
+</svg>
