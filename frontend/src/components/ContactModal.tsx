@@ -48,8 +48,8 @@ export default function ContactModal({
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
                 客服在线时间 10:00 - 20:00
               </span>
-              <BaseDialog.Title className="text-xl font-semibold text-gray-900">{title}</BaseDialog.Title>
-              <p className="mt-2 text-sm text-gray-500 leading-relaxed">{subtitle}</p>
+              <BaseDialog.Title className="text-xl font-semibold text-slate-900">{title}</BaseDialog.Title>
+              <p className="mt-2 text-sm text-slate-500 leading-relaxed">{subtitle}</p>
             </div>
 
             {/* Content Details */}
@@ -68,9 +68,9 @@ export default function ContactModal({
 
                 <div className="flex-1 text-center sm:text-left space-y-3">
                   <div>
-                    <span className="text-xs text-gray-400 block mb-0.5">微信专属通道</span>
+                    <span className="text-xs text-slate-400 block mb-0.5">微信专属通道</span>
                     <div className="flex items-center justify-center sm:justify-start gap-2">
-                      <span className="font-mono text-base font-bold text-gray-800 bg-blue-50 px-2.5 py-1 rounded border border-blue-100">
+                      <span className="font-mono text-base font-bold text-slate-800 bg-blue-50 px-2.5 py-1 rounded border border-blue-100">
                         {wechatId}
                       </span>
                       <Button
@@ -93,7 +93,7 @@ export default function ContactModal({
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 leading-normal">
+                  <p className="text-xs text-slate-500 leading-normal">
                     截图显卡外观、烤机性能、型号，添加微信后专家将在3分钟内发出确切收购报价方案。
                   </p>
                 </div>
@@ -113,7 +113,7 @@ export default function ContactModal({
                   href="https://s.amap.com/"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-slate-50 transition active:scale-98"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition active:scale-98"
                 >
                   <MapPin className="h-4 w-4" />
                   高德地图导航
@@ -121,18 +121,18 @@ export default function ContactModal({
               </div>
 
               {/* Offline Store Information Grid */}
-              <div className="border-t border-gray-100 pt-5 space-y-3">
-                <div className="flex items-start gap-2.5 text-xs text-gray-600">
-                  <MapPin className="h-4 w-4 text-gray-400 shrink-0 mt-0.5" />
+              <div className="border-t border-slate-100 pt-5 space-y-3">
+                <div className="flex items-start gap-2.5 text-xs text-slate-600">
+                  <MapPin className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-medium text-gray-800">实体店导航：</span>
+                    <span className="font-medium text-slate-800">实体店导航：</span>
                     成都武侯区天府三街新希望国际B座2507
                   </div>
                 </div>
-                <div className="flex items-start gap-2.5 text-xs text-gray-600">
-                  <Clock className="h-4 w-4 text-gray-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2.5 text-xs text-slate-600">
+                  <Clock className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-medium text-gray-800">到店检测交易：</span>
+                    <span className="font-medium text-slate-800">到店检测交易：</span>
                     支持当面烤机测试，秒款结算，现场环境极佳。
                   </div>
                 </div>

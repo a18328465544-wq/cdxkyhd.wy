@@ -86,7 +86,7 @@ export default function DeveloperApiSection() {
   };
 
   return (
-    <section id="api-hub" className="py-20 bg-white border-b border-gray-150 relative">
+    <section id="api-hub" className="py-20 bg-white border-b border-slate-200 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Titles */}
@@ -94,10 +94,10 @@ export default function DeveloperApiSection() {
           <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Terminal className="h-3.5 w-3.5" /> 开放级 API 云对接中心
           </span>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight sm:text-4xl">
             提供标准可对接 RESTful 接口
           </h2>
-          <p className="text-gray-500 text-sm max-w-2xl mx-auto leading-relaxed">
+          <p className="text-slate-500 text-sm max-w-2xl mx-auto leading-relaxed">
             支持成都市区仓储联锁、微信群报价机器人、以及第三方ERP库存管理系统无缝打通。可通过下方沙箱组件测试每一个路由输出JSON明细。
           </p>
         </div>
@@ -107,7 +107,7 @@ export default function DeveloperApiSection() {
           {/* Left: Endpoint Selector and description */}
           <div className="lg:col-span-5 flex flex-col justify-between bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6">
             <div className="space-y-4">
-              <span className="text-[10px] tracking-widest text-slate-400 uppercase font-black block">
+              <span className="text-xs tracking-widest text-slate-400 uppercase font-black block">
                 开放式 API 网关目录
               </span>
 
@@ -126,10 +126,10 @@ export default function DeveloperApiSection() {
                       className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-start gap-3 cursor-pointer ${
                         active
                           ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/10"
-                          : "bg-white text-gray-800 border-slate-200 hover:border-blue-300"
+                          : "bg-white text-slate-800 border-slate-200 hover:border-blue-300"
                       }`}
                     >
-                      <span className={`font-mono font-black text-[10px] uppercase px-2 py-0.5 rounded ${
+                      <span className={`font-mono font-black text-xs uppercase px-2 py-0.5 rounded ${
                         active ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700"
                       }`}>
                         {item.method}
@@ -138,7 +138,7 @@ export default function DeveloperApiSection() {
                         <span className="font-mono text-xs font-bold block truncate">
                           {item.url}
                         </span>
-                        <span className={`text-[10px] block mt-0.5 ${active ? "text-blue-150" : "text-gray-400"}`}>
+                        <span className={`text-xs block mt-0.5 ${active ? "text-blue-150" : "text-slate-400"}`}>
                           {item.desc}
                         </span>
                       </div>
@@ -152,10 +152,10 @@ export default function DeveloperApiSection() {
             <div className="bg-white border border-slate-200 rounded-2xl p-4 flex gap-3 text-xs leading-normal">
               <Info className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <span className="font-bold text-gray-900 block font-sans">
+                <span className="font-bold text-slate-900 block font-sans">
                   网页 API 网关测试说明
                 </span>
-                <p className="text-gray-500">
+                <p className="text-slate-500">
                   前端、小程序和第三方页面统一请求本站 /api，由网站后端携带 ERP Open API Token 转发到进销存系统；生产 Token 只保存在服务端环境变量中。
                 </p>
               </div>
@@ -176,13 +176,13 @@ export default function DeveloperApiSection() {
                     <span className="h-3 w-3 bg-amber-500 rounded-full" />
                     <span className="h-3 w-3 bg-emerald-500 rounded-full" />
                   </div>
-                  <span className="text-[11px] text-slate-400 ml-2">终端控制台沙箱</span>
+                  <span className="text-xs text-slate-400 ml-2">终端控制台沙箱</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleCopyCurl}
-                    className="flex items-center gap-1 hover:bg-slate-800 text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black font-mono transition-colors cursor-pointer"
+                    className="flex items-center gap-1 hover:bg-slate-800 text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-black font-mono transition-colors cursor-pointer"
                   >
                     {copied ? (
                       <>
@@ -214,16 +214,16 @@ export default function DeveloperApiSection() {
 
               {/* CURL viewer block */}
               <div className="space-y-1.5">
-                <span className="text-[10px] text-slate-450 uppercase font-black font-mono block">CURL 请求模型预览</span>
-                <pre className="p-3 bg-slate-900 rounded-xl text-[11px] font-mono text-slate-300 leading-normal border border-slate-850 overflow-x-auto whitespace-pre">
+                <span className="text-xs text-slate-450 uppercase font-black font-mono block">CURL 请求模型预览</span>
+                <pre className="p-3 bg-slate-900 rounded-xl text-xs font-mono text-slate-300 leading-normal border border-slate-850 overflow-x-auto whitespace-pre">
                   {endpointConfig[selectedEndpoint].curl}
                 </pre>
               </div>
 
               {/* LIVE Response output JSON viewer */}
               <div className="flex-1 flex flex-col space-y-1.5 text-left">
-                <span className="text-[10px] text-slate-450 uppercase font-black font-mono block">JSON 格式响应报文 (`Response`)</span>
-                <pre className="flex-1 p-4 bg-slate-900 rounded-xl text-[11px] font-mono text-emerald-400 leading-normal border border-slate-850 overflow-y-auto whitespace-pre h-48 max-h-64">
+                <span className="text-xs text-slate-450 uppercase font-black font-mono block">JSON 格式响应报文 (`Response`)</span>
+                <pre className="flex-1 p-4 bg-slate-900 rounded-xl text-xs font-mono text-emerald-400 leading-normal border border-slate-850 overflow-y-auto whitespace-pre h-48 max-h-64">
                   {responseJson || `// 请在上方点击 [安全执行 Request] 即可抓取真实 Express 物理后台返回的 JSON 序列化对账属性... \n// 模拟返回格式:\n{\n  "success": true,\n  "shop": "成都显卡一号店"\n}`}
                 </pre>
               </div>

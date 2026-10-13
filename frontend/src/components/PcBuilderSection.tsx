@@ -4,6 +4,7 @@ import { apiFetch } from "../lib/api";
 import { type PartSearchItem } from "../lib/partSearch";
 import SearchablePartSelect from "./SearchablePartSelect";
 import { Button, Input } from "./ui/controls";
+import SectionHeader from "./ui/SectionHeader";
 
 interface PartItem extends PartSearchItem {
   category: string;
@@ -178,17 +179,14 @@ export default function PcBuilderSection() {
   ];
 
   return (
-    <section className="border-b border-slate-200 bg-white py-12 sm:py-16 lg:py-20" aria-labelledby="pc-builder-title">
+    <section className="bg-white py-16 sm:py-24" aria-labelledby="pc-builder-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-11">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600">
-            <Cpu className="h-3.5 w-3.5" /> 在线装机配置
-          </span>
-          <h2 id="pc-builder-title" className="text-2xl font-bold text-slate-950 sm:text-3xl">按需选配，实时查看预算</h2>
-          <p className="mx-auto max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            从处理器和显卡开始选择，库存价格、整机功耗与配件兼容情况会随方案同步更新。
-          </p>
-        </header>
+        <SectionHeader
+          titleId="pc-builder-title"
+          eyebrow="在线装机"
+          title="按需选配，实时看预算"
+          description="从处理器和显卡开始选，库存价格、整机功耗和兼容性会随方案一起更新。"
+        />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-12 xl:items-start">
           <div className="min-w-0 space-y-4 xl:col-span-7">

@@ -13,17 +13,18 @@ export default function Header({ onOpenContact }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const isGpuSnPage = window.location.pathname === '/gpu-sn.php' || window.location.pathname === '/gpu-sn';
   const isCommunityPage = window.location.pathname === '/community' || window.location.pathname.startsWith('/community/');
-  const [activeSection, setActiveSection] = useState(isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : 'home');
+  const isBuildPage = window.location.pathname === '/build' || window.location.pathname === '/build/';
+  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage;
+  const [activeSection, setActiveSection] = useState(isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : 'home');
   const { phoneDisplay, phoneHref } = CONTACT_INFO;
 
   const navItems = [
     { id: 'home', name: '首页' },
-    { id: 'pricing', name: '今日行情' },
-    { id: 'inventory', name: '实时库存' },
-    { id: 'pc-builder', name: '在线装机' },
-    { id: 'workstation', name: 'AI工作站' },
+    { id: 'pricing', name: '回收行情' },
+    { id: 'inventory', name: '现货库存' },
+    { id: 'build', name: '装机方案' },
     { id: 'cases', name: '客户案例' },
-    { id: 'contact', name: '联系我们' }
+    { id: 'contact', name: '到店指引' }
   ];
   const primaryNavItems = navItems.filter((item) => item.id !== 'cases');
   const moreIsActive = isCommunityPage || activeSection === 'cases';
@@ -56,7 +57,11 @@ export default function Header({ onOpenContact }: HeaderProps) {
       if (!isGpuSnPage) window.location.href = '/gpu-sn.php';
       return;
     }
-    if (isGpuSnPage || isCommunityPage) {
+    if (id === 'build') {
+      if (!isBuildPage) window.location.href = '/build';
+      return;
+    }
+    if (isSubPage) {
       window.location.href = id === 'home' ? '/' : `/#${id}`;
       return;
     }
@@ -71,8 +76,8 @@ export default function Header({ onOpenContact }: HeaderProps) {
     <header
       id="main-app-header"
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled || isGpuSnPage
-          ? 'bg-white/85 backdrop-blur-md shadow-sm border-b border-gray-100'
+        isScrolled || isSubPage
+          ? 'bg-white/85 backdrop-blur-md border-b border-slate-200/80'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
@@ -89,7 +94,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               <Cpu className="h-5 w-5" />
             </div>
             <div>
-              <span className="text-lg font-bold text-gray-900 tracking-tight sm:text-xl block whitespace-nowrap">
+              <span className="text-lg font-bold text-slate-900 tracking-tight sm:text-xl block whitespace-nowrap">
                 成都显卡一号店
               </span>
               <span className="mt-0.5 block text-xs font-medium text-slate-600">
@@ -204,7 +209,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
 
       {/* Mobile Drawer Navigation Panels */}
       {mobileMenuOpen && (
-        <div id="mobile-navbar-drawer" className="xl:hidden bg-white border-b border-gray-100 shadow-lg divide-y divide-gray-50 animate-fade-in">
+        <div id="mobile-navbar-drawer" className="xl:hidden bg-white border-b border-slate-100 shadow-lg divide-y divide-slate-50 animate-fade-in">
           <div className="px-3 py-4 space-y-1">
             {navItems.map((item) => (
               <button
@@ -213,7 +218,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 className={`w-full text-left px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                   activeSection === item.id
                     ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-slate-50'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 {item.name}
@@ -228,8 +233,8 @@ export default function Header({ onOpenContact }: HeaderProps) {
               交流社区
             </a>
           </div>
-          <div className="border-y border-gray-100 bg-slate-50/70 px-4 py-3">
-            <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">独立查询工具</p>
+          <div className="border-y border-slate-100 bg-slate-50/70 px-4 py-3">
+            <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">独立查询工具</p>
             <a
               href="/gpu-sn.php"
               aria-current={isGpuSnPage ? 'page' : undefined}
@@ -258,7 +263,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
             </Button>
             <a
               href={phoneHref}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-700 active:scale-98"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-slate-700 active:scale-98"
             >
               <Phone className="h-4 w-4 text-blue-600" />
               联系客服电话：{phoneDisplay}

@@ -5,17 +5,28 @@ import Footer from './components/Footer';
 import FloatingContactButton from './components/FloatingContactButton';
 import { scrollToSectionTarget } from './lib/navigation';
 
-const PriceSection = lazy(() => import('./components/PriceSection'));
-const InventorySection = lazy(() => import('./components/InventorySection'));
+const homeSectionLoaders = {
+  price: () => import('./components/PriceSection'),
+  inventory: () => import('./components/InventorySection'),
+  process: () => import('./components/ProcessSection'),
+  advantage: () => import('./components/AdvantageSection'),
+  cases: () => import('./components/CaseSection'),
+  faq: () => import('./components/FAQSection'),
+  contact: () => import('./components/ContactSection'),
+};
+
+const PriceSection = lazy(homeSectionLoaders.price);
+const InventorySection = lazy(homeSectionLoaders.inventory);
 const GpuSnLookupSection = lazy(() => import('./components/GpuSnLookupSection'));
 const PcBuilderSection = lazy(() => import('./components/PcBuilderSection'));
-const ProcessSection = lazy(() => import('./components/ProcessSection'));
-const AdvantageSection = lazy(() => import('./components/AdvantageSection'));
+const ProcessSection = lazy(homeSectionLoaders.process);
+const AdvantageSection = lazy(homeSectionLoaders.advantage);
 const AiWorkstationSection = lazy(() => import('./components/AiWorkstationSection'));
-const CaseSection = lazy(() => import('./components/CaseSection'));
-const FAQSection = lazy(() => import('./components/FAQSection'));
-const ContactSection = lazy(() => import('./components/ContactSection'));
-const ContactModal = lazy(() => import('./components/ContactModal'));
+const CaseSection = lazy(homeSectionLoaders.cases);
+const FAQSection = lazy(homeSectionLoaders.faq);
+const ContactSection = lazy(homeSectionLoaders.contact);
+const loadContactModal = () => import('./components/ContactModal');
+const ContactModal = lazy(loadContactModal);
 const CommunityPage = lazy(() => import('./components/CommunityPage'));
 
 interface LazySectionProps {
@@ -27,13 +38,12 @@ interface LazySectionProps {
 
 function SectionFallback({ label, minHeight }: { label: string; minHeight: string }) {
   return (
-    <div className="w-full bg-slate-50" style={{ minHeight }}>
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="border-t border-slate-200 py-5">
-          <div className="mb-4 text-sm font-semibold text-slate-500">{label}</div>
-          <div className="h-4 w-44 animate-pulse rounded bg-slate-100" />
-          <div className="mt-3 h-3 w-64 max-w-full animate-pulse rounded bg-slate-100" />
-        </div>
+    <div className="w-full border-t border-slate-200 bg-white" style={{ minHeight }}>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+        <div className="text-sm font-semibold text-blue-700">{label}</div>
+        <div className="mt-4 h-9 w-72 max-w-full animate-pulse rounded-lg bg-slate-100" />
+        <div className="mt-4 h-4 w-96 max-w-full animate-pulse rounded bg-slate-100" />
+        <div className="mt-10 h-48 w-full animate-pulse rounded-2xl bg-slate-50" />
       </div>
     </div>
   );
@@ -90,6 +100,29 @@ export default function App() {
   const [hasOpenedContactModal, setHasOpenedContactModal] = useState(false);
   const isGpuSnPage = window.location.pathname === '/gpu-sn.php' || window.location.pathname === '/gpu-sn';
   const isCommunityPage = window.location.pathname === '/community' || window.location.pathname.startsWith('/community/');
+  const isBuildPage = window.location.pathname === '/build' || window.location.pathname === '/build/';
+  const [estimateModel, setEstimateModel] = useState('NVIDIA RTX 4090');
+
+  useEffect(() => {
+    if (isGpuSnPage || isCommunityPage || isBuildPage) return;
+    // Fetch the below-the-fold section code while the visitor reads the hero, so
+    // scrolling never lands on an empty placeholder.
+    const prefetch = () => [...Object.values(homeSectionLoaders), loadContactModal].forEach(load => void load());
+    const idle = window.requestIdleCallback?.(prefetch, { timeout: 2500 }) ?? window.setTimeout(prefetch, 1200);
+    const target = window.location.hash ? document.getElementById(decodeURIComponent(window.location.hash.slice(1))) : null;
+    if (target) scrollToSectionTarget(target, 80);
+    return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+    };
+  }, [isGpuSnPage, isCommunityPage, isBuildPage]);
+
+  useEffect(() => {
+    if (!isBuildPage) return;
+    const previousTitle = document.title;
+    document.title = '装机配置与 AI 工作站 - 成都显卡一号店';
+    return () => {document.title = previousTitle;};
+  }, [isBuildPage]);
 
   useEffect(() => {
     if (!isGpuSnPage) return;
@@ -150,13 +183,42 @@ export default function App() {
     );
   }
 
+  if (isBuildPage) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased selection:bg-blue-500/25 selection:text-blue-900">
+        <Header onOpenContact={handleOpenContact} />
+        <main className="flex-1 pt-16 sm:pt-20">
+          <Suspense fallback={<SectionFallback label="在线装机" minHeight="980px" />}>
+            <div id="pc-builder"><PcBuilderSection /></div>
+          </Suspense>
+          <Suspense fallback={<SectionFallback label="AI 工作站" minHeight="720px" />}>
+            <div id="workstation"><AiWorkstationSection onOpenContact={handleOpenContact} /></div>
+          </Suspense>
+        </main>
+        <Footer />
+        <FloatingContactButton onOpenContact={handleOpenContact} />
+        {hasOpenedContactModal && (
+          <Suspense fallback={<ContactModalFallback />}>
+            <ContactModal isOpen={isContactOpen} onClose={handleCloseContact} />
+          </Suspense>
+        )}
+      </div>
+    );
+  }
+
   const handleScrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) scrollToSectionTarget(element, 80);
   };
 
+  const handleEstimate = (model: string) => {
+    setEstimateModel(model);
+    const estimator = document.getElementById('quick-estimator');
+    if (estimator) scrollToSectionTarget(estimator, 96);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased font-sans flex flex-col justify-between selection:bg-blue-500/25 selection:text-blue-900 pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0">
+    <div className="min-h-screen bg-white text-slate-800 antialiased font-sans flex flex-col justify-between selection:bg-blue-500/25 selection:text-blue-900 pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0">
 
       {/* 1. Header Navigation System */}
       <Header onOpenContact={handleOpenContact} />
@@ -166,18 +228,16 @@ export default function App() {
         <HeroSection
           onOpenContact={handleOpenContact}
           onScrollToSection={handleScrollToSection}
+          estimateModel={estimateModel}
+          onEstimateModelChange={setEstimateModel}
         />
 
         <LazySection id="pricing" label="今日行情" minHeight="760px">
-          <PriceSection onOpenContact={handleOpenContact} />
+          <PriceSection onOpenContact={handleOpenContact} onEstimate={handleEstimate} />
         </LazySection>
 
         <LazySection id="inventory" label="实时库存" minHeight="760px">
-          <InventorySection />
-        </LazySection>
-
-        <LazySection id="pc-builder" label="在线装机" minHeight="980px">
-          <PcBuilderSection />
+          <InventorySection onOpenContact={handleOpenContact} />
         </LazySection>
 
         <LazySection id="process" label="服务流程" minHeight="420px">
@@ -186,10 +246,6 @@ export default function App() {
 
         <LazySection id="advantages" label="门店优势" minHeight="560px">
           <AdvantageSection />
-        </LazySection>
-
-        <LazySection id="workstation" label="AI 工作站" minHeight="720px">
-          <AiWorkstationSection onOpenContact={handleOpenContact} />
         </LazySection>
 
         <LazySection id="cases" label="客户案例" minHeight="520px">

@@ -75,7 +75,7 @@ export default function FloatingContactButton({ onOpenContact }: FloatingContact
           <button
             id="desktop-scroll-top-btn"
             onClick={scrollToTop}
-            className="h-11 w-11 rounded-full bg-white hover:bg-slate-100 text-gray-500 border border-slate-200 shadow-md flex items-center justify-center transition active:scale-95 cursor-pointer animate-scale"
+            className="h-11 w-11 rounded-full bg-white hover:bg-slate-100 text-slate-500 border border-slate-200 shadow-md flex items-center justify-center transition active:scale-95 cursor-pointer animate-scale"
             title="回到顶部"
           >
             <ArrowUp className="h-5 w-5" />
@@ -85,11 +85,11 @@ export default function FloatingContactButton({ onOpenContact }: FloatingContact
         <a
           id="desktop-floating-call"
           href={phoneHref}
-          className="h-11 w-11 rounded-full bg-white hover:bg-slate-100 text-blue-650 border border-slate-200 shadow-md flex items-center justify-center transition active:scale-95 group relative"
+          className="h-11 w-11 rounded-full bg-white hover:bg-slate-100 text-blue-600 border border-slate-200 shadow-md flex items-center justify-center transition active:scale-95 group relative"
           title="电话询价"
         >
           <Phone className="h-5 w-5 text-blue-500" />
-          <span className="absolute right-12 scale-0 group-hover:scale-100 transition-transform origin-right bg-slate-900 text-white font-bold text-[10px] py-1 px-2.5 rounded shadow whitespace-nowrap">
+          <span className="absolute right-12 scale-0 group-hover:scale-100 transition-transform origin-right bg-slate-900 text-white font-bold text-xs py-1 px-2.5 rounded shadow whitespace-nowrap">
             电话：{phoneDisplay}
           </span>
         </a>

@@ -149,7 +149,7 @@ export default function GpuSnLookupSection() {
           <h2 className="text-lg font-bold text-slate-950">选择显卡品牌</h2>
           <p className="mt-1 text-sm text-slate-600">选择品牌后输入序列号，可粘贴或使用扫码枪</p>
         </div>
-        <span className="text-xs font-medium text-gray-500">共 {sortedRules.length} 个品牌</span>
+        <span className="text-xs font-medium text-slate-500">共 {sortedRules.length} 个品牌</span>
       </div>
 
       <div id="gpu-sn-brand-list" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -215,7 +215,7 @@ export default function GpuSnLookupSection() {
               <ScanLine className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input ref={inputRef} id="gpu-sn-serial" value={sn} onChange={(event) => {setSn(event.target.value); setResult(null); setError("");}} autoCapitalize="characters" autoCorrect="off" spellCheck={false} maxLength={40} placeholder={`例如：${selectedBrand.example}`} className="sn-input font-mono uppercase" />
             </div>
-            <p className="mt-2 flex items-start gap-1.5 text-[11px] leading-5 text-slate-500"><Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />示例中的 X 表示被隐藏的字符，不能直接作为真实 SN 查询。支持粘贴；扫码枪输入完成后按回车即可。</p>
+            <p className="mt-2 flex items-start gap-1.5 text-xs leading-5 text-slate-500"><Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />示例中的 X 表示被隐藏的字符，不能直接作为真实 SN 查询。支持粘贴；扫码枪输入完成后按回车即可。</p>
             {error && <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm leading-5 text-rose-800">{error}</p>}
             <Button type="submit" disabled={loading} loading={loading} variant="primary" size="lg" className="mt-5 w-full"><Search className="h-4 w-4" />{loading ? "正在查询…" : "立即查询出厂日期"}</Button>
           </form>
@@ -226,17 +226,17 @@ export default function GpuSnLookupSection() {
                 {result.dateRange && <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-700"><CalendarDays className="h-3.5 w-3.5 text-blue-700" />生产日期范围：{result.dateRange.start} 至 {result.dateRange.end}</p>}
                 {result.week !== null && result.dateRange && <p className="mt-1 text-xs text-slate-600">{approximateWeekMonth(result)}</p>}
               </div>
-              <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${result.status === "parsed" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>{result.status === "parsed" && <BadgeCheck className="h-3 w-3" />}{statusLabel(result)}</span>
+              <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${result.status === "parsed" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>{result.status === "parsed" && <BadgeCheck className="h-3 w-3" />}{statusLabel(result)}</span>
             </div>
             {result.elapsedDays !== null && <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-600"><Clock3 className="h-3.5 w-3.5" />距今约 {result.elapsedDays} 天</p>}
             <p className="mt-3 text-xs leading-5 text-slate-700">{result.explanation}</p>
             <div className="mt-3 rounded-xl border border-white/80 bg-white/80 p-3">
-              <p className="text-[11px] font-bold text-slate-800">规则依据</p>
+              <p className="text-xs font-bold text-slate-800">规则依据</p>
               <p className="mt-1 text-xs leading-5 text-slate-600">{result.ruleSummary}</p>
-              <p className="mt-1.5 text-[10px] text-slate-500">规则 ID：<code className="font-mono">{result.ruleId}</code> · 可信度：{confidenceLabel[result.confidence]} · 官方单卡确认：否</p>
+              <p className="mt-1.5 text-xs text-slate-500">规则 ID：<code className="font-mono">{result.ruleId}</code> · 可信度：{confidenceLabel[result.confidence]} · 官方单卡确认：否</p>
               <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5">{result.sources.map((source) => source.url
-                ? <a key={`${source.url}-${source.title}`} href={source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] font-medium text-blue-700 hover:underline">{source.title}<ExternalLink className="h-2.5 w-2.5" /></a>
-                : <span key={source.title} className="inline-flex items-center text-[10px] font-medium text-slate-600">{source.title}</span>)}</div>
+                ? <a key={`${source.url}-${source.title}`} href={source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:underline">{source.title}<ExternalLink className="h-2.5 w-2.5" /></a>
+                : <span key={source.title} className="inline-flex items-center text-xs font-medium text-slate-600">{source.title}</span>)}</div>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               <a href={result.officialUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-white px-3 text-xs font-bold text-blue-700 transition hover:bg-blue-50"><ShieldCheck className="h-4 w-4" />品牌官方入口<ExternalLink className="h-3 w-3" /></a>
@@ -244,7 +244,7 @@ export default function GpuSnLookupSection() {
             </div>
           </article>}
 
-          <p className="mt-4 text-center text-[10px] leading-5 text-slate-500">查询结果为编码规则推算，不是官方保修、真伪或维修资格确认。</p>
+          <p className="mt-4 text-center text-xs leading-5 text-slate-500">查询结果为编码规则推算，不是官方保修、真伪或维修资格确认。</p>
         </BaseDialog.Popup>
           </BaseDialog.Viewport>
         </BaseDialog.Portal>

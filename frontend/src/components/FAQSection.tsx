@@ -1,95 +1,62 @@
 import React, { useState } from 'react';
 import { FAQ_DATA } from '../data';
-import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import SectionHeader from './ui/SectionHeader';
 
 export default function FAQSection() {
-  const [openIdx, setOpenIdx] = useState<number | null>(0); // First one open by default
-
-  const toggleFAQ = (index: number) => {
-    setOpenIdx(openIdx === index ? null : index);
-  };
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <section className="mx-auto max-w-4xl border-b border-slate-200 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-      
-      {/* Module Title */}
-      <div className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-11">
-        <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-block">
-          常见服务答疑
-        </span>
-        <h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">
-          显卡回收与交易常见问题
-        </h2>
-        <p className="text-sm leading-6 text-slate-600 sm:text-base">
-          我们尽最大诚意消除您的交易疑虑。以下整理了新老客户在显卡邮寄寄送、价格判定、到店交易及系统组装中最常提及的核心诉求解答。
-        </p>
-      </div>
+    <section className="border-t border-slate-200 bg-white py-16 sm:py-24">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-16 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
+        <div className="lg:col-span-4">
+          <SectionHeader
+            eyebrow="常见问题"
+            title="交易前你可能想问"
+            description={<>寄卡安全、报价准不准、能不能到店，这里都有答案。没找到的，直接微信问我们。</>}
+          />
+        </div>
 
-      {/* Accordion List wrapping FAQ elements */}
-      <div className="space-y-2">
-        {FAQ_DATA.map((faq, idx) => {
-          const isOpen = openIdx === idx;
-          return (
-            <div
-              key={idx}
-              className={`overflow-hidden rounded-lg border bg-white transition-colors duration-200 ${
-                isOpen
-                  ? 'border-blue-300'
-                  : 'border-slate-200'
-              }`}
-            >
-              
-              {/* Question Clickable header */}
-              <button
-                id={`faq-toggle-${idx}`}
-                onClick={() => toggleFAQ(idx)}
-                className="flex w-full cursor-pointer items-center justify-between gap-4 px-4 py-4 text-left select-none group sm:px-5"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700 text-xs sm:text-sm font-black font-mono">
-                    问
-                  </span>
-                  <span className="text-sm font-semibold leading-6 text-slate-900 transition-colors group-hover:text-blue-700 sm:text-base">
+        <div className="divide-y divide-slate-200 border-y border-slate-200 lg:col-span-8">
+          {FAQ_DATA.map((faq, idx) => {
+            const isOpen = openIdx === idx;
+            return (
+              <div key={faq.q}>
+                <button
+                  id={`faq-toggle-${idx}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
+                  onClick={() => setOpenIdx(isOpen ? null : idx)}
+                  className="group flex w-full cursor-pointer items-start justify-between gap-6 py-6 text-left"
+                >
+                  <span className="text-base font-semibold leading-7 text-slate-950 transition-colors group-hover:text-blue-700 sm:text-lg">
                     {faq.q}
                   </span>
-                </div>
+                  <span className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-1 ring-slate-300 text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-45 text-blue-700 ring-blue-300' : ''}`}>
+                    <Plus className="h-3.5 w-3.5" />
+                  </span>
+                </button>
 
-                <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition-transform duration-300 ${
-                    isOpen ? 'rotate-180 text-blue-600' : ''
-                  }`}
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </button>
-
-              {/* Answer collapsed wrapper */}
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: 'easeInOut' }}
-                  >
-                    <div className="flex gap-3 border-t border-slate-100 px-4 pb-4 pt-3 text-sm leading-6 text-slate-600 sm:px-5">
-                      <span className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white text-xs sm:text-sm font-black font-mono">
-                        答
-                      </span>
-                      <p className="flex-1 leading-6 text-slate-600">
-                        {faq.a}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-            </div>
-          );
-        })}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      id={`faq-answer-${idx}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      className="overflow-hidden"
+                    >
+                      <p className="max-w-3xl pb-6 pr-12 text-base leading-7 text-slate-600">{faq.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
       </div>
-
     </section>
   );
 }

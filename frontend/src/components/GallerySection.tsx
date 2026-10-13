@@ -23,10 +23,10 @@ export default function GallerySection() {
           <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-block">
             门店服务场景
           </span>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight sm:text-4xl">
             门店环境、检测与交付场景
           </h2>
-          <p className="text-base sm:text-lg text-gray-500 leading-relaxed font-sans">
+          <p className="text-base sm:text-lg text-slate-500 leading-relaxed font-sans">
             以下为本地化场景素材，用于展示到店检测、库存陈列、顺丰交付与客户接待流程。正式上线前可替换为真实门店照片。
           </p>
         </div>
@@ -57,17 +57,17 @@ export default function GallerySection() {
                   </span>
                 </div>
 
-                <span className="absolute top-3 left-3 rounded-md bg-slate-900/75 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 tracking-wider">
+                <span className="absolute top-3 left-3 rounded-md bg-slate-900/75 backdrop-blur-xs text-white text-xs font-bold px-2 py-1 tracking-wider">
                   {photo.tag}
                 </span>
               </div>
 
               {/* Text Caption bottom */}
               <div className="pt-3 px-1.5 space-y-1">
-                <h3 className="font-bold text-gray-900 text-sm tracking-tight">
+                <h3 className="font-bold text-slate-900 text-sm tracking-tight">
                   {photo.title}
                 </h3>
-                <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed font-sans font-medium">
+                <p className="text-xs sm:text-xs text-slate-500 leading-relaxed font-sans font-medium">
                   {photo.desc}
                 </p>
               </div>
@@ -99,7 +99,7 @@ export default function GallerySection() {
                 {/* Top header title details and close buttons */}
                 <div className="flex justify-between items-center px-4 py-3 bg-slate-900/60 text-white rounded-t-xl">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400 block font-mono">
+                    <span className="text-xs font-bold uppercase tracking-widest text-blue-400 block font-mono">
                       {GALLERY_MOCK_PHOTOS[selectedImageIdx].tag}
                     </span>
                     <h3 className="text-sm sm:text-base font-bold text-white tracking-tight -mt-0.5">
