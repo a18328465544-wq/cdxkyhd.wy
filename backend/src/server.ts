@@ -2,10 +2,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import express from "express";
 import { existsSync } from "node:fs";
+import {randomBytes} from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildInventoryCategories } from "./inventoryCategories.js";
 import { mapErpInventoryPresentation } from "./inventoryPresentation.js";
+import {createForumRouter, type ForumProductOption} from "./forumRoutes.js";
+import {ForumStore} from "./forumStore.js";
 import {GPU_SN_BRANDS, GPU_SN_RULES, parseGpuSnDate, type GpuSnBrandId} from "@cdxkyhd/shared";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
@@ -521,9 +524,15 @@ async function findErpProductIdByName(name: string) {
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT ?? 3001);
+  const forumDataDirectory = process.env.FORUM_DATA_DIR
+    ? path.resolve(process.env.FORUM_DATA_DIR)
+    : path.resolve(currentDir, "../../data/forum");
+  const forumStore = await ForumStore.open(forumDataDirectory);
+  const forumSessionSecret = process.env.FORUM_SESSION_SECRET || (process.env.NODE_ENV === "production" ? "" : randomBytes(32).toString("base64url"));
 
   // Body parsing and CORS
-  app.use(express.json());
+  app.use(express.json({limit: "128kb"}));
+  if (process.env.TRUST_PROXY === "1") app.set("trust proxy", 1);
   app.use(
     cors({
       origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : true,
@@ -545,6 +554,40 @@ async function startServer() {
       erpMode: ERP_BASE_URL ? "connected" : "mock-fallback"
     });
   });
+
+  app.use("/api/forum", createForumRouter({
+    store: forumStore,
+    dataDirectory: forumDataDirectory,
+    sessionSecret: forumSessionSecret,
+    adminPassword: process.env.FORUM_ADMIN_PASSWORD || "",
+    isProduction: process.env.NODE_ENV === "production",
+    findProducts: async (query): Promise<ForumProductOption[]> => {
+      const normalized = query.trim().toLocaleLowerCase();
+      if (normalized.length < 2) return [];
+      if (ERP_BASE_URL) {
+        const rows = await fetchErpStockedInventoryItems({search: query});
+        const products = new Map<string, ForumProductOption>();
+        for (const row of rows) {
+          const productId = String(row.productId || row.id || "");
+          const name = row.productName || row.model || row.id || "未命名商品";
+          if (!productId || (!name.toLocaleLowerCase().includes(normalized) && !productId.toLocaleLowerCase().includes(normalized))) continue;
+          products.set(productId, {
+            id: productId,
+            name,
+            category: toWebsiteCategory(row.category),
+            condition: row.condition,
+            stockStatus: ["已入库", "已上架"].includes(row.status || "") ? "有货" : "状态以 ERP 为准",
+          });
+          if (products.size >= 12) break;
+        }
+        return [...products.values()];
+      }
+      return currentInventory
+        .filter((item) => item.name.toLocaleLowerCase().includes(normalized))
+        .slice(0, 12)
+        .map((item) => ({id: item.id, name: item.name, category: item.category, condition: item.condition, stockStatus: item.status}));
+    },
+  }));
 
   app.get("/api/gpu-sn/rules", (_req, res) => {
     return res.json({success: true, source: "shared-gpu-sn-rule-engine", data: GPU_SN_RULES});

@@ -1,7 +1,9 @@
-import {useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent} from "react";
+import {useEffect, useMemo, useRef, useState, type FormEvent} from "react";
+import {Dialog as BaseDialog} from "@base-ui/react/dialog";
 import {ArrowUpRight, BadgeCheck, CalendarDays, Check, CircleAlert, Clock3, Copy, ExternalLink, Fingerprint, Headphones, Info, ScanLine, Search, ShieldCheck, X} from "lucide-react";
 import {GPU_SN_RULES, type ApiEnvelope, type GpuSnDateResult, type GpuSnRule} from "@cdxkyhd/shared";
 import {apiFetch} from "../lib/api";
+import {Button, Input} from "./ui/controls";
 
 const confidenceLabel = {high: "较高", medium: "中等", low: "较低"} as const;
 
@@ -69,19 +71,9 @@ export default function GpuSnLookupSection() {
 
   useEffect(() => {
     if (!selectedBrand) return;
-    const previousOverflow = document.body.style.overflow;
-    const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape" && !loading) closeLookup();
-    };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKeyDown);
     const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 40);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
-      window.clearTimeout(focusTimer);
-    };
-  }, [selectedBrand, loading]);
+    return () => window.clearTimeout(focusTimer);
+  }, [selectedBrand]);
 
   const sortedRules = useMemo(() => rules.length ? rules : GPU_SN_RULES, [rules]);
 
@@ -99,7 +91,7 @@ export default function GpuSnLookupSection() {
     setError("");
   }
 
-  async function lookup(event?: FormEvent | KeyboardEvent) {
+  async function lookup(event: FormEvent) {
     event?.preventDefault();
     if (!selectedBrand) return;
     setError("");
@@ -136,93 +128,96 @@ export default function GpuSnLookupSection() {
     }
   }
 
-  return <section className="bg-slate-50 pb-16 pt-24 sm:pb-20" aria-labelledby="gpu-sn-title">
+  return <section className="bg-white pb-12 pt-24 sm:pb-16 lg:pb-20" aria-labelledby="gpu-sn-title">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <header className="mx-auto mb-10 max-w-3xl space-y-4 text-center sm:mb-12">
+      <header className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-11">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600">
           <Fingerprint className="h-3.5 w-3.5" /> 显卡序列号查询
         </span>
-        <h1 id="gpu-sn-title" className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">显卡 SN 码查询生产日期</h1>
-        <p className="mx-auto max-w-2xl text-sm leading-relaxed text-gray-500 sm:text-base">
+        <h1 id="gpu-sn-title" className="text-2xl font-bold text-slate-950 sm:text-3xl">显卡 SN 码查询生产日期</h1>
+        <p className="mx-auto max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
           覆盖 21 个显卡品牌。已知编码按年份、月份或生产周规则推算；尚无可靠规则的品牌会明确标记，不返回猜测日期。
         </p>
-        <div className="mx-auto flex max-w-2xl items-start gap-2 rounded-xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-left text-xs leading-5 text-blue-900">
+        <div className="mx-auto flex max-w-2xl items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm leading-6 text-slate-700">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
           <p><span className="font-bold">说明：</span>规则来自公开资料和样例，推算结果仅供参考；品牌可能调整编码方式，最终保修与生产信息请以品牌官方查询结果为准。</p>
         </div>
       </header>
 
-      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-4 flex flex-col gap-2 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">选择显卡品牌</h2>
-          <p className="mt-1 text-sm text-gray-500">选择品牌后输入序列号，可粘贴或使用扫码枪</p>
+          <h2 className="text-lg font-bold text-slate-950">选择显卡品牌</h2>
+          <p className="mt-1 text-sm text-slate-600">选择品牌后输入序列号，可粘贴或使用扫码枪</p>
         </div>
         <span className="text-xs font-medium text-gray-500">共 {sortedRules.length} 个品牌</span>
       </div>
 
-      <div id="gpu-sn-brand-list" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div id="gpu-sn-brand-list" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {sortedRules.map((rule) => {
           const pending = rule.rule === "unknown" || rule.rule === "pending";
           const service = rule.serviceInfo;
-          return <article key={rule.id} className="flex min-h-[224px] flex-col rounded-2xl border border-slate-100 bg-white p-4 shadow-xs transition duration-200 hover:border-blue-200 hover:shadow-md sm:p-5">
+          return <article key={rule.id} className="flex min-w-0 flex-col rounded-lg border border-slate-200 bg-white p-4 transition-colors duration-200 hover:border-blue-300">
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-black ring-1 ${brandColors[rule.id] || "bg-slate-100 text-slate-700 ring-slate-200"}`}>{brandMarks[rule.id] || rule.name.slice(0, 1)}</span>
-                <h3 className="truncate text-sm font-bold text-slate-900">{rule.name}</h3>
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold ring-1 ${brandColors[rule.id] || "bg-slate-100 text-slate-700 ring-slate-200"}`}>{brandMarks[rule.id] || rule.name.slice(0, 1)}</span>
+                <h3 className="truncate text-sm font-semibold text-slate-950">{rule.name}</h3>
               </div>
-              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${pending ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>{pending ? "日期规则待补充" : "支持规则推算"}</span>
+              <span className={`shrink-0 rounded-full px-2 py-1 text-xs font-medium ${pending ? "bg-amber-50 text-amber-800" : "bg-emerald-50 text-emerald-800"}`}>{pending ? "规则待补充" : "支持推算"}</span>
             </div>
-            <p className="mt-3 min-h-[54px] text-xs leading-5 text-slate-600">{rule.description}</p>
-            <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-slate-50 px-3 py-2.5 text-[11px]">
+            <p className="mt-3 min-h-[60px] text-sm leading-5 text-slate-600">{rule.description}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-xs">
               <div><span className="flex items-center gap-1 text-slate-500"><Headphones className="h-3 w-3" />客服电话</span>{service?.hotline && /^[0-9-]+$/.test(service.hotline) ? <a href={`tel:${service.hotline.replace(/[^0-9+]/g, "")}`} className="mt-1 block font-semibold text-blue-700 hover:underline">{service.hotline}</a> : <span className="mt-1 block font-semibold text-slate-800">{service?.hotline || "官网服务"}</span>}</div>
               <div><span className="flex items-center gap-1 text-slate-500"><ShieldCheck className="h-3 w-3" />个人送保</span><span className="mt-1 block font-semibold text-slate-800">{service?.personalSend || "以官网为准"}</span></div>
             </div>
-            <div className="mt-auto flex items-center gap-2 pt-4">
-              <button type="button" onClick={() => openLookup(rule)} className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3 text-xs font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+            <div className="mt-auto flex items-center gap-2 pt-3">
+              <Button onClick={() => openLookup(rule)} variant="primary" className="min-w-0 flex-1">
                 <Search className="h-3.5 w-3.5" />立即查询 SN 码
-              </button>
-                <a href={rule.officialUrl} target="_blank" rel="noreferrer" aria-label={`${rule.name}官网`} title="品牌官网" className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-xl border border-slate-200 px-3 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">官网<ArrowUpRight className="h-3.5 w-3.5" /></a>
+              </Button>
+                <a href={rule.officialUrl} target="_blank" rel="noreferrer" aria-label={`${rule.name}官网`} title="品牌官网" className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">官网<ArrowUpRight className="h-3.5 w-3.5" /></a>
             </div>
           </article>;
         })}
       </div>
 
-      <div className="mx-auto mt-6 flex max-w-7xl items-start gap-2 rounded-xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-xs leading-5 text-blue-900">
+      <div className="mx-auto mt-5 flex max-w-7xl items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>客服和个人送保状态来自公开服务信息，可能随时间、地区和产品系列变化；使用前请以品牌官网为准。编码推算不等于品牌对单卡生产日期或保修状态的确认。</p>
       </div>
 
-      <section className="mx-auto mt-14 max-w-6xl" aria-labelledby="gpu-sn-faq-title">
+      <section className="mx-auto mt-10 max-w-6xl" aria-labelledby="gpu-sn-faq-title">
         <div className="mb-4 flex items-center gap-2"><CircleAlert className="h-5 w-5 text-blue-700" /><h2 id="gpu-sn-faq-title" className="text-lg font-bold text-slate-900">查询说明</h2></div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <details className="rounded-2xl border border-slate-100 bg-white p-4 shadow-xs"><summary className="cursor-pointer text-sm font-bold text-slate-800">SN 序列号在哪里找？</summary><p className="mt-3 text-xs leading-6 text-slate-600">通常在显卡背面或侧边的条码标签上，也可查看原装包装盒侧面条码。不同型号贴纸位置可能不同，请勿撕毁或遮挡标签。</p></details>
-          <details className="rounded-2xl border border-slate-100 bg-white p-4 shadow-xs"><summary className="cursor-pointer text-sm font-bold text-slate-800">为什么查不到日期？</summary><p className="mt-3 text-xs leading-6 text-slate-600">请核对品牌、SN，以及 0/O、1/I 等字符。新批次或特殊产品线可能更换编码；规则证据不足时会标为待验证，并提供官方入口。</p></details>
-          <details className="rounded-2xl border border-slate-100 bg-white p-4 shadow-xs"><summary className="cursor-pointer text-sm font-bold text-slate-800">周数代表哪一天？</summary><p className="mt-3 text-xs leading-6 text-slate-600">周码会显示该 ISO 周对应的周一至周日日期范围，并给出约月份。厂商周码定义可能不同，所以范围属于规则推算。</p></details>
-          <details className="rounded-2xl border border-slate-100 bg-white p-4 shadow-xs"><summary className="cursor-pointer text-sm font-bold text-slate-800">这个日期可以用来确认保修吗？</summary><p className="mt-3 text-xs leading-6 text-slate-600">不能。保修还受型号、地区、购买渠道和凭证影响。请通过品牌官方入口核实，不要将推算日期当作官方保修起算日。</p></details>
-          <details className="rounded-2xl border border-slate-100 bg-white p-4 shadow-xs"><summary className="cursor-pointer text-sm font-bold text-slate-800">可信度表示什么？</summary><p className="mt-3 text-xs leading-6 text-slate-600">可信度反映规则来源和验证范围，不是统计准确率。来自用户规则表、参考样例或社区资料的推算会明确标为较低可信度；官方单卡确认仍以品牌查询为准。</p></details>
-          <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-4"><h3 className="text-sm font-bold text-blue-900">扫码枪可直接输入</h3><p className="mt-3 text-xs leading-6 text-blue-900/80">打开品牌查询窗口后扫描标签，扫码枪回车会直接提交。也可以粘贴 SN，结果卡片支持一键复制。</p></div>
+          <details className="rounded-lg border border-slate-200 bg-white p-4"><summary className="cursor-pointer text-sm font-semibold text-slate-900">SN 序列号在哪里找？</summary><p className="mt-3 text-sm leading-6 text-slate-600">通常在显卡背面或侧边的条码标签上，也可查看原装包装盒侧面条码。不同型号贴纸位置可能不同，请勿撕毁或遮挡标签。</p></details>
+          <details className="rounded-lg border border-slate-200 bg-white p-4"><summary className="cursor-pointer text-sm font-semibold text-slate-900">为什么查不到日期？</summary><p className="mt-3 text-sm leading-6 text-slate-600">请核对品牌、SN，以及 0/O、1/I 等字符。新批次或特殊产品线可能更换编码；规则证据不足时会标为待验证，并提供官方入口。</p></details>
+          <details className="rounded-lg border border-slate-200 bg-white p-4"><summary className="cursor-pointer text-sm font-semibold text-slate-900">周数代表哪一天？</summary><p className="mt-3 text-sm leading-6 text-slate-600">周码会显示该 ISO 周对应的周一至周日日期范围，并给出约月份。厂商周码定义可能不同，所以范围属于规则推算。</p></details>
+          <details className="rounded-lg border border-slate-200 bg-white p-4"><summary className="cursor-pointer text-sm font-semibold text-slate-900">这个日期可以用来确认保修吗？</summary><p className="mt-3 text-sm leading-6 text-slate-600">不能。保修还受型号、地区、购买渠道和凭证影响。请通过品牌官方入口核实，不要将推算日期当作官方保修起算日。</p></details>
+          <details className="rounded-lg border border-slate-200 bg-white p-4"><summary className="cursor-pointer text-sm font-semibold text-slate-900">可信度表示什么？</summary><p className="mt-3 text-sm leading-6 text-slate-600">可信度反映规则来源和验证范围，不是统计准确率。来自用户规则表、参考样例或社区资料的推算会明确标为较低可信度；官方单卡确认仍以品牌查询为准。</p></details>
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4"><h3 className="text-sm font-semibold text-blue-900">扫码枪可直接输入</h3><p className="mt-3 text-sm leading-6 text-blue-900/80">打开品牌查询窗口后扫描标签，扫码枪回车会直接提交。也可以粘贴 SN，结果卡片支持一键复制。</p></div>
         </div>
       </section>
 
-      {selectedBrand && <div className="fixed inset-0 z-[70] flex items-end justify-center bg-slate-950/55 p-0 backdrop-blur-[2px] sm:items-center sm:p-4" onMouseDown={(event) => {if (event.target === event.currentTarget) closeLookup();}}>
-        <section role="dialog" aria-modal="true" aria-labelledby="gpu-sn-dialog-title" className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl sm:p-7">
+      {selectedBrand && <BaseDialog.Root open onOpenChange={open => {if (!open) closeLookup();}}>
+        <BaseDialog.Portal>
+          <BaseDialog.Backdrop className="fixed inset-0 z-[70] bg-slate-950/30" />
+          <BaseDialog.Viewport className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-4">
+        <BaseDialog.Popup className="max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-lg border border-[var(--erp-color-border)] bg-white p-5 shadow-[var(--erp-shadow-popover)] sm:rounded-lg sm:p-7">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-black ring-1 ${brandColors[selectedBrand.id] || "bg-slate-100 text-slate-700 ring-slate-200"}`}>{brandMarks[selectedBrand.id] || selectedBrand.name.slice(0, 1)}</span>
-              <div><p className="text-xs font-semibold text-blue-600">显卡 SN 生产日期查询</p><h2 id="gpu-sn-dialog-title" className="mt-0.5 text-lg font-black text-slate-950">{selectedBrand.name} SN 码查询</h2></div>
+              <div><p className="text-xs font-semibold text-blue-600">显卡 SN 生产日期查询</p><BaseDialog.Title className="mt-0.5 text-lg font-semibold text-slate-950">{selectedBrand.name} SN 码查询</BaseDialog.Title></div>
             </div>
-            <button type="button" aria-label="关闭查询窗口" onClick={closeLookup} disabled={loading} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 disabled:opacity-40"><X className="h-5 w-5" /></button>
+            <BaseDialog.Close render={<Button size="icon" variant="ghost" aria-label="关闭查询窗口" disabled={loading}><X className="h-5 w-5" /></Button>} />
           </div>
 
           <form onSubmit={(event) => void lookup(event)} className="mt-6">
             <label htmlFor="gpu-sn-serial" className="mb-2 block text-sm font-bold text-slate-800">请输入显卡序列号（SN）</label>
             <div className="relative">
               <ScanLine className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input ref={inputRef} id="gpu-sn-serial" value={sn} onChange={(event) => {setSn(event.target.value); setResult(null); setError("");}} onKeyDown={(event) => {if (event.key === "Enter" && !loading) void lookup(event);}} autoCapitalize="characters" autoCorrect="off" spellCheck={false} maxLength={40} placeholder={`例如：${selectedBrand.example}`} className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 font-mono text-sm uppercase text-slate-900 outline-none transition placeholder:font-sans placeholder:text-xs placeholder:normal-case placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+              <Input ref={inputRef} id="gpu-sn-serial" value={sn} onChange={(event) => {setSn(event.target.value); setResult(null); setError("");}} autoCapitalize="characters" autoCorrect="off" spellCheck={false} maxLength={40} placeholder={`例如：${selectedBrand.example}`} className="sn-input font-mono uppercase" />
             </div>
             <p className="mt-2 flex items-start gap-1.5 text-[11px] leading-5 text-slate-500"><Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />示例中的 X 表示被隐藏的字符，不能直接作为真实 SN 查询。支持粘贴；扫码枪输入完成后按回车即可。</p>
             {error && <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm leading-5 text-rose-800">{error}</p>}
-            <button type="submit" disabled={loading} className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"><Search className="h-4 w-4" />{loading ? "正在查询…" : "立即查询出厂日期"}</button>
+            <Button type="submit" disabled={loading} loading={loading} variant="primary" size="lg" className="mt-5 w-full"><Search className="h-4 w-4" />{loading ? "正在查询…" : "立即查询出厂日期"}</Button>
           </form>
 
           {result && <article aria-live="polite" className={`mt-5 rounded-2xl border p-4 sm:p-5 ${result.status === "parsed" ? "border-emerald-200 bg-emerald-50/60" : "border-amber-200 bg-amber-50/70"}`}>
@@ -245,13 +240,15 @@ export default function GpuSnLookupSection() {
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               <a href={result.officialUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-white px-3 text-xs font-bold text-blue-700 transition hover:bg-blue-50"><ShieldCheck className="h-4 w-4" />品牌官方入口<ExternalLink className="h-3 w-3" /></a>
-              <button type="button" onClick={() => void copyResult()} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50">{copied ? <Check className="h-4 w-4 text-emerald-700" /> : <Copy className="h-4 w-4" />}{copied ? "已复制" : "复制结果"}</button>
+              <Button onClick={() => void copyResult()}>{copied ? <Check className="h-4 w-4 text-emerald-700" /> : <Copy className="h-4 w-4" />}{copied ? "已复制" : "复制结果"}</Button>
             </div>
           </article>}
 
           <p className="mt-4 text-center text-[10px] leading-5 text-slate-500">查询结果为编码规则推算，不是官方保修、真伪或维修资格确认。</p>
-        </section>
-      </div>}
+        </BaseDialog.Popup>
+          </BaseDialog.Viewport>
+        </BaseDialog.Portal>
+      </BaseDialog.Root>}
       </div>
   </section>;
 }

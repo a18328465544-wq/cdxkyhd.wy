@@ -3,6 +3,7 @@ import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import Footer from './components/Footer';
 import FloatingContactButton from './components/FloatingContactButton';
+import { scrollToSectionTarget } from './lib/navigation';
 
 const PriceSection = lazy(() => import('./components/PriceSection'));
 const InventorySection = lazy(() => import('./components/InventorySection'));
@@ -12,10 +13,10 @@ const ProcessSection = lazy(() => import('./components/ProcessSection'));
 const AdvantageSection = lazy(() => import('./components/AdvantageSection'));
 const AiWorkstationSection = lazy(() => import('./components/AiWorkstationSection'));
 const CaseSection = lazy(() => import('./components/CaseSection'));
-const GallerySection = lazy(() => import('./components/GallerySection'));
 const FAQSection = lazy(() => import('./components/FAQSection'));
 const ContactSection = lazy(() => import('./components/ContactSection'));
 const ContactModal = lazy(() => import('./components/ContactModal'));
+const CommunityPage = lazy(() => import('./components/CommunityPage'));
 
 interface LazySectionProps {
   id: string;
@@ -28,8 +29,8 @@ function SectionFallback({ label, minHeight }: { label: string; minHeight: strin
   return (
     <div className="w-full bg-slate-50" style={{ minHeight }}>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-slate-100 bg-white/70 p-5 shadow-xs">
-          <div className="mb-4 text-xs font-bold tracking-wider text-slate-400">{label}</div>
+        <div className="border-t border-slate-200 py-5">
+          <div className="mb-4 text-sm font-semibold text-slate-500">{label}</div>
           <div className="h-4 w-44 animate-pulse rounded bg-slate-100" />
           <div className="mt-3 h-3 w-64 max-w-full animate-pulse rounded bg-slate-100" />
         </div>
@@ -88,6 +89,7 @@ export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [hasOpenedContactModal, setHasOpenedContactModal] = useState(false);
   const isGpuSnPage = window.location.pathname === '/gpu-sn.php' || window.location.pathname === '/gpu-sn';
+  const isCommunityPage = window.location.pathname === '/community' || window.location.pathname.startsWith('/community/');
 
   useEffect(() => {
     if (!isGpuSnPage) return;
@@ -95,6 +97,13 @@ export default function App() {
     document.title = '显卡 SN 码查询生产日期 - 成都显卡一号店';
     return () => {document.title = previousTitle;};
   }, [isGpuSnPage]);
+
+  useEffect(() => {
+    if (!isCommunityPage) return;
+    const previousTitle = document.title;
+    document.title = '显卡玩家交流社区 - 成都显卡一号店';
+    return () => {document.title = previousTitle;};
+  }, [isCommunityPage]);
 
   const handleOpenContact = () => {
     setHasOpenedContactModal(true);
@@ -124,24 +133,30 @@ export default function App() {
     );
   }
 
+  if (isCommunityPage) {
+    return (
+      <div className="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-800 antialiased">
+        <Header onOpenContact={handleOpenContact} />
+        <Suspense fallback={<SectionFallback label="社区内容" minHeight="100vh" />}>
+          <CommunityPage />
+        </Suspense>
+        <Footer />
+        {hasOpenedContactModal && (
+          <Suspense fallback={<ContactModalFallback />}>
+            <ContactModal isOpen={isContactOpen} onClose={handleCloseContact} />
+          </Suspense>
+        )}
+      </div>
+    );
+  }
+
   const handleScrollToSection = (id: string) => {
     const element = document.getElementById(id);
-    if (element) {
-      const offset = 80; // height of the sticky header
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
+    if (element) scrollToSectionTarget(element, 80);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased font-sans flex flex-col justify-between selection:bg-blue-500/25 selection:text-blue-900 pb-16 sm:pb-0">
+    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased font-sans flex flex-col justify-between selection:bg-blue-500/25 selection:text-blue-900 pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0">
 
       {/* 1. Header Navigation System */}
       <Header onOpenContact={handleOpenContact} />
@@ -157,7 +172,7 @@ export default function App() {
           <PriceSection onOpenContact={handleOpenContact} />
         </LazySection>
 
-        <LazySection id="inventory" label="实时库存" minHeight="980px">
+        <LazySection id="inventory" label="实时库存" minHeight="760px">
           <InventorySection />
         </LazySection>
 
@@ -179,10 +194,6 @@ export default function App() {
 
         <LazySection id="cases" label="客户案例" minHeight="520px">
           <CaseSection />
-        </LazySection>
-
-        <LazySection id="gallery" label="门店场景" minHeight="760px">
-          <GallerySection />
         </LazySection>
 
         <LazySection id="faq" label="常见问题" minHeight="520px">

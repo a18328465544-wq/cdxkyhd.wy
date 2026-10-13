@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, TrendingDown, TrendingUp, Minus, HelpCircle, AlertCircle, Sparkles, MessageSquare, Calculator } from 'lucide-react';
+import { TrendingDown, TrendingUp, Minus, HelpCircle, AlertCircle, Sparkles, MessageSquare, Calculator } from 'lucide-react';
 import { GPU_PRICES_DATA } from '../data';
 import { GpuPrice } from '../types';
 import { apiFetch } from '../lib/api';
+import { Button, SearchInput, SegmentedControl, Select } from './ui/controls';
 
 interface PriceSectionProps {
   onOpenContact: () => void;
@@ -79,17 +80,17 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
   }, [gpuPrices, selectedGpuName, condition, brandTier]);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 border-b border-slate-100">
+    <section className="mx-auto max-w-7xl border-b border-slate-200 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       
       {/* Title Header Section */}
-      <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 sm:mb-16">
+      <div className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-11">
         <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-block">
           价格公开透明
         </span>
-        <h2 className="text-3xl font-bold text-gray-900 tracking-tight sm:text-4xl">
+        <h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">
           今日显卡回收参考价
         </h2>
-        <p className="text-base sm:text-lg text-gray-500 leading-relaxed">
+        <p className="text-sm leading-6 text-slate-600 sm:text-base">
           行情每天都在变，以下价格为成都实体店今日参考出价。价格更透明，实际交易价格以显卡具体品牌、成色、保修与当面烤机测试结果为准。
         </p>
       </div>
@@ -97,52 +98,25 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         
         {/* Left Column: List Of Gpu Price reference */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs">
+        <div className="space-y-5 lg:col-span-7">
+          <div className="flex flex-col items-center justify-between gap-3 border-b border-slate-200 pb-4 sm:flex-row">
             
             {/* Category selection */}
-            <div className="flex gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 shrink-0">
-              <button
-                onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                  activeCategory === 'all'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-gray-600 hover:bg-slate-50'
-                }`}
-              >
-                全部大类
-              </button>
-              <button
-                onClick={() => { setActiveCategory('gaming'); setSearchQuery(''); }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                  activeCategory === 'gaming'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-gray-600 hover:bg-slate-50'
-                }`}
-              >
-                游戏娱乐卡
-              </button>
-              <button
-                onClick={() => { setActiveCategory('ai'); setSearchQuery(''); }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                  activeCategory === 'ai'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-gray-600 hover:bg-slate-50'
-                }`}
-              >
-                AI计算卡
-              </button>
-            </div>
+            <SegmentedControl
+              label="显卡类型"
+              className="w-full sm:w-auto"
+              options={[{ value: 'all', label: '全部大类' }, { value: 'gaming', label: '游戏娱乐卡' }, { value: 'ai', label: 'AI计算卡' }]}
+              value={activeCategory}
+              onChange={value => { setActiveCategory(value); setSearchQuery(''); }}
+            />
 
             {/* Quick search input */}
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
+            <div className="w-full sm:w-64">
+              <SearchInput
+                aria-label="搜索显卡行情"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="搜索 RTX 4090, A6000..."
-                className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-gray-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 bg-slate-50/50"
               />
             </div>
 
@@ -154,8 +128,8 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
               filteredPrices.map((gpu, idx) => (
                 <div
                   key={idx}
-                  className={`bg-white rounded-2xl p-5 border shadow-xs transition-transform duration-300 hover:scale-101 flex flex-col justify-between ${
-                    gpu.popular ? 'border-blue-500/40 ring-1 ring-blue-500/10' : 'border-slate-100'
+                  className={`flex flex-col justify-between rounded-lg border bg-white p-4 transition-colors duration-200 hover:border-blue-300 ${
+                    gpu.popular ? 'border-blue-300' : 'border-slate-200'
                   }`}
                 >
                   <div className="space-y-2">
@@ -197,7 +171,7 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
                     </h3>
 
                     {/* Specifications parameters detail */}
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1 py-1 px-2 bg-slate-50 rounded-lg text-[10px] font-mono text-gray-500">
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-1 rounded bg-slate-50 px-2.5 py-2 text-xs text-slate-600">
                       <div>显存: {gpu.specs.vram}</div>
                       <div>功耗: {gpu.specs.tdp}</div>
                     </div>
@@ -205,8 +179,8 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
 
                   {/* Pricing footer container */}
                   <div className="flex items-baseline justify-between mt-4 pt-3 border-t border-gray-100">
-                    <span className="text-xs text-slate-400 font-semibold">今日最高回购价</span>
-                    <span className="text-xl font-black text-rose-600 font-mono tracking-tight">
+                    <span className="text-xs font-medium text-slate-500">今日参考回收价</span>
+                    <span className="text-xl font-bold tabular-nums text-slate-950">
                       {gpu.basePrice.includes('xxx') ? (
                         <>
                           <span className="text-xs">¥</span> {gpu.basePrice.replace('xxx', '')}
@@ -228,8 +202,8 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
             )}
           </div>
 
-          <div className="flex items-start gap-2 rounded-xl bg-orange-50/70 p-3 text-xs text-orange-700 border border-orange-100/50">
-            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-orange-500" />
+          <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
             <div>
               <strong>温馨提示：</strong>
               若由于不可抗力造成国内外算力限制政策突变，显卡市场往往产生日内波动。请尽快联系微信锁定当前极佳回报价！
@@ -239,93 +213,75 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
         </div>
 
         {/* Right Column: Mini Interactive Estimator Panel */}
-        <div className="lg:col-span-5 bg-gradient-to-b from-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-          
-          {/* Aesthetic graphics overlays */}
-          <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-blue-500/5 blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/5 blur-2xl" />
-
-          <div className="relative space-y-6">
+        <div className="h-fit rounded-lg border border-slate-200 bg-white p-5 sm:p-6 lg:col-span-5">
+          <div className="space-y-5">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+              <div className="rounded-lg bg-blue-50 p-2 text-blue-700">
                 <Calculator className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-bold text-white tracking-tight">显卡估价自助计算器</h3>
-                <p className="text-[10px] text-gray-400">输入真实配置及细节，即时预览折旧回收价</p>
+                <h3 className="font-bold text-slate-950">显卡估价参考</h3>
+                <p className="mt-1 text-xs text-slate-500">根据型号和成色查看参考区间</p>
               </div>
             </div>
 
             {/* Selector model */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-gray-300 block">
+              <label className="block text-sm font-semibold text-slate-700">
                 选择你的显卡型号
               </label>
-              <select
+              <Select
                 value={selectedGpuName}
-                onChange={(e) => setSelectedGpuName(e.target.value)}
-                className="w-full bg-slate-800/80 border border-slate-700/60 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-hidden focus:ring-1 focus:ring-blue-500"
-              >
-                {gpuPrices.map((gpu, i) => (
-                  <option key={i} value={gpu.name} className="bg-slate-950">
-                    {gpu.name}
-                  </option>
-                ))}
-              </select>
+                onValueChange={setSelectedGpuName}
+                options={gpuPrices.map(gpu => ({ value: gpu.name, label: gpu.name }))}
+                aria-label="选择显卡型号"
+              />
             </div>
 
             {/* Selector condition */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-gray-300 block">
+              <label className="block text-sm font-semibold text-slate-700">
                 显卡目前成色
               </label>
               <div className="grid grid-cols-2 gap-2">
-                <button
+                <Button
                   onClick={() => setCondition('perfect')}
-                  className={`px-3 py-2 text-[10px] sm:text-xs font-bold rounded-xl border text-center transition-all ${
-                    condition === 'perfect'
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-300'
-                      : 'border-slate-800 bg-slate-900/40 text-gray-400 hover:bg-slate-800/50'
-                  }`}
+                  variant="choice"
+                  aria-pressed={condition === 'perfect'}
+                  className="min-h-12 px-2 py-2 text-xs"
                 >
                   国行在保 / 盒说无拆微尘
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setCondition('good')}
-                  className={`px-3 py-2 text-[10px] sm:text-xs font-bold rounded-xl border text-center transition-all ${
-                    condition === 'good'
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-300'
-                      : 'border-slate-800 bg-slate-900/40 text-gray-400 hover:bg-slate-800/50'
-                  }`}
+                  variant="choice"
+                  aria-pressed={condition === 'good'}
+                  className="min-h-12 px-2 py-2 text-xs"
                 >
                   无拆无修过保 / 仅微尘
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setCondition('average')}
-                  className={`px-3 py-2 text-[10px] sm:text-xs font-bold rounded-xl border text-center transition-all ${
-                    condition === 'average'
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-300'
-                      : 'border-slate-800 bg-slate-900/40 text-gray-400 hover:bg-slate-800/50'
-                  }`}
+                  variant="choice"
+                  aria-pressed={condition === 'average'}
+                  className="min-h-12 px-2 py-2 text-xs"
                 >
                   正常使用 / 轻微氧化红标
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setCondition('poor')}
-                  className={`px-3 py-2 text-[10px] sm:text-xs font-bold rounded-xl border text-center transition-all ${
-                    condition === 'poor'
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-300'
-                      : 'border-slate-800 bg-slate-900/40 text-gray-400 hover:bg-slate-800/50'
-                  }`}
+                  variant="choice"
+                  aria-pressed={condition === 'poor'}
+                  className="min-h-12 px-2 py-2 text-xs"
                 >
                   微板弯 / 有拆修 / 核心偏暗
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Brand tier */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-gray-300 block">
+              <label className="block text-sm font-semibold text-slate-700">
                 显卡品牌档次
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -334,43 +290,43 @@ export default function PriceSection({ onOpenContact }: PriceSectionProps) {
                   { key: 'mid', label: '七彩虹 / 影驰 / 主流' },
                   { key: 'basic', label: '丐版双扇 / 杂牌 / 拆机卡' }
                 ].map((item, i) => (
-                  <button
+                  <Button
                     key={i}
                     onClick={() => setBrandTier(item.key as any)}
-                    className={`p-2 text-[9px] sm:text-[10px] font-bold rounded-lg border text-center transition-all ${
-                      brandTier === item.key
-                        ? 'border-blue-500 bg-blue-500/10 text-blue-300'
-                        : 'border-slate-800 bg-slate-900/40 text-gray-400 hover:bg-slate-800/50'
-                    }`}
+                    variant="choice"
+                    aria-pressed={brandTier === item.key}
+                    className="min-h-12 px-2 py-2 text-xs"
                   >
                     {item.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
 
             {/* Calculated box result */}
-            <div className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 text-center space-y-1">
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest block font-semibold">
+            <div className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-4 text-center">
+              <span className="block text-xs font-medium text-slate-500">
                 智能估算出价范围
               </span>
-              <div className="text-2xl sm:text-3xl font-black text-rose-500 font-mono tracking-tight py-2 animate-pulse-slow">
+              <div className="py-2 text-2xl font-bold tabular-nums text-emerald-700 sm:text-3xl">
                 {estimatedValue}
               </div>
-              <span className="text-[9px] text-gray-500 block leading-normal">
+              <span className="block text-xs leading-5 text-slate-500">
                 说明：此报价根据成都武侯实体店行情库生成，若无大出入即为实拿价。
               </span>
             </div>
 
             {/* Quick action WeChat */}
-            <button
+            <Button
               id="calculator-wechat-btn"
               onClick={onOpenContact}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 px-4 shadow-lg transition active:scale-98 cursor-pointer"
+              variant="primary"
+              size="lg"
+              className="w-full"
             >
               <MessageSquare className="h-4 w-4" />
               一键联系客服估价
-            </button>
+            </Button>
 
           </div>
         </div>

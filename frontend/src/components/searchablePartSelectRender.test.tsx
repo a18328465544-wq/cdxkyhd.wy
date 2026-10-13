@@ -26,5 +26,5 @@ test("renders an accessible searchable hardware combobox", () => {
 });
 
 test("reopens search when an already-focused input is clicked", () => {
-  assert.match(componentSource, /onClick=\{handleInputClick\}/);
+  assert.match(componentSource, /onClick=\{\(\) => setOpen\(true\)\}/);
 });

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { X, Copy, Check, Phone, MapPin, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { CONTACT_INFO } from '../lib/contact';
+import { Button } from './ui/controls';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -32,36 +33,14 @@ export default function ContactModal({
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <div id="contact-modal-overlay" className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        />
-
-        {/* Modal Container */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ type: 'spring', duration: 0.4 }}
-          className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
-        >
-          {/* Header Banner Accent */}
-          <div className="h-2 bg-blue-605" />
+    <BaseDialog.Root open onOpenChange={open => {if (!open) onClose();}}>
+      <BaseDialog.Portal>
+        <BaseDialog.Backdrop className="fixed inset-0 z-50 bg-slate-950/30" />
+        <BaseDialog.Viewport id="contact-modal-overlay" className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
+        <BaseDialog.Popup className="relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-lg border border-[var(--erp-color-border)] bg-white shadow-[var(--erp-shadow-popover)] sm:rounded-lg">
 
           {/* Close button */}
-          <button
-            id="close-modal-btn"
-            onClick={onClose}
-            className="absolute top-4 right-4 rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <BaseDialog.Close render={<Button id="close-modal-btn" size="icon" variant="ghost" aria-label="关闭" className="absolute right-4 top-4"><X className="h-5 w-5" /></Button>} />
 
           <div className="p-6 md:p-8">
             <div className="text-center mb-6">
@@ -69,7 +48,7 @@ export default function ContactModal({
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
                 客服在线时间 10:00 - 20:00
               </span>
-              <h3 className="text-xl font-bold text-gray-900 tracking-tight">{title}</h3>
+              <BaseDialog.Title className="text-xl font-semibold text-gray-900">{title}</BaseDialog.Title>
               <p className="mt-2 text-sm text-gray-500 leading-relaxed">{subtitle}</p>
             </div>
 
@@ -94,10 +73,11 @@ export default function ContactModal({
                       <span className="font-mono text-base font-bold text-gray-800 bg-blue-50 px-2.5 py-1 rounded border border-blue-100">
                         {wechatId}
                       </span>
-                      <button
+                      <Button
                         id="copy-wechat-btn"
                         onClick={handleCopy}
-                        className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-slate-100 active:scale-95 transition text-gray-600 tooltip"
+                        size="icon"
+                        aria-label="复制微信号"
                         title="复制微信号"
                       >
                         {copied ? (
@@ -105,7 +85,7 @@ export default function ContactModal({
                         ) : (
                           <Copy className="h-4 w-4" />
                         )}
-                      </button>
+                      </Button>
                     </div>
                     {copied && (
                       <span className="text-xs text-emerald-600 font-medium block mt-1 animate-fade-in">
@@ -166,8 +146,9 @@ export default function ContactModal({
               防骗保障：成都正规实体店执照备存 · 面付秒款资金无忧
             </span>
           </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+        </BaseDialog.Popup>
+        </BaseDialog.Viewport>
+      </BaseDialog.Portal>
+    </BaseDialog.Root>
   );
 }

@@ -11,58 +11,50 @@ export default function ProcessSection() {
   ];
 
   return (
-    <section className="bg-slate-50 py-16 sm:py-24 border-b border-slate-100">
+    <section className="border-b border-slate-200 bg-slate-50 py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* Module Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 sm:mb-16">
+        <div className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-11">
           <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-block">
             专业服务流程
           </span>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight sm:text-4xl">
+          <h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">
             成都显卡回收极速流程
           </h2>
-          <p className="text-base sm:text-lg text-gray-500 leading-relaxed">
+          <p className="text-sm leading-6 text-slate-600 sm:text-base">
             告别传统网店漫长的审核等待和暗中克扣。我们仅需四步，即可帮您安全、专业、公开地将闲置算力变现。
           </p>
         </div>
 
-        {/* 4 Cards Layout with nice arrows between them on desktop */}
-        <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+        <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2 lg:grid-cols-4">
             {WORKFLOW_STEPS.map((stepItem, idx) => (
               <div
                 key={idx}
-                className="relative bg-white rounded-2xl p-6 sm:p-8 border border-slate-100 shadow-xs flex flex-col justify-between group hover:shadow-md transition duration-300"
+                className="flex gap-3 border-t border-slate-200 py-5 sm:px-2"
               >
-                {/* Step badge top */}
-                <div className="absolute -top-3 left-6 h-7 w-7 rounded-full bg-slate-900 text-white text-xs font-black flex items-center justify-center font-mono">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-700 text-sm font-bold text-white">
                   {stepItem.step}
                 </div>
 
-                <div className="space-y-4 mt-2">
-                  <div className="h-11 w-11 rounded-xl bg-blue-50 flex items-center justify-center">
+                <div className="min-w-0 space-y-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white">
                     {icons[idx] || <MessageSquare className="h-6 w-6 text-blue-600" />}
                   </div>
-                  <h3 className="text-base font-bold text-gray-905 tracking-tight">
+                  <h3 className="text-base font-semibold text-slate-900">
                     {stepItem.title}
                   </h3>
-                  <p className="text-xs text-gray-500 leading-relaxed font-medium">
+                  <p className="text-sm leading-6 text-slate-600">
                     {stepItem.desc}
                   </p>
                 </div>
 
               </div>
             ))}
-          </div>
-
-          {/* Desktop background dotted line indicator */}
-          <div className="hidden md:block absolute top-1/2 left-8 right-8 h-0.5 border-t border-dashed border-slate-200 -translate-y-6 -z-0" />
-
         </div>
 
         {/* Support lines for reassurance */}
-        <div className="mt-12 text-center text-xs text-gray-400 font-semibold flex items-center justify-center flex-wrap gap-2">
+        <div className="mt-7 border-t border-slate-200 pt-5 text-center text-sm text-slate-600">
           <span>客服微信号实时待命 · 外地全程视频监控开箱 · 成都实体店铺面对面现场支付</span>
         </div>
 

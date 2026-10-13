@@ -3,6 +3,7 @@ import { Cpu, Battery, Check, AlertCircle, Send, Trash2, CheckCircle2 } from "lu
 import { apiFetch } from "../lib/api";
 import { type PartSearchItem } from "../lib/partSearch";
 import SearchablePartSelect from "./SearchablePartSelect";
+import { Button, Input } from "./ui/controls";
 
 interface PartItem extends PartSearchItem {
   category: string;
@@ -177,14 +178,14 @@ export default function PcBuilderSection() {
   ];
 
   return (
-    <section className="border-b border-slate-100 bg-slate-50 py-14 sm:py-16 lg:py-20" aria-labelledby="pc-builder-title">
+    <section className="border-b border-slate-200 bg-white py-12 sm:py-16 lg:py-20" aria-labelledby="pc-builder-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-12">
+        <header className="mx-auto mb-9 max-w-3xl space-y-3 text-center sm:mb-11">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600">
             <Cpu className="h-3.5 w-3.5" /> 在线装机配置
           </span>
-          <h2 id="pc-builder-title" className="text-2xl font-bold text-gray-900 sm:text-3xl">按需选配，实时查看预算</h2>
-          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-gray-500">
+          <h2 id="pc-builder-title" className="text-2xl font-bold text-slate-950 sm:text-3xl">按需选配，实时查看预算</h2>
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
             从处理器和显卡开始选择，库存价格、整机功耗与配件兼容情况会随方案同步更新。
           </p>
         </header>
@@ -196,13 +197,13 @@ export default function PcBuilderSection() {
                 <h3 className="text-base font-bold text-slate-900">选择配件</h3>
                 <p className="mt-1 text-xs text-slate-500">先选择处理器和显卡开始配置</p>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={handleClearAll}
-                className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                size="sm"
               >
                 <Trash2 className="h-3.5 w-3.5" /> 重置
-              </button>
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -212,8 +213,8 @@ export default function PcBuilderSection() {
                 const quantity = selectedPart?.quantity ?? 0;
 
                 return (
-                  <div key={cat.key} className="relative min-w-0 rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs transition hover:border-blue-200 sm:p-4">
-                    <label className="mb-2 block text-sm font-semibold text-slate-800">{cat.label}</label>
+                  <div key={cat.key} className="relative min-w-0 rounded-lg border border-slate-200 bg-white p-3.5 sm:p-4">
+                    <label className="mb-2 block text-sm font-semibold text-slate-900">{cat.label}</label>
                     <SearchablePartSelect
                       parts={categoryParts}
                       value={cat.state}
@@ -224,16 +225,16 @@ export default function PcBuilderSection() {
 
                     {selectedPart && (
                       <div className="mt-2.5 space-y-2 rounded-lg bg-slate-50 px-3 py-2.5">
-                        <p className="break-words text-xs leading-5 text-slate-600">
+                        <p className="break-words text-sm leading-5 text-slate-600">
                           <span className="font-semibold text-slate-700">规格：</span>{selectedPart.specs || "暂未提供"}
                         </p>
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className={`rounded-md px-2 py-1 text-[11px] font-semibold ${
+                          <span className={`rounded px-2 py-1 text-xs font-medium ${
                             quantity <= 0 ? "bg-rose-50 text-rose-700" : quantity <= 3 ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"
                           }`}>
                             {quantity <= 0 ? "暂时缺货" : quantity <= 3 ? `库存紧张 · ${quantity} 件` : `现货 · ${quantity} 件`}
                           </span>
-                          <span className="whitespace-nowrap text-sm font-bold tabular-nums text-slate-900">¥{selectedPart.price.toLocaleString()}</span>
+                          <span className="whitespace-nowrap text-base font-semibold tabular-nums text-slate-950">¥{selectedPart.price.toLocaleString()}</span>
                         </div>
                       </div>
                     )}
@@ -244,7 +245,7 @@ export default function PcBuilderSection() {
           </div>
 
           <aside className="min-w-0 space-y-4 xl:col-span-5 xl:sticky xl:top-24">
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:p-5" aria-labelledby="build-summary-title">
+            <section className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5" aria-labelledby="build-summary-title">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 id="build-summary-title" className="text-base font-bold text-slate-900">预算与兼容性</h3>
@@ -285,40 +286,40 @@ export default function PcBuilderSection() {
               )}
 
               {buildData && (
-                <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/70 p-3.5">
+                <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3.5">
                   <p className="text-sm font-semibold text-blue-900">AI 算力参考：{buildData.aiRating}</p>
-                  <p className="mt-1.5 text-xs leading-5 text-blue-900/75">{buildData.aiRatingDesc}</p>
+                  <p className="mt-1.5 text-sm leading-5 text-blue-900/80">{buildData.aiRatingDesc}</p>
                 </div>
               )}
 
               <div className="mt-4 space-y-3">
                 <h4 className="text-sm font-bold text-slate-800">兼容性检查</h4>
                 {calculating ? (
-                  <p className="rounded-lg bg-slate-50 px-3 py-2.5 text-xs text-slate-500" role="status">正在核对接口、内存规格和电源功率…</p>
+                    <p className="rounded-lg bg-slate-50 px-3 py-2.5 text-sm text-slate-600" role="status">正在核对接口、内存规格和电源功率…</p>
                 ) : buildData && (buildData.warnings.length > 0 || buildData.successes.length > 0) ? (
                   <div className="space-y-2">
                     {buildData.warnings.map((warn, index) => (
-                      <div key={index} className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs leading-5 text-rose-800">
+                      <div key={index} className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm leading-5 text-rose-800">
                         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                         <span>{warn}</span>
                       </div>
                     ))}
                     {buildData.successes.map((success, index) => (
-                      <div key={index} className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2.5 text-xs leading-5 text-emerald-800">
+                      <div key={index} className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2.5 text-sm leading-5 text-emerald-800">
                         <Check className="mt-0.5 h-4 w-4 shrink-0" />
                         <span>{success}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="rounded-lg bg-slate-50 px-3 py-2.5 text-xs leading-5 text-slate-500">
+                  <p className="rounded-lg bg-slate-50 px-3 py-2.5 text-sm leading-5 text-slate-600">
                     选择处理器、显卡和主板后，将显示接口及功耗检查结果。
                   </p>
                 )}
               </div>
             </section>
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:p-5" aria-labelledby="quote-form-title">
+            <section className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5" aria-labelledby="quote-form-title">
               <div className="mb-4">
                 <h3 id="quote-form-title" className="text-base font-bold text-slate-900">获取装机报价</h3>
                 <p className="mt-1 text-xs leading-5 text-slate-500">提交当前配置和联系方式，门店将与您确认库存及最终价格。</p>
@@ -330,20 +331,20 @@ export default function PcBuilderSection() {
                     <CheckCircle2 className="h-5 w-5 shrink-0" /> 方案已提交 · {quoteResponse.quoteId}
                   </div>
                   <p className="text-xs leading-5 text-emerald-800">{quoteResponse.message}</p>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setQuoteResponse(null)}
-                    className="min-h-10 w-full rounded-lg border border-emerald-200 bg-white px-3 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100"
+                    className="w-full"
                   >
                     继续配置
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmitQuote} className="space-y-3">
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="min-w-0">
                       <label htmlFor="builder-name" className="mb-1.5 block text-xs font-medium text-slate-700">联系人 *</label>
-                      <input
+                      <Input
                         id="builder-name"
                         type="text"
                         autoComplete="name"
@@ -351,12 +352,11 @@ export default function PcBuilderSection() {
                         placeholder="怎么称呼您"
                         value={userName}
                         onChange={event => setUserName(event.target.value)}
-                        className="h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
                     <div className="min-w-0">
                       <label htmlFor="builder-phone" className="mb-1.5 block text-xs font-medium text-slate-700">联系电话 *</label>
-                      <input
+                      <Input
                         id="builder-phone"
                         type="tel"
                         inputMode="tel"
@@ -365,21 +365,19 @@ export default function PcBuilderSection() {
                         placeholder="请输入手机号"
                         value={userPhone}
                         onChange={event => setUserPhone(event.target.value)}
-                        className="h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label htmlFor="builder-wechat" className="mb-1.5 block text-xs font-medium text-slate-700">微信号（选填）</label>
-                    <input
+                    <Input
                       id="builder-wechat"
                       type="text"
                       autoComplete="off"
                       placeholder="方便时可填写"
                       value={userWechat}
                       onChange={event => setUserWechat(event.target.value)}
-                      className="h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     />
                   </div>
 
@@ -387,14 +385,17 @@ export default function PcBuilderSection() {
                     <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs leading-5 text-rose-800">{quoteError}</p>
                   )}
 
-                  <button
+                  <Button
                     type="submit"
                     disabled={submittingQuote || !selectedCpuId || !selectedGpuId}
-                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-xs transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    variant="primary"
+                    size="lg"
+                    loading={submittingQuote}
+                    className="w-full"
                   >
                     <Send className="h-4 w-4 shrink-0" />
                     {!selectedCpuId || !selectedGpuId ? "请先选择处理器和显卡" : submittingQuote ? "正在提交方案…" : "提交配置并获取报价"}
-                  </button>
+                  </Button>
                 </form>
               )}
             </section>
