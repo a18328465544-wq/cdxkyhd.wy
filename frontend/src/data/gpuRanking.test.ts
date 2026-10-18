@@ -356,6 +356,33 @@ const malicious = parseRankingQuery(
   "?test=bad&res=8k&compare=RTX4090,RTX4090,%3Cscript%3E,RTX5090,RTX5080,RTX5070,RTX5060&base=unselected",
 );
 assert(
+  gpuIdentity("NVIDIA GeForce RTX 5090 (notebook)")?.kind === "mobile",
+  "official notebook naming stays separate from desktop",
+);
+assert(
+  gpuIdentity("RTX 3080 LHR")?.base !== gpuIdentity("RTX 3080")?.base,
+  "LHR source entries cannot override the base card",
+);
+assert(
+  gpuIdentity("GTX 1060 9 Gbps")?.base !== gpuIdentity("GTX 1060")?.base,
+  "memory speed variants stay separate",
+);
+assert(
+  resolveGpuRankingScore(
+    GPU_RANKING_DATA[0],
+    [
+      {
+        model: "GeForce RTX 5090",
+        benchmark: "timeSpyGraphics",
+        score: 47760,
+        samples: null,
+      },
+    ],
+    "timeSpyGraphics",
+  ).samples === null,
+  "unpublished sample counts remain unknown",
+);
+assert(
   malicious.mode === "raster" &&
     malicious.resolution === "1440p" &&
     malicious.selected.length === 4 &&

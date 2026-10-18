@@ -33,7 +33,18 @@ export interface GpuRankingScoreModel {
   model: string;
   benchmark: GpuScoreBenchmark;
   score: number;
-  samples: number;
+  samples: number | null;
+}
+
+export interface GpuRankingBenchmarkSource {
+  source: string;
+  name: string;
+  methodology: "review" | "public-median";
+  sourceUpdatedAt: string | null;
+  checkedAt: string;
+  updatedAt: string;
+  refreshFailed: boolean;
+  reason?: string;
 }
 
 export interface GpuRankingScoreSnapshot {
@@ -43,4 +54,5 @@ export interface GpuRankingScoreSnapshot {
   checkedAt: string;
   updatedAt: string;
   models: GpuRankingScoreModel[];
+  sources?: Partial<Record<GpuScoreBenchmark, GpuRankingBenchmarkSource>>;
 }

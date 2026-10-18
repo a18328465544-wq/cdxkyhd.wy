@@ -29,6 +29,7 @@ import {
   type GpuRankingScoreSnapshot,
   type GpuRankingSnapshot,
   type GpuResolution,
+  type GpuScoreBenchmark,
 } from "../data/gpuRanking";
 import {
   parseRankingQuery,
@@ -176,10 +177,28 @@ export default function GpuRankingPage({
       : mode.startsWith("geekbench")
         ? data.geekbenchSnapshot
         : data.threeDMarkSnapshot;
+  const benchmarkSource =
+    family === "threeDMark"
+      ? data.threeDMarkSnapshot?.sources?.[mode as GpuScoreBenchmark]
+      : undefined;
+  const sourceSnapshot = benchmarkSource ?? activeSnapshot;
   const activeStatus = gameMode
     ? data.gamingStatus
     : family === "threeDMark"
-      ? data.threeDMarkStatus
+      ? benchmarkSource
+        ? {
+            ...data.threeDMarkStatus,
+            refreshFailed: benchmarkSource.refreshFailed,
+            reason: benchmarkSource.reason,
+          }
+        : data.threeDMarkSnapshot?.sources
+          ? {
+              configured: false,
+              refreshFailed: false,
+              reason:
+                "当前公开来源未提供此测试项目的独立成绩，暂不以其他项目替代。",
+            }
+          : data.threeDMarkStatus
       : mode.startsWith("geekbench")
         ? data.geekbenchStatus
         : data.blenderStatus;
@@ -189,10 +208,11 @@ export default function GpuRankingPage({
       ? `Blender ${data.blenderSnapshot?.version ?? ""} Open Data`
       : mode.startsWith("geekbench")
         ? (data.geekbenchSnapshot?.version ?? "Geekbench 7")
-        : "3DMark";
+        : (benchmarkSource?.name ?? "3DMark");
   const sourceUrl = mode.startsWith("geekbench")
     ? "https://browser.geekbench.com/v7/gpu"
-    : SOURCE_URLS[family as keyof typeof SOURCE_URLS];
+    : (benchmarkSource?.source ??
+      SOURCE_URLS[family as keyof typeof SOURCE_URLS]);
 
   useEffect(() => {
     const abort = new AbortController();
@@ -357,6 +377,7 @@ export default function GpuRankingPage({
   const measuredCount = allRows.filter(
     (row) => row.entry.kind === kind && row.value !== null,
   ).length;
+  const projectHasScores = allRows.some((row) => row.value !== null);
   const maxValue = Math.max(1, ...rows.map((row) => row.value ?? 0));
   const modeLabel = RANKING_MODES.find((item) => item.value === mode)!.label;
   const benchmarkUnit = gameMode
@@ -715,7 +736,7 @@ export default function GpuRankingPage({
                         className={`px-3 py-2 text-xs ${row.samples !== null && row.samples < 5 ? "text-amber-700" : "text-slate-500"}`}
                       >
                         {row.samples === null
-                          ? gameMode && row.value !== null
+                          ? row.value !== null
                             ? "源站未提供"
                             : "未收录"
                           : `${row.samples} 次${row.samples < 5 ? " · 样本较少" : ""}`}
@@ -944,12 +965,12 @@ export default function GpuRankingPage({
               <h2 className="text-sm font-semibold text-slate-800">
                 {dataState === "loading"
                   ? "正在读取成绩"
-                  : !activeSnapshot
+                  : !projectHasScores
                     ? "当前测试成绩尚未接入"
                     : "没有符合条件的成绩"}
               </h2>
               <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                {!activeSnapshot && dataState !== "loading"
+                {!projectHasScores && dataState !== "loading"
                   ? (activeStatus?.reason ??
                     "等待数据源提供可用成绩，不以其他测试或相似型号代替。")
                   : "可以调整筛选条件，或查看尚未收录成绩的型号。"}
@@ -979,15 +1000,21 @@ export default function GpuRankingPage({
             数据来源与口径{" "}
             <span className="mt-1 block text-xs font-normal leading-5 text-slate-500">
               {sourceName} · 源站更新{" "}
-              {sourceDate(activeSnapshot?.sourceUpdatedAt)} · 最近检查{" "}
-              {sourceDate(activeSnapshot?.checkedAt)}
+              {sourceDate(sourceSnapshot?.sourceUpdatedAt)} · 最近检查{" "}
+              {sourceDate(sourceSnapshot?.checkedAt)}
             </span>
           </summary>
           <div className="mt-4 grid gap-4 text-xs leading-6 sm:grid-cols-2">
             <div>
-              <p>源站更新：{sourceDate(activeSnapshot?.sourceUpdatedAt)}</p>
-              <p>本站数据更新：{sourceDate(activeSnapshot?.updatedAt)}</p>
-              <p>最近成功检查：{sourceDate(activeSnapshot?.checkedAt)}</p>
+              <p>源站更新：{sourceDate(sourceSnapshot?.sourceUpdatedAt)}</p>
+              <p>本站数据更新：{sourceDate(sourceSnapshot?.updatedAt)}</p>
+              <p>最近成功检查：{sourceDate(sourceSnapshot?.checkedAt)}</p>
+              {benchmarkSource?.reason && (
+                <p className="text-amber-700">
+                  {benchmarkSource.reason}
+                  ；继续展示上次核验的参考成绩，不代表本次已更新。
+                </p>
+              )}
               {activeStatus?.lastAttemptAt && (
                 <p>最近尝试：{sourceDate(activeStatus.lastAttemptAt)}</p>
               )}
@@ -1009,7 +1036,11 @@ export default function GpuRankingPage({
                     ? `Blender ${data.blenderSnapshot?.version ?? ""} 设备中位数，单位为样本/分钟。每 6 小时检查；仅在同一版本内比较。`
                     : mode.startsWith("geekbench")
                       ? "Geekbench 各计算 API 独立比较；只展示已接入的有效成绩，每 6 小时检查。"
-                      : "仅比较同一 3DMark 项目显卡成绩，不使用含 CPU 的总分。每 15 分钟检查成绩文件；未收录项目不推算。"}
+                      : benchmarkSource?.methodology === "review"
+                        ? "Time Spy Graphics 取自 ComputerBase 编辑部实测，不是 UL 用户平均分，也不是含 CPU 的总分。样本次数未公开，不推测次数；每 6 小时尝试检查，源站拒绝访问时保留核验快照。"
+                        : benchmarkSource?.methodology === "public-median"
+                          ? "Steel Nomad 取自 UL 官方公开硬件榜的用户成绩中位数，官网每日更新，本站每 6 小时检查。不限定默认频率，不能当作严格原厂基准；同名但分数存在歧义的条目不展示。样本数未公开。"
+                          : "仅比较同一 3DMark 项目显卡成绩，不使用含 CPU 的总分。未收录项目不推算。"}
               </p>
               <p className="mt-2">
                 D 版、笔记本版及明确区分的显存容量不混用成绩。样本少于 5

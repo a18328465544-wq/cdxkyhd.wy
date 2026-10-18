@@ -13,7 +13,7 @@ export function gpuIdentity(name: string): GpuIdentity | null {
   const text = name.normalize("NFKC").toUpperCase().replace(/\s+/g, " ").trim();
   const maxQ = /\bMAX[ -]?Q\b/.test(text);
   const mobile =
-    /\b(?:LAPTOP|MOBILE)\b|\b(?:GTX|RTX)\s*\d{3,4}M\b|\bARC\s*[AB]\s*\d{3}M\b|\bRX\s*\d{4}(?:M|S|M\s*XT)\b/.test(
+    /\b(?:LAPTOP|MOBILE|NOTEBOOK)\b|\b(?:GTX|RTX)\s*\d{3,4}M\b|\bARC\s*[AB]\s*\d{3}M\b|\bRX\s*\d{4}(?:M|S|M\s*XT)\b/.test(
       text,
     ) ||
     (maxQ && !/WORKSTATION/.test(text));
@@ -131,6 +131,11 @@ export function gpuIdentity(name: string): GpuIdentity | null {
     canonicalModel = `Intel Arc ${arc[1]}${arc[2]}`;
     brand = "Intel";
   } else return null;
+  const boardVariant = text.match(/\b(?:LHR|GDDR6X|9\s*GBPS)\b/)?.[0];
+  if (boardVariant) {
+    base += boardVariant.replace(/\s/g, "");
+    canonicalModel += ` ${boardVariant}`;
+  }
   return {
     base: `${base}${mobile ? `MOBILE${maxQ ? "MAXQ" : ""}` : ""}`,
     canonicalModel: `${canonicalModel}${mobile ? `${maxQ ? " Max-Q" : ""} Laptop GPU` : ""}`,

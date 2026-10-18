@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "lint": "tsc --noEmit -p tsconfig.json",
-    "test": "node --import tsx --test src/inventoryPresentation.test.ts src/inventoryCategories.test.ts src/gpuSnDate.test.ts src/gpuRankingService.test.ts src/blenderRankingService.test.ts src/geekbenchGpuRankingService.test.ts src/threeDMarkRankingService.test.ts src/seoPage.test.ts src/forumStore.test.ts src/forumSecurity.test.ts src/forumRoutes.test.ts src/routes/domainRoutes.test.ts"
+    "test": "node --import tsx --test src/inventoryPresentation.test.ts src/inventoryCategories.test.ts src/gpuSnDate.test.ts src/gpuRankingService.test.ts src/blenderRankingService.test.ts src/geekbenchGpuRankingService.test.ts src/threeDMarkRankingService.test.ts src/publicThreeDMarkRankingService.test.ts src/seoPage.test.ts src/forumStore.test.ts src/forumSecurity.test.ts src/forumRoutes.test.ts src/routes/domainRoutes.test.ts"
   },
   "dependencies": {
     "@cdxkyhd/shared": "file:../shared",

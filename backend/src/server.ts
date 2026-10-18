@@ -10,6 +10,7 @@ import { BlenderGpuRankingService, BLENDER_RANKING_REFRESH_INTERVAL_MS } from ".
 import { GpuRankingService, GPU_RANKING_REFRESH_INTERVAL_MS } from "./gpuRankingService.js";
 import { GeekbenchGpuRankingService, GEEKBENCH_GPU_RANKING_REFRESH_INTERVAL_MS } from "./geekbenchGpuRankingService.js";
 import { ThreeDMarkRankingService, THREE_DMARK_RANKING_REFRESH_INTERVAL_MS } from "./threeDMarkRankingService.js";
+import { PublicThreeDMarkRankingService, PUBLIC_3DMARK_REFRESH_INTERVAL_MS } from "./publicThreeDMarkRankingService.js";
 import {createForumRouter, type ForumProductOption} from "./forumRoutes.js";
 import {ForumStore} from "./forumStore.js";
 import { createErpCatalogService } from "./services/erpCatalogService.js";
@@ -78,18 +79,24 @@ async function startServer() {
   const threeDMarkDataFile = process.env.THREE_DMARK_RANKING_DATA_FILE
     ? path.resolve(process.env.THREE_DMARK_RANKING_DATA_FILE)
     : undefined;
-  const threeDMarkRankingService = await ThreeDMarkRankingService.open({
+  const useThreeDMarkFile = Boolean(threeDMarkDataFile) || process.env.THREE_DMARK_RANKING_SOURCE === "file";
+  const threeDMarkRefreshInterval = useThreeDMarkFile ? THREE_DMARK_RANKING_REFRESH_INTERVAL_MS : PUBLIC_3DMARK_REFRESH_INTERVAL_MS;
+  const threeDMarkRankingService = useThreeDMarkFile ? await ThreeDMarkRankingService.open({
     cacheFile: threeDMarkRankingCacheFile,
     dataFile: threeDMarkDataFile,
     redistributionAllowed: process.env.THREE_DMARK_REDISPLAY_ALLOWED === "true",
+  }) : await PublicThreeDMarkRankingService.open({
+    cacheFile: threeDMarkRankingCacheFile,
+    seedFile: path.resolve(currentDir, "../data/3dmark-public-reference.json"),
   });
   void gpuRankingService.refresh();
   void blenderRankingService.refresh();
   void geekbenchRankingService.refresh();
+  void threeDMarkRankingService.refresh();
   const gpuRankingRefreshTimer = setInterval(() => void gpuRankingService.refresh(), GPU_RANKING_REFRESH_INTERVAL_MS);
   const blenderRankingRefreshTimer = setInterval(() => void blenderRankingService.refresh(), BLENDER_RANKING_REFRESH_INTERVAL_MS);
   const geekbenchRankingRefreshTimer = setInterval(() => void geekbenchRankingService.refresh(), GEEKBENCH_GPU_RANKING_REFRESH_INTERVAL_MS);
-  const threeDMarkRankingRefreshTimer = setInterval(() => void threeDMarkRankingService.refresh(), THREE_DMARK_RANKING_REFRESH_INTERVAL_MS);
+  const threeDMarkRankingRefreshTimer = setInterval(() => void threeDMarkRankingService.refresh(), threeDMarkRefreshInterval);
   gpuRankingRefreshTimer.unref();
   blenderRankingRefreshTimer.unref();
   geekbenchRankingRefreshTimer.unref();
@@ -125,7 +132,7 @@ async function startServer() {
       gpu: GPU_RANKING_REFRESH_INTERVAL_MS,
       blender: BLENDER_RANKING_REFRESH_INTERVAL_MS,
       geekbench: GEEKBENCH_GPU_RANKING_REFRESH_INTERVAL_MS,
-      threeDMark: THREE_DMARK_RANKING_REFRESH_INTERVAL_MS,
+      threeDMark: threeDMarkRefreshInterval,
     },
   });
 

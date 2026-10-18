@@ -26,10 +26,31 @@ counts and flag fewer than 5 samples. Percentages are recalculated from the same
 selected test and resolution against the comparison baseline, or the fastest
 measured card of the selected type. Different benchmark scales are not combined.
 
+## Public 3DMark references
+
+With no custom data file, the website uses the verified reference in
+`backend/data/3dmark-public-reference.json` and checks public source pages every
+6 hours. Time Spy Graphics comes from ComputerBase's editorial test chart;
+Steel Nomad comes from UL's public hardware ranking (user-result medians, not a
+stock-clock-only sample). Every test retains its own source link, methodology,
+last successful check and failure status. Sample counts are null when unpublished.
+Same-name entries with conflicting scores are excluded, never resolved by taking
+the highest value. Notebook, explicit VRAM, LHR and memory-speed variants remain
+separate. No percentage or other benchmark is converted into a missing score.
+
+At initial verification on 2026-10-18, ComputerBase returned HTTP 403 to the
+production server. Time Spy therefore uses a publicly retrieved and locally
+verified snapshot (source history: 2026-09-24). Automatic attempts respect the
+denial, retain that snapshot and report failure; no proxy or identity spoofing is
+used. UL's Steel Nomad page was directly reachable from the production server.
+Port Royal and Speed Way are not populated by either reference and remain pending.
+
 ## Optional 3DMark import
 
 The existing environment configuration and display-permission gate remain in
-place. Schema version 1 is backward compatible with two new optional arrays:
+place for custom files. Set `THREE_DMARK_RANKING_SOURCE=file`, or configure
+`THREE_DMARK_RANKING_DATA_FILE`, to use that import path instead of public references.
+Schema version 1 is backward compatible with two new optional arrays:
 
 ```json
 {

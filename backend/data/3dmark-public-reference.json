@@ -1,0 +1,1529 @@
+{
+  "source": "https://benchmarks.ul.com/compare/best-gpus",
+  "version": "3DMark public reference v1",
+  "sourceUpdatedAt": null,
+  "checkedAt": "2026-10-18T07:37:01.674Z",
+  "updatedAt": "2026-10-18T07:37:01.674Z",
+  "models": [
+    {
+      "model": "GeForce RTX 5090",
+      "benchmark": "timeSpyGraphics",
+      "score": 47760,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4090",
+      "benchmark": "timeSpyGraphics",
+      "score": 36676,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5080",
+      "benchmark": "timeSpyGraphics",
+      "score": 31987,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9070 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 29464,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7900 XTX",
+      "benchmark": "timeSpyGraphics",
+      "score": 28910,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4080 Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 27920,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5070 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 27727,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4080",
+      "benchmark": "timeSpyGraphics",
+      "score": 27724,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7900 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 26046,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9070",
+      "benchmark": "timeSpyGraphics",
+      "score": 26039,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Ti Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 24404,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 22608,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5070",
+      "benchmark": "timeSpyGraphics",
+      "score": 22267,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3090 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 21748,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9070 GRE",
+      "benchmark": "timeSpyGraphics",
+      "score": 21407,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7900 GRE",
+      "benchmark": "timeSpyGraphics",
+      "score": 21302,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6950 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 20969,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 20671,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3090",
+      "benchmark": "timeSpyGraphics",
+      "score": 20041,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6900 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 19969,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 19698,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7800 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 19079,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6800 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 18732,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080",
+      "benchmark": "timeSpyGraphics",
+      "score": 17967,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070",
+      "benchmark": "timeSpyGraphics",
+      "score": 17557,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7700 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 16917,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9060 XT 16GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 16422,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6800",
+      "benchmark": "timeSpyGraphics",
+      "score": 15868,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9060 XT 8GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 15762,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060 Ti 8GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 15643,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 15599,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc B580",
+      "benchmark": "timeSpyGraphics",
+      "score": 14819,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3070",
+      "benchmark": "timeSpyGraphics",
+      "score": 13854,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2080 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 13832,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060",
+      "benchmark": "timeSpyGraphics",
+      "score": 13620,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6750 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 13450,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4060 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 13292,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A770",
+      "benchmark": "timeSpyGraphics",
+      "score": 13129,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6700 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 12739,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc B570",
+      "benchmark": "timeSpyGraphics",
+      "score": 12473,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A750",
+      "benchmark": "timeSpyGraphics",
+      "score": 12407,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 11916,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7600 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 11206,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2080",
+      "benchmark": "timeSpyGraphics",
+      "score": 11061,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7600",
+      "benchmark": "timeSpyGraphics",
+      "score": 11007,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4060",
+      "benchmark": "timeSpyGraphics",
+      "score": 10596,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A580",
+      "benchmark": "timeSpyGraphics",
+      "score": 10365,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2070 Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 10265,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5050",
+      "benchmark": "timeSpyGraphics",
+      "score": 10197,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6650 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 9802,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1080 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 9525,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6600 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 9463,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5700 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 9270,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2070",
+      "benchmark": "timeSpyGraphics",
+      "score": 8874,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2060 Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 8744,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060",
+      "benchmark": "timeSpyGraphics",
+      "score": 8637,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5700",
+      "benchmark": "timeSpyGraphics",
+      "score": 8297,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6600",
+      "benchmark": "timeSpyGraphics",
+      "score": 8263,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2060",
+      "benchmark": "timeSpyGraphics",
+      "score": 8096,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5600 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 7356,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX Vega 64",
+      "benchmark": "timeSpyGraphics",
+      "score": 7281,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1080",
+      "benchmark": "timeSpyGraphics",
+      "score": 7223,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1070 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 6912,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX Vega 56",
+      "benchmark": "timeSpyGraphics",
+      "score": 6344,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1660 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 6262,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050 8GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 6193,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1660 Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 6133,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1070",
+      "benchmark": "timeSpyGraphics",
+      "score": 5814,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 980 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 5652,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5500 XT 4GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 5016,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5500 XT 8GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 4961,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6500 XT",
+      "benchmark": "timeSpyGraphics",
+      "score": 4914,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 590",
+      "benchmark": "timeSpyGraphics",
+      "score": 4804,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1650 Super",
+      "benchmark": "timeSpyGraphics",
+      "score": 4621,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050 6GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 4526,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 580",
+      "benchmark": "timeSpyGraphics",
+      "score": 4416,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A380",
+      "benchmark": "timeSpyGraphics",
+      "score": 4409,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1060 9 GBPS",
+      "benchmark": "timeSpyGraphics",
+      "score": 4169,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1060",
+      "benchmark": "timeSpyGraphics",
+      "score": 4150,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 480",
+      "benchmark": "timeSpyGraphics",
+      "score": 4080,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 980",
+      "benchmark": "timeSpyGraphics",
+      "score": 4069,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 390",
+      "benchmark": "timeSpyGraphics",
+      "score": 4021,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 570",
+      "benchmark": "timeSpyGraphics",
+      "score": 3882,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 290X",
+      "benchmark": "timeSpyGraphics",
+      "score": 3824,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 470",
+      "benchmark": "timeSpyGraphics",
+      "score": 3549,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6400",
+      "benchmark": "timeSpyGraphics",
+      "score": 3520,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 970",
+      "benchmark": "timeSpyGraphics",
+      "score": 3441,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1650",
+      "benchmark": "timeSpyGraphics",
+      "score": 3306,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 780 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 3029,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 380 4GB",
+      "benchmark": "timeSpyGraphics",
+      "score": 2835,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 285",
+      "benchmark": "timeSpyGraphics",
+      "score": 2741,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 780",
+      "benchmark": "timeSpyGraphics",
+      "score": 2595,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 280X",
+      "benchmark": "timeSpyGraphics",
+      "score": 2314,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 770",
+      "benchmark": "timeSpyGraphics",
+      "score": 2113,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 560",
+      "benchmark": "timeSpyGraphics",
+      "score": 2004,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 680",
+      "benchmark": "timeSpyGraphics",
+      "score": 1988,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 960",
+      "benchmark": "timeSpyGraphics",
+      "score": 1985,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1050",
+      "benchmark": "timeSpyGraphics",
+      "score": 1851,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 950",
+      "benchmark": "timeSpyGraphics",
+      "score": 1840,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 460",
+      "benchmark": "timeSpyGraphics",
+      "score": 1796,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 760",
+      "benchmark": "timeSpyGraphics",
+      "score": 1591,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 270X",
+      "benchmark": "timeSpyGraphics",
+      "score": 1545,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 660 Ti",
+      "benchmark": "timeSpyGraphics",
+      "score": 1545,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 370X",
+      "benchmark": "timeSpyGraphics",
+      "score": 1538,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 360",
+      "benchmark": "timeSpyGraphics",
+      "score": 1405,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 660",
+      "benchmark": "timeSpyGraphics",
+      "score": 1262,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 550",
+      "benchmark": "timeSpyGraphics",
+      "score": 1115,
+      "samples": null
+    },
+    {
+      "model": "RTX PRO 6000 Blackwell",
+      "benchmark": "steelNomad",
+      "score": 15797,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5090",
+      "benchmark": "steelNomad",
+      "score": 14636,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5090 D",
+      "benchmark": "steelNomad",
+      "score": 14602,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5090 D V2",
+      "benchmark": "steelNomad",
+      "score": 14348,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4090",
+      "benchmark": "steelNomad",
+      "score": 9225,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5080",
+      "benchmark": "steelNomad",
+      "score": 8938,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4090 D",
+      "benchmark": "steelNomad",
+      "score": 8607,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9070 XT",
+      "benchmark": "steelNomad",
+      "score": 7273,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 700",
+      "benchmark": "steelNomad",
+      "score": 7008,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5070 Ti",
+      "benchmark": "steelNomad",
+      "score": 6967,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7900 XTX",
+      "benchmark": "steelNomad",
+      "score": 6866,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4080 Super",
+      "benchmark": "steelNomad",
+      "score": 6621,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4080",
+      "benchmark": "steelNomad",
+      "score": 6585,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9070",
+      "benchmark": "steelNomad",
+      "score": 6312,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5090 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 6223,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3090 Ti",
+      "benchmark": "steelNomad",
+      "score": 5763,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7900 XT",
+      "benchmark": "steelNomad",
+      "score": 5635,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Ti Super",
+      "benchmark": "steelNomad",
+      "score": 5588,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5070",
+      "benchmark": "steelNomad",
+      "score": 5340,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9070 GRE",
+      "benchmark": "steelNomad",
+      "score": 5239,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5080 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 5236,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3090",
+      "benchmark": "steelNomad",
+      "score": 5112,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080 Ti",
+      "benchmark": "steelNomad",
+      "score": 5092,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Ti",
+      "benchmark": "steelNomad",
+      "score": 5040,
+      "samples": null
+    },
+    {
+      "model": "RTX A6000",
+      "benchmark": "steelNomad",
+      "score": 4869,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4090 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 4843,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7900 GRE",
+      "benchmark": "steelNomad",
+      "score": 4805,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080 12GB",
+      "benchmark": "steelNomad",
+      "score": 4797,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Super",
+      "benchmark": "steelNomad",
+      "score": 4650,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080",
+      "benchmark": "steelNomad",
+      "score": 4442,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080 LHR",
+      "benchmark": "steelNomad",
+      "score": 4430,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6950 XT",
+      "benchmark": "steelNomad",
+      "score": 4217,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4080 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 4178,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7800 XT",
+      "benchmark": "steelNomad",
+      "score": 4152,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6900 XT",
+      "benchmark": "steelNomad",
+      "score": 4055,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5070 Ti Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 3847,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070",
+      "benchmark": "steelNomad",
+      "score": 3845,
+      "samples": null
+    },
+    {
+      "model": "NVIDIA TITAN RTX",
+      "benchmark": "steelNomad",
+      "score": 3829,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9060 XT 16GB",
+      "benchmark": "steelNomad",
+      "score": 3820,
+      "samples": null
+    },
+    {
+      "model": "RTX A5000",
+      "benchmark": "steelNomad",
+      "score": 3796,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9060 XT",
+      "benchmark": "steelNomad",
+      "score": 3743,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6800 XT",
+      "benchmark": "steelNomad",
+      "score": 3669,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060 Ti 16GB",
+      "benchmark": "steelNomad",
+      "score": 3622,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060 Ti",
+      "benchmark": "steelNomad",
+      "score": 3592,
+      "samples": null
+    },
+    {
+      "model": "NVIDIA TITAN V",
+      "benchmark": "steelNomad",
+      "score": 3525,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3070 Ti",
+      "benchmark": "steelNomad",
+      "score": 3501,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2080 Ti",
+      "benchmark": "steelNomad",
+      "score": 3497,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7700 XT",
+      "benchmark": "steelNomad",
+      "score": 3322,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 9060",
+      "benchmark": "steelNomad",
+      "score": 3294,
+      "samples": null
+    },
+    {
+      "model": "RTX A4500",
+      "benchmark": "steelNomad",
+      "score": 3207,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3070",
+      "benchmark": "steelNomad",
+      "score": 3182,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6800",
+      "benchmark": "steelNomad",
+      "score": 3181,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060",
+      "benchmark": "steelNomad",
+      "score": 3178,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3070 LHR",
+      "benchmark": "steelNomad",
+      "score": 3173,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc B580",
+      "benchmark": "steelNomad",
+      "score": 3055,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5070 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 3012,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A770",
+      "benchmark": "steelNomad",
+      "score": 2972,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7800 M Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2950,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080 Ti Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2914,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4060 Ti 8GB",
+      "benchmark": "steelNomad",
+      "score": 2907,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4060 Ti 16GB",
+      "benchmark": "steelNomad",
+      "score": 2905,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7700",
+      "benchmark": "steelNomad",
+      "score": 2857,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060 Ti GDDR6X",
+      "benchmark": "steelNomad",
+      "score": 2806,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4070 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2702,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060 Ti",
+      "benchmark": "steelNomad",
+      "score": 2691,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc B570",
+      "benchmark": "steelNomad",
+      "score": 2647,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5060 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2639,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060 Ti LHR",
+      "benchmark": "steelNomad",
+      "score": 2638,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3080 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2617,
+      "samples": null
+    },
+    {
+      "model": "RTX A4000",
+      "benchmark": "steelNomad",
+      "score": 2608,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A750",
+      "benchmark": "steelNomad",
+      "score": 2600,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3070 Ti Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2566,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6750 XT",
+      "benchmark": "steelNomad",
+      "score": 2539,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6700 XT",
+      "benchmark": "steelNomad",
+      "score": 2424,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6750 GRE 12GB",
+      "benchmark": "steelNomad",
+      "score": 2394,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3070 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2375,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7600 XT",
+      "benchmark": "steelNomad",
+      "score": 2355,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5050",
+      "benchmark": "steelNomad",
+      "score": 2323,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7600",
+      "benchmark": "steelNomad",
+      "score": 2312,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4060",
+      "benchmark": "steelNomad",
+      "score": 2309,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7650 GRE",
+      "benchmark": "steelNomad",
+      "score": 2304,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4060 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2267,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A770 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2265,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1080 Ti",
+      "benchmark": "steelNomad",
+      "score": 2225,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6800 M Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2206,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A580",
+      "benchmark": "steelNomad",
+      "score": 2187,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7700 S Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2161,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 5050 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2130,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5700 XT",
+      "benchmark": "steelNomad",
+      "score": 2114,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7600 M XT Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 2086,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6700",
+      "benchmark": "steelNomad",
+      "score": 2002,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6750 GRE 10GB",
+      "benchmark": "steelNomad",
+      "score": 1987,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2060 Super",
+      "benchmark": "steelNomad",
+      "score": 1984,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 7600 S Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1909,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6650 XT",
+      "benchmark": "steelNomad",
+      "score": 1853,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5700",
+      "benchmark": "steelNomad",
+      "score": 1852,
+      "samples": null
+    },
+    {
+      "model": "Quadro RTX 4000",
+      "benchmark": "steelNomad",
+      "score": 1847,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1801,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6600 XT",
+      "benchmark": "steelNomad",
+      "score": 1792,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 4050 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1786,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2070 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1773,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2060 12GB",
+      "benchmark": "steelNomad",
+      "score": 1770,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX Vega 64",
+      "benchmark": "steelNomad",
+      "score": 1675,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6800 S Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1675,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5600 XT",
+      "benchmark": "steelNomad",
+      "score": 1663,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3060 8GB",
+      "benchmark": "steelNomad",
+      "score": 1588,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX Vega 56",
+      "benchmark": "steelNomad",
+      "score": 1514,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc B390",
+      "benchmark": "steelNomad",
+      "score": 1494,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5600",
+      "benchmark": "steelNomad",
+      "score": 1491,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6600 M Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1479,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1070 Ti",
+      "benchmark": "steelNomad",
+      "score": 1467,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6700 S Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1425,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2060 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1380,
+      "samples": null
+    },
+    {
+      "model": "RTX A2000",
+      "benchmark": "steelNomad",
+      "score": 1363,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050",
+      "benchmark": "steelNomad",
+      "score": 1338,
+      "samples": null
+    },
+    {
+      "model": "RTX A2000 12GB",
+      "benchmark": "steelNomad",
+      "score": 1328,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 980 Ti",
+      "benchmark": "steelNomad",
+      "score": 1319,
+      "samples": null
+    },
+    {
+      "model": "Quadro RTX 3000 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 1283,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1660 Super",
+      "benchmark": "steelNomad",
+      "score": 1246,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050 Laptop GPU 6GB",
+      "benchmark": "steelNomad",
+      "score": 1088,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1660",
+      "benchmark": "steelNomad",
+      "score": 1046,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 5500 XT",
+      "benchmark": "steelNomad",
+      "score": 1023,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 580",
+      "benchmark": "steelNomad",
+      "score": 1004,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050 6GB",
+      "benchmark": "steelNomad",
+      "score": 1003,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 480",
+      "benchmark": "steelNomad",
+      "score": 962,
+      "samples": null
+    },
+    {
+      "model": "Radeon R9 390",
+      "benchmark": "steelNomad",
+      "score": 954,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1060 6GB",
+      "benchmark": "steelNomad",
+      "score": 905,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 570",
+      "benchmark": "steelNomad",
+      "score": 883,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 470",
+      "benchmark": "steelNomad",
+      "score": 845,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 580 2048SP",
+      "benchmark": "steelNomad",
+      "score": 836,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1060",
+      "benchmark": "steelNomad",
+      "score": 803,
+      "samples": null
+    },
+    {
+      "model": "Intel Arc A380",
+      "benchmark": "steelNomad",
+      "score": 786,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 980",
+      "benchmark": "steelNomad",
+      "score": 546,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050 Ti Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 489,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 2050 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 402,
+      "samples": null
+    },
+    {
+      "model": "GeForce RTX 3050 Laptop GPU",
+      "benchmark": "steelNomad",
+      "score": 386,
+      "samples": null
+    },
+    {
+      "model": "Radeon RX 6500 XT",
+      "benchmark": "steelNomad",
+      "score": 343,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 970",
+      "benchmark": "steelNomad",
+      "score": 338,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1650 Super",
+      "benchmark": "steelNomad",
+      "score": 323,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1650 Ti",
+      "benchmark": "steelNomad",
+      "score": 251,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1060 3GB",
+      "benchmark": "steelNomad",
+      "score": 156,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 960",
+      "benchmark": "steelNomad",
+      "score": 155,
+      "samples": null
+    },
+    {
+      "model": "GeForce GTX 1050",
+      "benchmark": "steelNomad",
+      "score": 113,
+      "samples": null
+    }
+  ],
+  "sources": {
+    "timeSpyGraphics": {
+      "source": "https://www.computerbase.de/artikel/grafikkarten/3dmark-time-spy-benchmark.88185/",
+      "name": "ComputerBase 编辑部实测",
+      "methodology": "review",
+      "sourceUpdatedAt": "2026-09-24",
+      "checkedAt": "2026-10-18T07:37:01.674Z",
+      "updatedAt": "2026-10-18T07:37:01.674Z",
+      "refreshFailed": false
+    },
+    "steelNomad": {
+      "source": "https://benchmarks.ul.com/compare/best-gpus",
+      "name": "UL 官方公开中位数",
+      "methodology": "public-median",
+      "sourceUpdatedAt": null,
+      "checkedAt": "2026-10-18T07:37:01.674Z",
+      "updatedAt": "2026-10-18T07:37:01.674Z",
+      "refreshFailed": false
+    }
+  }
+}

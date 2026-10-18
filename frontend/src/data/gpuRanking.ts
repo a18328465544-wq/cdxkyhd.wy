@@ -73,7 +73,7 @@ export function resolveBlenderGpuBenchmark(
 ) {
   const match = models
     .filter((model) => sameBenchmarkModel(entry.model, model.model))
-    .sort((a, b) => b.samples - a.samples)[0];
+    .sort((a, b) => (b.samples ?? 0) - (a.samples ?? 0))[0];
   return match
     ? { score: match.medianScore, samples: match.samples }
     : { score: null, samples: null };
@@ -90,7 +90,7 @@ export function resolveGpuRankingScore(
         model.benchmark === benchmark &&
         sameBenchmarkModel(entry.model, model.model),
     )
-    .sort((a, b) => b.samples - a.samples)[0];
+    .sort((a, b) => (b.samples ?? 0) - (a.samples ?? 0))[0];
   return match
     ? { score: match.score, samples: match.samples }
     : { score: null, samples: null };

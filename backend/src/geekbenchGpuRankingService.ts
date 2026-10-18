@@ -109,7 +109,7 @@ function validateModels(models: GpuRankingScoreModel[]) {
       throw new Error("Geekbench source contains duplicate or invalid GPU scores");
     }
     keys.add(key);
-    if (!Number.isFinite(model.score) || model.score <= 0 || model.score > 10_000_000 || !Number.isInteger(model.samples) || model.samples < 1 || model.samples > RESULTS_PER_MODEL) {
+    if (!Number.isFinite(model.score) || model.score <= 0 || model.score > 10_000_000 || typeof model.samples !== "number" || !Number.isInteger(model.samples) || model.samples < 1 || model.samples > RESULTS_PER_MODEL) {
       throw new Error("Geekbench source contains invalid scores");
     }
   }

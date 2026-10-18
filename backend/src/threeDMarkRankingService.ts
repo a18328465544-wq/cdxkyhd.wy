@@ -56,6 +56,7 @@ function validateSnapshotModels(value: unknown): value is GpuRankingScoreModel[]
       !Number.isFinite(model.score) ||
       model.score <= 0 ||
       model.score > 10_000_000 ||
+      typeof model.samples !== "number" ||
       !Number.isInteger(model.samples) ||
       model.samples < 1 ||
       model.samples > MAXIMUM_RESULTS_PER_MODEL
