@@ -1,6 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { GPU_RANKING_MODEL_NAMES, type GpuRankingScoreModel, type GpuRankingScoreSnapshot } from "@cdxkyhd/shared";
+import { buildGpuCatalog, gpuIdentity as identity, type GpuRankingScoreModel, type GpuRankingScoreSnapshot } from "@cdxkyhd/shared";
 
 export const GEEKBENCH_GPU_RANKING_SOURCE = "https://browser.geekbench.com";
 export const GEEKBENCH_GPU_RANKING_VERSION = "Geekbench 7 GPU";
@@ -35,23 +35,6 @@ const FETCH_TIMEOUT_MS = 20_000;
 const RESULTS_PER_MODEL = 100;
 const MINIMUM_SNAPSHOT_MODELS = 1;
 const SCORE_BENCHMARKS = ["geekbenchVulkan", "geekbenchOpencl", "geekbenchCuda"] as const;
-
-function identity(name: string) {
-  const normalized = name.toUpperCase().replace(/\s+/g, " ").trim();
-  const mobile = /\b(?:LAPTOP|MOBILE|MAX[ -]?Q)\b/.test(normalized);
-  const rtx = normalized.match(/RTX\s*(\d{4})\s*(TI\s*SUPER|TI|SUPER|D)?/);
-  const rx = normalized.match(/RX\s*(\d{4})\s*(XTX|GRE|XT)?/);
-  const arc = normalized.match(/ARC\s*(B\s*\d{3})/);
-  const memory = normalized.match(/\b(8|12|16|24|32)\s*(?:GB|G)\b/);
-  const base = rtx
-    ? `RTX${rtx[1]}${(rtx[2] ?? "").replace(/\s/g, "")}`
-    : rx
-      ? `RX${rx[1]}${rx[2] ?? ""}`
-      : arc
-        ? `ARC${arc[1].replace(/\s/g, "")}`
-        : null;
-  return base ? { base: `${base}${mobile ? "MOBILE" : ""}`, memoryGb: memory ? Number(memory[1]) : undefined } : null;
-}
 
 function matchingCatalogModel(sourceName: string, requestedModel: string) {
   const source = identity(sourceName);
@@ -141,7 +124,7 @@ export class GeekbenchGpuRankingService {
 
   constructor(private readonly options: GeekbenchRankingServiceOptions) {
     this.fetcher = options.fetcher ?? fetch;
-    this.modelNames = options.modelNames ?? GPU_RANKING_MODEL_NAMES;
+    this.modelNames = options.modelNames ?? buildGpuCatalog().map(entry => entry.model);
   }
 
   static async open(options: GeekbenchRankingServiceOptions) {
@@ -157,7 +140,7 @@ export class GeekbenchGpuRankingService {
   getStatus() {
     if (!this.options.apiKey) return { configured: false, reason: "缺少 Geekbench API Key" };
     if (!this.options.redistributionAllowed) return { configured: false, reason: "尚未确认 Geekbench 成绩展示授权" };
-    return { configured: true, reason: this.snapshot ? "已同步" : this.lastRefreshFailed ? "同步失败，暂无有效成绩" : "正在同步" };
+    return { configured: true, refreshFailed: this.lastRefreshFailed, reason: this.lastRefreshFailed ? "同步失败，保留上次有效数据" : this.snapshot ? "已同步" : "正在同步" };
   }
 
   refresh(): Promise<GpuRankingScoreSnapshot | null> {

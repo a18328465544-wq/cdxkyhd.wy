@@ -59,10 +59,25 @@ test("keeps the last valid benchmark snapshot when a later source response is in
     const afterFailure = await service.refresh();
     assert.equal(afterFailure?.checkedAt, first?.checkedAt);
     assert.deepEqual(afterFailure?.models, first?.models);
+    assert.equal(service.getStatus().refreshFailed, true);
+    assert.ok(service.getStatus().lastAttemptAt);
 
     const reloaded = await GpuRankingService.open({ cacheFile });
     assert.deepEqual(reloaded.getSnapshot()?.models, first?.models);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("retains raster-only older GPUs and unavailable resolution cells without manufacturing ray tracing", () => {
+  const raster = rankingTable("Rasterization Performance", 0).replace("Graphics Card 1", "GeForce GTX 1080").replace("80.0% (80.0)", "N/A");
+  const rays = rankingTable("Ray Tracing Performance", 0).replace(/<tr><td>Graphics Card 1<\/td>.*?<\/tr>/, "");
+  const parsed = parseGpuRankingHtml(raster + rays);
+  const old = parsed.models.find(model => model.model === "GeForce GTX 1080")!;
+  assert.equal(old.raster[0]?.fps, 100);
+  assert.equal(old.raster[2], null);
+  assert.deepEqual(old.rayTracing, [null, null, null]);
+  assert.equal(parseGpuRankingHtml(raster).models.length, 40);
+  assert.throws(() => parseGpuRankingHtml(raster.replace("100.0% (100.0)", "broken")), /Invalid/);
+  assert.throws(() => parseGpuRankingHtml(raster.replace(/<tr><td>Graphics Card 2<\/td>.*?<\/tr>/, "")), /incomplete/);
 });

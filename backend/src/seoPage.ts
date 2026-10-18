@@ -418,7 +418,7 @@ export function renderGpuRankingSeoHtml(appShell: string, snapshot: GpuRankingSn
 
   const rankingRows = (snapshot?.models ?? [])
     .map((model) => ({ model: model.model, metric: model.raster[1] }))
-    .filter(({ model, metric }) => model && Number.isFinite(metric?.fps) && metric.fps > 0 && Number.isFinite(metric?.relativeScore))
+    .filter((row): row is { model: string; metric: NonNullable<typeof row.metric> } => Boolean(row.model) && row.metric !== null && Number.isFinite(row.metric.fps) && row.metric.fps > 0 && Number.isFinite(row.metric.relativeScore))
     .sort((left, right) => right.metric.fps - left.metric.fps)
     .slice(0, 10);
 

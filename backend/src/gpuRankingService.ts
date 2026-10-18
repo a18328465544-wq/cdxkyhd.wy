@@ -1,30 +1,15 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { load } from "cheerio";
+import type { GpuGameMetric, GpuGameMetrics, GpuGameModel, GpuGameSnapshot } from "@cdxkyhd/shared";
 
 export const GPU_RANKING_SOURCE = "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html";
 export const GPU_RANKING_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
 
-export interface GpuBenchmarkMetric {
-  relativeScore: number;
-  fps: number;
-}
-
-export type GpuResolutionMetrics = readonly [GpuBenchmarkMetric, GpuBenchmarkMetric, GpuBenchmarkMetric];
-
-export interface GpuRankingModel {
-  model: string;
-  raster: GpuResolutionMetrics;
-  rayTracing: GpuResolutionMetrics;
-}
-
-export interface GpuRankingSnapshot {
-  source: string;
-  sourceUpdatedAt: string | null;
-  checkedAt: string;
-  updatedAt: string;
-  models: GpuRankingModel[];
-}
+export type GpuBenchmarkMetric = GpuGameMetric;
+export type GpuResolutionMetrics = GpuGameMetrics;
+export type GpuRankingModel = GpuGameModel;
+export type GpuRankingSnapshot = GpuGameSnapshot;
 
 interface ParsedGpuRanking {
   sourceUpdatedAt: string | null;
@@ -59,23 +44,30 @@ function parseRankingTable($: ReturnType<typeof load>, table: Parameters<ReturnT
     const cells = $(row).find("th, td").toArray();
     if (cells.length < 5) continue;
     const model = $(cells[0]).text().replace(/\s+/g, " ").trim();
-    const metrics = cells.slice(2, 5).map((cell) => parseMetric($(cell).text()));
-    if (!model || metrics.some((metric) => metric === null) || parsed.has(model)) {
+    const metrics = cells.slice(2, 5).map((cell) => {
+      const text = $(cell).text().trim();
+      if (/^(?:N\/?A|[-–—]|Not tested)?$/i.test(text)) return null;
+      const metric = parseMetric(text);
+      if (!metric) throw new Error(`Invalid ${mode} GPU benchmark metric`);
+      return metric;
+    });
+    if (!model || metrics.every((metric) => metric === null) || parsed.has(model)) {
       throw new Error(`Invalid ${mode} GPU benchmark row`);
     }
-    parsed.set(model, metrics as [GpuBenchmarkMetric, GpuBenchmarkMetric, GpuBenchmarkMetric]);
+    parsed.set(model, metrics as unknown as GpuResolutionMetrics);
   }
   return parsed;
 }
 
 function validateModels(models: GpuRankingModel[]) {
   if (models.length < MINIMUM_MODEL_COUNT) throw new Error("GPU benchmark source returned too few models");
+  if (models.filter(model => model.raster.some(metric => metric !== null)).length < MINIMUM_MODEL_COUNT) throw new Error("GPU raster benchmark tables are incomplete");
   const names = new Set<string>();
   for (const model of models) {
     if (!model.model || names.has(model.model)) throw new Error("GPU benchmark source contains duplicate models");
     names.add(model.model);
     for (const mode of [model.raster, model.rayTracing]) {
-      if (mode.length !== 3 || mode.some((metric) => !Number.isFinite(metric.fps) || metric.fps <= 0 || metric.fps > 1000 || !Number.isFinite(metric.relativeScore) || metric.relativeScore <= 0 || metric.relativeScore > 200)) {
+      if (!Array.isArray(mode) || mode.length !== 3 || mode.some((metric) => metric !== null && (!Number.isFinite(metric.fps) || metric.fps <= 0 || metric.fps > 1000 || !Number.isFinite(metric.relativeScore) || metric.relativeScore <= 0 || metric.relativeScore > 200))) {
         throw new Error("GPU benchmark source contains invalid scores");
       }
     }
@@ -93,14 +85,16 @@ export function parseGpuRankingHtml(html: string): ParsedGpuRanking {
     if (heading.includes("Ray Tracing Performance")) rayTracing = parseRankingTable($, table, "rayTracing");
   }
 
-  if (!raster || !rayTracing) throw new Error("GPU benchmark tables were not found");
-  if (raster.size < MINIMUM_MODEL_COUNT || raster.size !== rayTracing.size) throw new Error("GPU benchmark tables are incomplete");
+  if (!raster) throw new Error("GPU benchmark tables were not found");
+  if (raster.size < MINIMUM_MODEL_COUNT) throw new Error("GPU benchmark tables are incomplete");
 
   const models: GpuRankingModel[] = [];
   for (const [model, rasterMetrics] of raster) {
-    const rayTracingMetrics = rayTracing.get(model);
-    if (!rayTracingMetrics) throw new Error("Raster and ray-tracing GPU models do not match");
+    const rayTracingMetrics = rayTracing?.get(model) ?? [null, null, null];
     models.push({ model, raster: rasterMetrics, rayTracing: rayTracingMetrics });
+  }
+  for (const [model, metrics] of rayTracing ?? []) {
+    if (!raster.has(model)) models.push({ model, raster: [null, null, null], rayTracing: metrics });
   }
   validateModels(models);
 
@@ -113,6 +107,8 @@ export class GpuRankingService {
   private snapshot: GpuRankingSnapshot | null = null;
   private refreshInFlight: Promise<GpuRankingSnapshot | null> | null = null;
   private readonly fetcher: typeof fetch;
+  private lastAttemptAt: string | null = null;
+  private refreshFailed = false;
 
   constructor(private readonly options: GpuRankingServiceOptions) {
     this.fetcher = options.fetcher ?? fetch;
@@ -126,6 +122,10 @@ export class GpuRankingService {
 
   getSnapshot() {
     return this.snapshot;
+  }
+
+  getStatus() {
+    return { available: Boolean(this.snapshot), lastAttemptAt: this.lastAttemptAt, refreshFailed: this.refreshFailed };
   }
 
   refresh(): Promise<GpuRankingSnapshot | null> {
@@ -148,6 +148,7 @@ export class GpuRankingService {
   }
 
   private async fetchAndStore(): Promise<GpuRankingSnapshot | null> {
+    this.lastAttemptAt = new Date().toISOString();
     try {
       const response = await this.fetcher(GPU_RANKING_SOURCE, {
         headers: {
@@ -173,9 +174,11 @@ export class GpuRankingService {
         models: parsed.models,
       };
       this.snapshot = next;
+      this.refreshFailed = false;
       await this.writeCache(next);
       return next;
     } catch (error) {
+      this.refreshFailed = true;
       console.warn("GPU benchmark refresh failed; keeping the last valid snapshot:", error instanceof Error ? error.message : "unknown error");
       return this.snapshot;
     }

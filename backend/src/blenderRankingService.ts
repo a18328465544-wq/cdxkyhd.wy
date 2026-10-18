@@ -88,6 +88,8 @@ export class BlenderGpuRankingService {
   private snapshot: BlenderGpuRankingSnapshot | null = null;
   private refreshInFlight: Promise<BlenderGpuRankingSnapshot | null> | null = null;
   private readonly fetcher: typeof fetch;
+  private refreshFailed = false;
+  private lastAttemptAt: string | null = null;
 
   constructor(private readonly options: BlenderRankingServiceOptions) {
     this.fetcher = options.fetcher ?? fetch;
@@ -101,6 +103,10 @@ export class BlenderGpuRankingService {
 
   getSnapshot() {
     return this.snapshot;
+  }
+
+  getStatus() {
+    return { available: Boolean(this.snapshot), refreshFailed: this.refreshFailed, lastAttemptAt: this.lastAttemptAt };
   }
 
   refresh(): Promise<BlenderGpuRankingSnapshot | null> {
@@ -128,6 +134,7 @@ export class BlenderGpuRankingService {
   }
 
   private async fetchAndStore(): Promise<BlenderGpuRankingSnapshot | null> {
+    this.lastAttemptAt = new Date().toISOString();
     try {
       const response = await this.fetcher(buildBlenderRankingUrl(), {
         headers: {
@@ -154,9 +161,11 @@ export class BlenderGpuRankingService {
         models,
       };
       this.snapshot = next;
+      this.refreshFailed = false;
       await this.writeCache(next);
       return next;
     } catch (error) {
+      this.refreshFailed = true;
       console.warn("Blender benchmark refresh failed; keeping the last valid snapshot:", error instanceof Error ? error.message : "unknown error");
       return this.snapshot;
     }

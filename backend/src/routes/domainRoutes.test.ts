@@ -7,8 +7,41 @@ import { registerCatalogRoutes } from "./catalogRoutes.js";
 import { registerGpuSnRoutes } from "./gpuSnRoutes.js";
 import { registerHealthRoutes } from "./healthRoutes.js";
 import { registerPcBuilderRoutes } from "./pcBuilderRoutes.js";
+import { registerGpuRankingRoutes } from "./gpuRankingRoutes.js";
 import type { GpuPrice, InventoryItem } from "../types/catalog.js";
 import type { ErpInventoryCard } from "../types/erpCatalog.js";
+
+test("ranking route returns source configuration during cold starts and preserves stale snapshots with failure status", async () => {
+  const app = express();
+  let snapshot: { checkedAt: string } | null = null;
+  let refreshes = 0;
+  const source = {
+    getSnapshot: () => snapshot,
+    refresh: () => { refreshes += 1; },
+    getStatus: () => ({ configured: false, reason: "等待数据源", refreshFailed: true }),
+  };
+  registerGpuRankingRoutes(app, { gpu: source, blender: source, geekbench: source, threeDMark: source, refreshIntervals: { gpu: 1000, blender: 1000, geekbench: 1000, threeDMark: 1000 } });
+  const server = app.listen(0, "127.0.0.1");
+  await once(server, "listening");
+  const baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  try {
+    const cold = await fetch(`${baseUrl}/api/gpu-ranking`);
+    assert.equal(cold.status, 200);
+    const body = await cold.json() as { success: boolean; syncing: boolean; threeDMarkStatus: { reason: string } };
+    assert.equal(body.success, true);
+    assert.equal(body.syncing, true);
+    assert.equal(body.threeDMarkStatus.reason, "等待数据源");
+    assert.equal(refreshes, 4);
+    snapshot = { checkedAt: "2020-01-01T00:00:00Z" };
+    const stale = await readJson<{ snapshot: { checkedAt: string }; gamingStatus: { refreshFailed: boolean }; blenderStatus: { refreshFailed: boolean } }>(`${baseUrl}/api/gpu-ranking`);
+    assert.deepEqual(stale.snapshot, snapshot);
+    assert.equal(stale.gamingStatus.refreshFailed, true);
+    assert.equal(stale.blenderStatus.refreshFailed, true);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>(resolve => server.close(() => resolve()));
+  }
+});
 
 async function readJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);

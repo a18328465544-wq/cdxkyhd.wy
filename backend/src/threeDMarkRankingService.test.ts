@@ -33,6 +33,17 @@ test("computes median Time Spy Graphics and Port Royal scores from screened samp
   assert.throws(() => parseThreeDMarkRankingJson(JSON.stringify({ ...JSON.parse(dataFile()), sourceUrl: "https://example.com/results" })), /official source/);
 });
 
+test("imports Steel Nomad and Speed Way separately without changing older data files", () => {
+  const payload = JSON.parse(dataFile());
+  payload.models = [{ model: "GeForce RTX 4090", steelNomadScores: [100, 300, 200], speedWayScores: [400, 600] }];
+  assert.deepEqual(parseThreeDMarkRankingJson(JSON.stringify(payload)), [
+    { model: "GeForce RTX 4090", benchmark: "steelNomad", score: 200, samples: 3 },
+    { model: "GeForce RTX 4090", benchmark: "speedWay", score: 500, samples: 2 },
+  ]);
+  payload.models[0].speedWayScores = [-1];
+  assert.throws(() => parseThreeDMarkRankingJson(JSON.stringify(payload)), /invalid score/);
+});
+
 test("imports only when display authorization and a data file are configured", async () => {
   const directory = await mkdtemp(path.join(os.tmpdir(), "3dmark-ranking-"));
   const dataPath = path.join(directory, "approved-results.json");
@@ -64,6 +75,10 @@ test("retains the previous snapshot if the imported file becomes invalid", async
     const afterFailure = await service.refresh();
     assert.equal(afterFailure?.checkedAt, first?.checkedAt);
     assert.deepEqual(afterFailure?.models, first?.models);
+    assert.equal(service.getStatus().refreshFailed, true);
+    await writeFile(cachePath, JSON.stringify({ ...first, version: "Time Spy Graphics + Port Royal" }));
+    const legacy = await ThreeDMarkRankingService.open({ cacheFile: cachePath, dataFile: dataPath, redistributionAllowed: true });
+    assert.deepEqual(legacy.getSnapshot()?.models, first?.models);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

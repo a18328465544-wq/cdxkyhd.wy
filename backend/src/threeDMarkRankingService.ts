@@ -3,7 +3,8 @@ import path from "node:path";
 import type { GpuRankingScoreModel, GpuRankingScoreSnapshot } from "@cdxkyhd/shared";
 
 export const THREE_DMARK_RANKING_SOURCE = "https://www.3dmark.com/search";
-export const THREE_DMARK_RANKING_VERSION = "Time Spy Graphics + Port Royal";
+export const THREE_DMARK_RANKING_VERSION = "Time Spy Graphics + Port Royal + Steel Nomad + Speed Way";
+const LEGACY_VERSION = "Time Spy Graphics + Port Royal";
 export const THREE_DMARK_RANKING_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
 
 interface ThreeDMarkRankingServiceOptions {
@@ -21,12 +22,14 @@ interface ThreeDMarkDataFile {
     model: string;
     timeSpyGraphicsScores?: number[];
     portRoyalScores?: number[];
+    steelNomadScores?: number[];
+    speedWayScores?: number[];
   }>;
 }
 
 const MAXIMUM_JSON_BYTES = 20_000_000;
 const MAXIMUM_RESULTS_PER_MODEL = 50_000;
-const ALLOWED_BENCHMARKS = new Set(["timeSpyGraphics", "portRoyal"]);
+const ALLOWED_BENCHMARKS = new Set(["timeSpyGraphics", "portRoyal", "steelNomad", "speedWay"]);
 
 function median(values: number[]) {
   const ordered = [...values].sort((left, right) => left - right);
@@ -82,7 +85,7 @@ export function parseThreeDMarkRankingJson(json: string): GpuRankingScoreModel[]
   for (const row of payload.models) {
     if (!row.model || seen.has(row.model)) throw new Error("3DMark data contains duplicate or empty GPU models");
     seen.add(row.model);
-    for (const [field, benchmark] of [["timeSpyGraphicsScores", "timeSpyGraphics"], ["portRoyalScores", "portRoyal"]] as const) {
+    for (const [field, benchmark] of [["timeSpyGraphicsScores", "timeSpyGraphics"], ["portRoyalScores", "portRoyal"], ["steelNomadScores", "steelNomad"], ["speedWayScores", "speedWay"]] as const) {
       const values = row[field] ?? [];
       if (!validateScores(values)) throw new Error(`3DMark ${field} contains invalid score values`);
       if (values.length) models.push({ model: row.model, benchmark, score: median(values), samples: values.length });
@@ -115,7 +118,7 @@ export class ThreeDMarkRankingService {
   getStatus() {
     if (!this.options.redistributionAllowed) return { configured: false, reason: "尚未确认 3DMark 成绩展示授权" };
     if (!this.options.dataFile) return { configured: false, reason: "等待配置授权成绩数据文件" };
-    return { configured: true, reason: this.snapshot ? "已同步" : this.lastRefreshFailed ? "成绩文件无效或暂不可用" : "等待授权成绩文件" };
+    return { configured: true, refreshFailed: this.lastRefreshFailed, reason: this.lastRefreshFailed ? "成绩文件无效或暂不可用，保留上次有效数据" : this.snapshot ? "已同步" : "等待授权成绩文件" };
   }
 
   refresh(): Promise<GpuRankingScoreSnapshot | null> {
@@ -132,7 +135,7 @@ export class ThreeDMarkRankingService {
       const parsed = JSON.parse(await readFile(this.options.cacheFile, "utf8")) as GpuRankingScoreSnapshot;
       if (
         parsed.source !== THREE_DMARK_RANKING_SOURCE ||
-        parsed.version !== THREE_DMARK_RANKING_VERSION ||
+        (parsed.version !== THREE_DMARK_RANKING_VERSION && parsed.version !== LEGACY_VERSION) ||
         typeof parsed.sourceUpdatedAt !== "string" ||
         !Number.isFinite(Date.parse(parsed.sourceUpdatedAt)) ||
         !Number.isFinite(Date.parse(parsed.checkedAt)) ||

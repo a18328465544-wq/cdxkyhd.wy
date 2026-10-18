@@ -4,6 +4,7 @@ type RankingSnapshot = { checkedAt: string } | null;
 
 interface RankingService {
   getSnapshot(): RankingSnapshot;
+  getStatus?(): unknown;
   refresh(): unknown;
 }
 
@@ -42,18 +43,13 @@ export function registerGpuRankingRoutes(app: Express, services: GpuRankingRoute
     if (!threeDMarkSnapshot || Date.now() - Date.parse(threeDMarkSnapshot.checkedAt) >= services.refreshIntervals.threeDMark) {
       void services.threeDMark.refresh();
     }
-    if (!snapshot && !blenderSnapshot && !geekbenchSnapshot && !threeDMarkSnapshot) {
-      return res.status(503).json({
-        success: false,
-        syncing: true,
-        source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html",
-        error: "显卡成绩正在从测试数据源同步，请稍后重试。",
-      });
-    }
     return res.json({
       success: true,
+      syncing: !snapshot && !blenderSnapshot && !geekbenchSnapshot && !threeDMarkSnapshot,
       snapshot,
+      gamingStatus: services.gpu.getStatus?.() ?? null,
       blenderSnapshot,
+      blenderStatus: services.blender.getStatus?.() ?? null,
       geekbenchSnapshot,
       geekbenchStatus: services.geekbench.getStatus(),
       threeDMarkSnapshot,
