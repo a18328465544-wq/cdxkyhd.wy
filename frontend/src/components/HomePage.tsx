@@ -1,0 +1,123 @@
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+import Header from "./Header";
+import HeroSection from "./HeroSection";
+import Footer from "./Footer";
+import FloatingContactButton from "./FloatingContactButton";
+import { SectionFallback } from "./PageLoading";
+import { scrollToSectionTarget } from "../lib/navigation";
+import PageQuestions from "./PageQuestions";
+
+const homeSectionLoaders = {
+  price: () => import("./PriceSection"),
+  inventory: () => import("./InventorySection"),
+  process: () => import("./ProcessSection"),
+  advantage: () => import("./AdvantageSection"),
+  cases: () => import("./CaseSection"),
+  faq: () => import("./FAQSection"),
+  contact: () => import("./ContactSection"),
+};
+
+const PriceSection = lazy(homeSectionLoaders.price);
+const InventorySection = lazy(homeSectionLoaders.inventory);
+const ProcessSection = lazy(homeSectionLoaders.process);
+const AdvantageSection = lazy(homeSectionLoaders.advantage);
+const CaseSection = lazy(homeSectionLoaders.cases);
+const FAQSection = lazy(homeSectionLoaders.faq);
+const ContactSection = lazy(homeSectionLoaders.contact);
+const loadContactModal = () => import("./ContactModal");
+
+interface LazySectionProps {
+  id: string;
+  label: string;
+  minHeight: string;
+  children: React.ReactNode;
+}
+
+function LazySection({ id, label, minHeight, children }: LazySectionProps) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  useEffect(() => {
+    if (shouldRender) return;
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldRender(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "420px 0px" }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [shouldRender]);
+
+  return (
+    <div id={id} ref={ref} style={{ minHeight }}>
+      {shouldRender ? (
+        <Suspense fallback={<SectionFallback label={label} minHeight={minHeight} />}>
+          {children}
+        </Suspense>
+      ) : (
+        <SectionFallback label={label} minHeight={minHeight} />
+      )}
+    </div>
+  );
+}
+
+export function prefetchHomePage() {
+  [...Object.values(homeSectionLoaders), loadContactModal].forEach((load) => void load());
+}
+
+interface HomePageProps {
+  onOpenContact: () => void;
+}
+
+export default function HomePage({ onOpenContact }: HomePageProps) {
+  const [estimateModel, setEstimateModel] = useState("NVIDIA RTX 4090");
+
+  const handleScrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) scrollToSectionTarget(element, 80);
+  };
+
+  const handleEstimate = (model: string) => {
+    setEstimateModel(model);
+    const estimator = document.getElementById("quick-estimator");
+    if (estimator) scrollToSectionTarget(estimator, 96);
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-slate-800 antialiased font-sans flex flex-col justify-between selection:bg-blue-500/25 selection:text-blue-900 pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0">
+      <Header onOpenContact={onOpenContact} />
+      <main className="flex-1 overflow-hidden">
+        <HeroSection
+          onOpenContact={onOpenContact}
+          onScrollToSection={handleScrollToSection}
+          estimateModel={estimateModel}
+          onEstimateModelChange={setEstimateModel}
+        />
+        <LazySection id="pricing" label="今日行情" minHeight="760px">
+          <PriceSection onOpenContact={onOpenContact} onEstimate={handleEstimate} />
+        </LazySection>
+        <LazySection id="inventory" label="实时库存" minHeight="760px">
+          <InventorySection onOpenContact={onOpenContact} />
+        </LazySection>
+        <LazySection id="process" label="服务流程" minHeight="420px"><ProcessSection /></LazySection>
+        <LazySection id="advantages" label="门店优势" minHeight="560px"><AdvantageSection /></LazySection>
+        <LazySection id="cases" label="客户案例" minHeight="520px"><CaseSection /></LazySection>
+        <LazySection id="faq" label="常见问题" minHeight="520px"><FAQSection /></LazySection>
+        <LazySection id="contact" label="联系我们" minHeight="760px">
+          <ContactSection onOpenContact={onOpenContact} />
+        </LazySection>
+        <PageQuestions pathname="/" />
+      </main>
+      <Footer />
+      <FloatingContactButton onOpenContact={onOpenContact} />
+    </div>
+  );
+}

@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>显示器在线检测：屏幕坏点、漏光与拖影测试 - 成都显卡一号店</title>
+    <meta name="description" content="免费显示器与屏幕在线测试，通过纯色、黑白、灰阶、渐变和运动图案观察坏点、亮点、暗点、漏光及拖影，辅助检查新屏幕和二手显示器，不自动判定面板是否合格。">
+    <link rel="canonical" href="https://cdgpu.cn/tools/monitor">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #e6e6e6;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 禁止文本选择 */
+        body.no-select,
+        .test-page * {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* Internet Explorer/Edge */
+            user-select: none;         /* 标准语法 */
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 首页样式 */
+        .home-page {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0c0c1d 0%, #1a1a3a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .home-content {
+            max-width: 1200px; /* 增加宽度 */
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            color: #4cc9f0;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(76, 201, 240, 0.7);
+        }
+        
+        .title {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #fff;
+            background: linear-gradient(90deg, #4cc9f0, #f72585);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #aaa;
+            margin-bottom: 40px;
+            max-width: 900px; /* 增加宽度 */
+            line-height: 1.8;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 操作说明区域 */
+        .instructions {
+            max-width: 900px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: rgba(30, 30, 60, 0.6);
+            border-radius: 10px;
+            border-left: 4px solid #f72585;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #f72585;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions h3 i {
+            margin-right: 10px;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            color: #ccc;
+            font-size: 1rem;
+        }
+        
+        .instructions li:before {
+            content: "•";
+            color: #4cc9f0;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -3px;
+        }
+        
+        /* 开始按钮 - 带脉冲动画 */
+        .start-button {
+            background-color: #4cc9f0;
+            color: #000;
+            border: none;
+            padding: 25px 60px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 0 40px rgba(76, 201, 240, 0.7);
+            transition: all 0.3s ease;
+            z-index: 10;
+            overflow: hidden;
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .start-button:hover {
+            background-color: #3ab8df;
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(76, 201, 240, 0.9);
+        }
+        
+        /* 脉冲动画效果 */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 30px rgba(76, 201, 240, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 201, 240, 0);
+            }
+        }
+        
+        .start-button.pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* 测试项目说明区域 */
+        .test-intro-section {
+            max-width: 1200px; /* 增加宽度 */
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #4cc9f0;
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 2px solid rgba(76, 201, 240, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 改为每行4个 */
+            gap: 20px;
+        }
+        
+        .intro-item {
+            background-color: rgba(30, 30, 60, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #4cc9f0;
+            transition: transform 0.3s;
+            height: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .intro-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .intro-item h3 {
+            color: #4cc9f0;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .intro-item h3 i {
+            margin-right: 10px;
+        }
+        
+        .intro-item p {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        /* 显示器推荐区域 */
+        .recommendation-section {
+            max-width: 1200px; /* 增加宽度 */
+            width: 100%;
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 一行4个 */
+            gap: 20px;
+        }
+        
+        .recommendation-item {
+            background-color: rgba(30, 30, 60, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #f72585;
+            transition: transform 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .recommendation-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .recommendation-item h3 {
+            color: #f72585;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .recommendation-item h3 i {
+            margin-right: 10px;
+        }
+        
+        .recommendation-item p {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        /* 测试页面样式 */
+        .test-page {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 顶部横幅 - 取消阴影 */
+        .top-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(20, 20, 40, 0.95);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            border-bottom: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        .top-banner.visible {
+            transform: translateY(0);
+        }
+        
+        .test-title {
+            font-size: 1.5rem;
+            color: #4cc9f0;
+            font-weight: bold;
+        }
+        
+        .test-progress {
+            font-size: 1.1rem;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .progress-bar {
+            width: 300px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4cc9f0;
+            width: 10%;
+            transition: width 0.3s ease;
+        }
+        
+        /* 退出按钮 - 在顶部横幅内，进度条后边 */
+        .exit-test {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: #fff;
+            border: 1px solid #4cc9f0;
+            border-radius: 5px;
+            padding: 6px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .exit-test:hover {
+            background-color: rgba(76, 201, 240, 0.4);
+        }
+        
+        /* 底部Dock栏 - 取消阴影 */
+        .dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(20, 20, 40, 0.95);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-top: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        .dock.visible {
+            transform: translateY(0);
+        }
+        
+        .dock-items {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90%;
+        }
+        
+        .dock-item {
+            background-color: rgba(30, 30, 60, 0.8);
+            color: #ccc;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        
+        .dock-item:hover {
+            background-color: rgba(50, 50, 90, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .dock-item.active {
+            background-color: rgba(76, 201, 240, 0.3);
+            color: white;
+            border-color: #4cc9f0;
+        }
+        
+        .dock-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        /* 测试显示区域 */
+        .test-display {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .test-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* 测试完成提示 */
+        .test-complete {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: #000;
+            color: #fff;
+        }
+        
+        .complete-title {
+            font-size: 3rem;
+            color: #4cc9f0;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(76, 201, 240, 0.7);
+        }
+        
+        .complete-message {
+            font-size: 1.5rem;
+            color: #aaa;
+            margin-bottom: 20px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .esc-note {
+            font-size: 1rem;
+            color: #f72585;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: rgba(247, 37, 133, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #f72585;
+        }
+        
+        /* 坏点测试 - 单色全屏 */
+        .dead-pixel-test {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .dead-pixel-color {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        /* 漏光测试 */
+        .light-bleed-test {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .light-bleed-instruction {
+            color: #666;
+            font-size: 1.5rem;
+            max-width: 800px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            border-radius: 10px;
+        }
+        
+        /* 暗角测试 */
+        .vignetting-test {
+            width: 100%;
+            height: 100%;
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vignetting-instruction {
+            color: #333;
+            font-size: 1.5rem;
+            max-width: 800px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px 40px;
+            border-radius: 10px;
+        }
+        
+        /* 干扰测试容器 - 全屏无标题 */
+        .interference-container {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+        }
+        
+        /* 水平线 - 全屏 - 修复：确保线条可见 */
+        .horizontal-lines {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 1px,
+                #fff 1px,
+                #fff 2px
+            );
+            background-size: 100% 2px;
+        }
+        
+        /* 垂直线 - 全屏 - 修复：确保线条可见 */
+        .vertical-lines {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 1px,
+                #fff 1px,
+                #fff 2px
+            );
+            background-size: 2px 100%;
+        }
+        
+        /* 点阵图 - 全屏 */
+        .dot-matrix {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            background-image: radial-gradient(#fff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* 方形网格 - 全屏 */
+        .square-grid {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        /* 彩色网格 - 全屏，三原色网格线 */
+        .color-grid {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(20, 1fr);
+            gap: 1px;
+            background-color: #000;
+        }
+        
+        .color-grid-cell {
+            background-color: #000;
+            position: relative;
+        }
+        
+        .color-grid-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1px solid;
+        }
+        
+        /* 灰阶测试 - 改进版 */
+        .grayscale-test {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+        }
+        
+        .grayscale-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            width: 90%;
+            height: 70%;
+            gap: 0;
+            border: 1px solid #333;
+        }
+        
+        .grayscale-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+            padding: 2px;
+            box-sizing: border-box;
+        }
+        
+        .grayscale-legend {
+            margin-top: 20px;
+            color: #aaa;
+            font-size: 1rem;
+            max-width: 800px;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+        
+        /* 渐变测试 - 单个渐变全屏 */
+        .gradient-test {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 彩虹渐变 */
+        .rainbow-gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                #ff0000 0%, #ff8000 20%, 
+                #ffff00 40%, #00ff00 60%, 
+                #00ffff 80%, #0000ff 100%);
+        }
+        
+        /* 拖影测试容器 */
+        .ghosting-test {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 黑底白色方块拖影测试 */
+        .black-bg-ghosting {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            position: relative;
+        }
+        
+        /* 白底黑色方块拖影测试 */
+        .white-bg-ghosting {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            position: relative;
+        }
+        
+        /* 移动方块通用样式 */
+        .moving-block {
+            position: absolute;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 果冻屏测试 - 改进版 */
+        .jelly-test {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 上下移动的横线 */
+        .jelly-horizontal-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px; /* 加粗一倍 */
+            background-color: #FFFFFF; /* 改为白色 */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+            animation: jelly-move-vertical 2.67s linear infinite; /* 速度加快1.5倍 (4/1.5=2.67) */
+            z-index: 2;
+        }
+        
+        /* 左右移动的竖线 */
+        .jelly-vertical-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px; /* 加粗一倍 */
+            height: 100%;
+            background-color: #FFFFFF; /* 白色 */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+            animation: jelly-move-horizontal 4s linear infinite;
+            z-index: 2;
+        }
+        
+        /* 中心竖线 - 用于上下移动测试 */
+        .jelly-center-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.7);
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        
+        /* 中心横线 - 用于左右移动测试 */
+        .jelly-center-horizontal-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: rgba(255, 0, 0, 0.7);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        /* 刻度标记 - 用于上下移动测试（左右两侧） */
+        .jelly-scale-vertical {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            z-index: 3;
+        }
+        
+        .jelly-scale-left {
+            left: 20px;
+        }
+        
+        .jelly-scale-right {
+            right: 20px;
+        }
+        
+        .jelly-scale-mark {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.3); /* 更淡的颜色 */
+        }
+        
+        /* 刻度标记 - 用于左右移动测试（上下两侧） */
+        .jelly-scale-horizontal {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            z-index: 3;
+        }
+        
+        .jelly-scale-top {
+            top: 20px;
+        }
+        
+        .jelly-scale-bottom {
+            bottom: 20px;
+        }
+        
+        .jelly-scale-mark-horizontal {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3); /* 更淡的颜色 */
+        }
+        
+        /* 果冻屏测试提示 - 随dock栏一起隐藏 */
+        .jelly-instruction {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #aaa;
+            font-size: 1.2rem;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .jelly-instruction.visible {
+            opacity: 1;
+        }
+        
+        @keyframes jelly-move-vertical {
+            0% {
+                top: 0;
+                transform: translateY(0);
+            }
+            50% {
+                top: calc(100% - 8px); /* 调整到底部位置 */
+                transform: translateY(0);
+            }
+            100% {
+                top: 0;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes jelly-move-horizontal {
+            0% {
+                left: 0;
+                transform: translateX(0);
+            }
+            50% {
+                left: calc(100% - 8px); /* 调整到右侧位置 */
+                transform: translateX(0);
+            }
+            100% {
+                left: 0;
+                transform: translateX(0);
+            }
+        }
+        
+        /* 操作提示 */
+        .hint {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            z-index: 999;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .hint.visible {
+            opacity: 1;
+        }
+        
+        @media (max-width: 1366px) {
+            .home-content,
+            .test-intro-section,
+            .recommendation-section {
+                max-width: 1100px;
+            }
+            
+            .intro-grid,
+            .recommendation-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .home-content,
+            .test-intro-section,
+            .recommendation-section {
+                max-width: 1000px;
+            }
+            
+            .intro-grid,
+            .recommendation-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .title {
+                font-size: 2.4rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+                max-width: 800px;
+            }
+            
+            .intro-grid,
+            .recommendation-grid {
+                grid-template-columns: repeat(2, 1fr); /* 在小屏幕上改为每行2个 */
+            }
+            
+            .start-button {
+                padding: 20px 50px;
+                font-size: 1.6rem;
+            }
+            
+            .instructions {
+                padding: 15px;
+            }
+            
+            .instructions h3 {
+                font-size: 1.2rem;
+            }
+            
+            .instructions li {
+                font-size: 0.95rem;
+            }
+            
+            .progress-bar {
+                width: 250px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+                max-width: 700px;
+            }
+            
+            .intro-grid,
+            .recommendation-grid {
+                grid-template-columns: 1fr; /* 在更小的屏幕上改为每行1个 */
+            }
+            
+            .start-button {
+                padding: 20px 40px;
+                font-size: 1.5rem;
+            }
+            
+            .progress-bar {
+                width: 200px;
+            }
+            
+            .test-progress {
+                gap: 10px;
+            }
+            
+            .exit-test {
+                padding: 5px 12px;
+                font-size: 0.8rem;
+                margin-left: 10px;
+            }
+            
+            .dock-item {
+                min-width: 100px;
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            
+            .intro-item {
+                min-height: auto;
+            }
+            
+            .light-bleed-instruction,
+            .vignetting-instruction {
+                font-size: 1.2rem;
+                padding: 15px 20px;
+            }
+            
+            .complete-title {
+                font-size: 2rem;
+            }
+            
+            .complete-message {
+                font-size: 1.2rem;
+                padding: 0 20px;
+            }
+            
+            .esc-note {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+            
+            .grayscale-grid {
+                grid-template-columns: repeat(8, 1fr);
+                grid-template-rows: repeat(20, 1fr);
+                height: 80%;
+            }
+            
+            .jelly-instruction {
+                font-size: 1rem;
+                padding: 15px;
+            }
+            
+            .jelly-scale-left {
+                left: 10px;
+            }
+            
+            .jelly-scale-right {
+                right: 10px;
+            }
+            
+            .jelly-scale-top {
+                top: 10px;
+            }
+            
+            .jelly-scale-bottom {
+                bottom: 10px;
+            }
+        }
+        
+        /* 鼠标感应区域 */
+        .top-sensitive-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            z-index: 999;
+        }
+        
+        .bottom-sensitive-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            z-index: 999;
+        }
+    </style>
+    <link rel="stylesheet" href="/hardware-tools/site-adapt.css">
+</head>
+<body>
+    <!-- 首页 -->
+    <div class="container home-page" id="homePage">
+        <div class="home-content">
+            <div class="logo">
+                <i class="fas fa-tv"></i>
+            </div>
+            <h1 class="title">显示器画面检测</h1>
+            <p class="subtitle">通过纯色、灰阶与运动画面，辅助检查屏幕显示状态。</p>
+            
+            <!-- 操作说明区域 -->
+            <div class="instructions">
+                <p>点击画面或按方向键切换测试，按 Esc 退出全屏。</p>
+            </div>
+            
+            <button class="start-button pulse" id="startButton">
+                <i class="fas fa-play-circle"></i> 开始测试
+            </button>
+        </div>
+        
+        <!-- 测试项目说明区域 -->
+        <div class="test-intro-section">
+            <h2 class="section-title">测试项目说明</h2>
+            <div class="intro-grid">
+                <div class="intro-item">
+                    <h3><i class="fas fa-dot-circle"></i> 坏点测试</h3>
+                    <p>检查屏幕上是否有坏点（亮点、暗点、颜色异常的点）。通过显示红、绿、蓝、黑、白、黄、紫、青八种纯色，可以全面检测屏幕的每个像素点是否正常工作。观察每种颜色下是否有异常的像素点。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-moon"></i> 漏光测试</h3>
+                    <p>检测显示器在显示黑色时，屏幕边缘是否有光线泄漏。漏光现象在LCD显示器中较为常见，但过多的漏光会影响观看暗场景内容的体验。建议在全黑环境下进行此测试。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-sun"></i> 暗角测试</h3>
+                    <p>检测显示器四角是否有明显的亮度衰减或颜色变化。在纯白背景下，观察屏幕四个角落是否比其他区域更暗或出现颜色偏差。理想的显示器应该在整个屏幕上呈现均匀的白色。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-wave-square"></i> 干扰测试</h3>
+                    <p>通过显示水平线、垂直线、点阵图、方形网格、彩色网格五种图案，检查显示器在处理规则图案时是否有干扰、波纹或失真现象。这可以反映显示器的信号处理能力和抗干扰能力。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-adjust"></i> 灰阶测试</h3>
+                    <p>专业的灰阶测试，通过从0到255的256级灰阶色块，检测屏幕的灰阶显示能力和对比度表现。观察每个色块是否能清晰分辨，特别是靠近黑色的深灰色块。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-sliders-h"></i> 渐变测试</h3>
+                    <p>包含五种颜色渐变测试：红、绿、蓝、白以及彩虹渐变。检测显示器显示颜色渐变的能力，理想的显示器应该能平滑显示过渡，没有明显的色带或条纹。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-running"></i> 拖影测试</h3>
+                    <p>检测显示器响应时间和拖影现象。包含黑底白色方块和白底黑色方块两种测试模式，通过不同速度的移动物体观察是否有拖影、残影或模糊现象，评估显示器的动态表现能力。</p>
+                </div>
+                <div class="intro-item">
+                    <h3><i class="fas fa-scroll"></i> 果冻屏测试</h3>
+                    <p>检测屏幕滚动时的果冻现象。通过观察横线上下移动和竖线左右移动，检查屏幕在快速移动时是否有变形、延迟或倾斜现象，这通常与显示器分辨率有关。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 显示器推荐区域 -->
+        <div class="recommendation-section">
+            <h2 class="section-title">显示器选购推荐</h2>
+            <div class="recommendation-grid">
+                <div class="recommendation-item">
+                    <h3><i class="fas fa-desktop"></i> 办公显示器</h3>
+                    <p>推荐IPS面板，分辨率1920x1080或更高，色域覆盖sRGB 99%以上，适合文档处理、网页浏览等日常办公使用。</p>
+                </div>
+                <div class="recommendation-item">
+                    <h3><i class="fas fa-palette"></i> 设计显示器</h3>
+                    <p>推荐专业级IPS或OLED面板，色域覆盖Adobe RGB 99%以上，Delta E < 2，适合摄影、平面设计等色彩敏感工作。</p>
+                </div>
+                <div class="recommendation-item">
+                    <h3><i class="fas fa-gamepad"></i> 电竞显示器</h3>
+                    <p>推荐高刷新率(144Hz以上)、低响应时间(1ms)的TN或Fast IPS面板，支持FreeSync/G-Sync，适合游戏玩家。</p>
+                </div>
+                <div class="recommendation-item">
+                    <h3><i class="fas fa-film"></i> 影视显示器</h3>
+                    <p>推荐4K或更高分辨率，支持HDR，色域覆盖DCI-P3 95%以上，对比度高，适合影音娱乐和视频剪辑。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 测试页面 -->
+    <div class="container test-page" id="testPage">
+        <!-- 鼠标感应区域 -->
+        <div class="top-sensitive-area" id="topSensitiveArea"></div>
+        <div class="bottom-sensitive-area" id="bottomSensitiveArea"></div>
+        
+        <div class="top-banner" id="topBanner">
+            <div class="test-title" id="currentTestTitle">坏点测试</div>
+            <div class="test-progress">
+                <span id="testProgressText">1/25</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <!-- 退出按钮移到顶部横幅内 -->
+                <button class="exit-test" id="exitTest">退出测试</button>
+            </div>
+        </div>
+        
+        <div class="dock" id="dock">
+            <div class="dock-items" id="dockItems">
+                <!-- Dock项将通过JS动态生成 -->
+            </div>
+        </div>
+        
+        <div class="test-display">
+            <div class="test-content" id="testContent">
+                <!-- 测试内容将通过JS动态生成 -->
+            </div>
+        </div>
+        
+        <div class="hint" id="hint">
+            提示: 左键点击切换到下一个测试，右键点击返回上一个测试 | 鼠标移到屏幕顶部/底部显示控制栏
+        </div>
+    </div>
+
+    <script>
+        // 测试数据
+        const tests = [
+            {
+                id: 'dead-pixel',
+                name: '坏点测试',
+                description: '检查屏幕是否有坏点（常亮或常暗的像素点）',
+                colors: [
+                    { name: '红色', value: '#FF0000', textColor: '#FFFFFF' },
+                    { name: '绿色', value: '#00FF00', textColor: '#000000' },
+                    { name: '蓝色', value: '#0000FF', textColor: '#FFFFFF' },
+                    { name: '黑色', value: '#000000', textColor: '#FFFFFF' },
+                    { name: '白色', value: '#FFFFFF', textColor: '#000000' },
+                    { name: '黄色', value: '#FFFF00', textColor: '#000000' },
+                    { name: '紫色', value: '#FF00FF', textColor: '#FFFFFF' },
+                    { name: '青色', value: '#00FFFF', textColor: '#000000' }
+                ]
+            },
+            {
+                id: 'light-bleed',
+                name: '漏光测试',
+                description: '检查屏幕边缘是否有漏光现象'
+            },
+            {
+                id: 'vignetting',
+                name: '暗角测试',
+                description: '检查屏幕四角是否有亮度衰减或颜色变化'
+            },
+            {
+                id: 'interference',
+                name: '干扰测试',
+                description: '检查屏幕在各种图案下的显示效果',
+                subTests: [
+                    { id: 'horizontal', name: '水平线' },
+                    { id: 'vertical', name: '垂直线' },
+                    { id: 'dot-matrix', name: '点阵图' },
+                    { id: 'square-grid', name: '方形网格' },
+                    { id: 'color-grid', name: '彩色网格' }
+                ]
+            },
+            {
+                id: 'grayscale',
+                name: '灰阶测试',
+                description: '检查屏幕灰阶显示能力'
+            },
+            {
+                id: 'gradient',
+                name: '渐变测试',
+                description: '检查屏幕渐变显示是否平滑',
+                gradients: [
+                    { name: '红到黑渐变', from: '#FF0000', to: '#000000' },
+                    { name: '绿到黑渐变', from: '#00FF00', to: '#000000' },
+                    { name: '蓝到黑渐变', from: '#0000FF', to: '#000000' },
+                    { name: '白到黑渐变', from: '#FFFFFF', to: '#000000' },
+                    { name: '彩虹渐变', type: 'rainbow' }
+                ]
+            },
+            {
+                id: 'ghosting',
+                name: '拖影测试',
+                description: '检查屏幕响应时间和拖影现象',
+                subTests: [
+                    { id: 'black-bg', name: '黑底白块' },
+                    { id: 'white-bg', name: '白底黑块' }
+                ]
+            },
+            {
+                id: 'jelly',
+                name: '果冻屏测试',
+                description: '检查屏幕滚动时的果冻现象',
+                subTests: [
+                    { id: 'vertical-line', name: '横线上下移动' },
+                    { id: 'horizontal-line', name: '竖线左右移动' }
+                ]
+            }
+        ];
+
+        // 状态变量
+        let currentTestIndex = 0;
+        let currentSubTestIndex = 0;
+        let currentColorIndex = 0;
+        let currentGradientIndex = 0;
+        let isFullscreen = false;
+        let bannerTimeout, dockTimeout, hintTimeout, jellyHintTimeout;
+        let isInterferenceTest = false;
+        let isDeadPixelTest = false;
+        let isGradientTest = false;
+        let isGrayscaleTest = false;
+        let isGhostingTest = false;
+        let isJellyTest = false;
+        let animationId = null;
+        let allTestsCompleted = false;
+        let textSelectionEnabled = true; // 初始允许选择
+        
+        // 计算总测试项目数
+        function calculateTotalTests() {
+            let total = 0;
+            
+            tests.forEach(test => {
+                if (test.id === 'dead-pixel') {
+                    total += test.colors.length; // 8种颜色
+                } else if (test.id === 'light-bleed' || test.id === 'vignetting') {
+                    total += 1; // 1个测试
+                } else if (test.id === 'interference') {
+                    total += test.subTests.length; // 5个子测试
+                } else if (test.id === 'grayscale') {
+                    total += 1; // 1个测试
+                } else if (test.id === 'gradient') {
+                    total += test.gradients.length; // 5种渐变
+                } else if (test.id === 'ghosting') {
+                    total += test.subTests.length; // 2个子测试
+                } else if (test.id === 'jelly') {
+                    total += test.subTests.length; // 2个子测试
+                }
+            });
+            
+            return total; // 8 + 1 + 1 + 5 + 1 + 5 + 2 + 2 = 25个测试
+        }
+        
+        // 计算当前测试的全局序号
+        function calculateCurrentTestNumber() {
+            let currentNumber = 0;
+            
+            for (let i = 0; i < currentTestIndex; i++) {
+                const test = tests[i];
+                if (test.id === 'dead-pixel') {
+                    currentNumber += test.colors.length;
+                } else if (test.id === 'light-bleed' || test.id === 'vignetting') {
+                    currentNumber += 1;
+                } else if (test.id === 'interference') {
+                    currentNumber += test.subTests.length;
+                } else if (test.id === 'grayscale') {
+                    currentNumber += 1;
+                } else if (test.id === 'gradient') {
+                    currentNumber += test.gradients.length;
+                } else if (test.id === 'ghosting') {
+                    currentNumber += test.subTests.length;
+                } else if (test.id === 'jelly') {
+                    currentNumber += test.subTests.length;
+                }
+            }
+            
+            const currentTest = tests[currentTestIndex];
+            if (currentTest.id === 'dead-pixel') {
+                currentNumber += currentColorIndex + 1;
+            } else if (currentTest.id === 'interference') {
+                currentNumber += currentSubTestIndex + 1;
+            } else if (currentTest.id === 'gradient') {
+                currentNumber += currentGradientIndex + 1;
+            } else if (currentTest.id === 'ghosting') {
+                currentNumber += currentSubTestIndex + 1;
+            } else if (currentTest.id === 'jelly') {
+                currentNumber += currentSubTestIndex + 1;
+            } else if (currentTest.id === 'grayscale' || currentTest.id === 'light-bleed' || currentTest.id === 'vignetting') {
+                currentNumber += 1;
+            }
+            
+            return currentNumber;
+        }
+        
+        // 检查是否所有测试都已完成
+        function checkAllTestsCompleted() {
+            const totalTests = calculateTotalTests();
+            const currentTestNum = calculateCurrentTestNumber();
+            
+            // 如果是最后一个测试的最后一个项目，再点一次就完成
+            return currentTestNum >= totalTests;
+        }
+        
+        // DOM元素
+        const homePage = document.getElementById('homePage');
+        const testPage = document.getElementById('testPage');
+        const startButton = document.getElementById('startButton');
+        const topBanner = document.getElementById('topBanner');
+        const dock = document.getElementById('dock');
+        const dockItems = document.getElementById('dockItems');
+        const testContent = document.getElementById('testContent');
+        const currentTestTitle = document.getElementById('currentTestTitle');
+        const testProgressText = document.getElementById('testProgressText');
+        const progressFill = document.getElementById('progressFill');
+        const hint = document.getElementById('hint');
+        const exitTest = document.getElementById('exitTest');
+        const topSensitiveArea = document.getElementById('topSensitiveArea');
+        const bottomSensitiveArea = document.getElementById('bottomSensitiveArea');
+        
+        // 禁用文本选择
+        function disableTextSelection() {
+            document.body.classList.add('no-select');
+            textSelectionEnabled = false;
+        }
+        
+        // 启用文本选择
+        function enableTextSelection() {
+            document.body.classList.remove('no-select');
+            textSelectionEnabled = true;
+        }
+        
+        // 禁用Dock栏导航
+        function disableDockNavigation() {
+            document.querySelectorAll('.dock-item').forEach(item => {
+                item.classList.add('disabled');
+                item.style.pointerEvents = 'none';
+            });
+        }
+        
+        // 启用Dock栏导航
+        function enableDockNavigation() {
+            document.querySelectorAll('.dock-item').forEach(item => {
+                item.classList.remove('disabled');
+                item.style.pointerEvents = 'auto';
+            });
+        }
+        
+        // 初始化Dock栏
+        function initDock() {
+            dockItems.innerHTML = '';
+            tests.forEach((test, index) => {
+                const dockItem = document.createElement('button');
+                dockItem.className = 'dock-item';
+                dockItem.textContent = test.name;
+                dockItem.dataset.index = index;
+                
+                if (index === currentTestIndex) {
+                    dockItem.classList.add('active');
+                }
+                
+                dockItem.addEventListener('click', () => {
+                    if (allTestsCompleted) return; // 测试完成后禁用导航
+                    
+                    if (test.id === 'interference') {
+                        currentSubTestIndex = 0;
+                        isInterferenceTest = true;
+                    } else if (test.id === 'dead-pixel') {
+                        currentColorIndex = 0;
+                        isDeadPixelTest = true;
+                    } else if (test.id === 'gradient') {
+                        currentGradientIndex = 0;
+                        isGradientTest = true;
+                    } else if (test.id === 'ghosting') {
+                        currentSubTestIndex = 0;
+                        isGhostingTest = true;
+                    } else if (test.id === 'jelly') {
+                        currentSubTestIndex = 0;
+                        isJellyTest = true;
+                    } else if (test.id === 'grayscale') {
+                        isGrayscaleTest = true;
+                    } else {
+                        isInterferenceTest = false;
+                        isDeadPixelTest = false;
+                        isGradientTest = false;
+                        isGrayscaleTest = false;
+                        isGhostingTest = false;
+                        isJellyTest = false;
+                    }
+                    loadTest(index);
+                });
+                
+                dockItems.appendChild(dockItem);
+            });
+        }
+        
+        // 显示横幅和Dock栏
+        function showUI() {
+            topBanner.classList.add('visible');
+            dock.classList.add('visible');
+            
+            hint.classList.add('visible');
+            
+            // 显示果冻屏测试提示（如果存在）
+            const jellyInstruction = document.querySelector('.jelly-instruction');
+            if (jellyInstruction) {
+                jellyInstruction.classList.add('visible');
+            }
+            
+            clearTimeout(bannerTimeout);
+            clearTimeout(dockTimeout);
+            clearTimeout(hintTimeout);
+            clearTimeout(jellyHintTimeout);
+            
+            bannerTimeout = setTimeout(() => {
+                topBanner.classList.remove('visible');
+            }, 3000);
+            
+            dockTimeout = setTimeout(() => {
+                dock.classList.remove('visible');
+            }, 3000);
+            
+            hintTimeout = setTimeout(() => {
+                hint.classList.remove('visible');
+            }, 5000);
+            
+            jellyHintTimeout = setTimeout(() => {
+                if (jellyInstruction) {
+                    jellyInstruction.classList.remove('visible');
+                }
+            }, 5000);
+        }
+        
+        // 隐藏UI
+        function hideUI() {
+            topBanner.classList.remove('visible');
+            dock.classList.remove('visible');
+            hint.classList.remove('visible');
+            
+            // 隐藏果冻屏测试提示（如果存在）
+            const jellyInstruction = document.querySelector('.jelly-instruction');
+            if (jellyInstruction) {
+                jellyInstruction.classList.remove('visible');
+            }
+            
+            clearTimeout(bannerTimeout);
+            clearTimeout(dockTimeout);
+            clearTimeout(hintTimeout);
+            clearTimeout(jellyHintTimeout);
+        }
+        
+        // 显示测试完成页面
+        function showTestComplete() {
+            allTestsCompleted = true;
+            
+            // 禁用Dock栏导航
+            disableDockNavigation();
+            
+            const container = document.createElement('div');
+            container.className = 'test-complete';
+            
+            const title = document.createElement('div');
+            title.className = 'complete-title';
+            title.textContent = '测试完成';
+            
+            const message = document.createElement('div');
+            message.className = 'complete-message';
+            message.textContent = '所有测试项目已完成！点击屏幕任意位置返回首页。';
+            
+            const escNote = document.createElement('div');
+            escNote.className = 'esc-note';
+            escNote.innerHTML = '提示：部分浏览器需要按两次ESC键才能正常退出测试';
+            
+            container.appendChild(title);
+            container.appendChild(message);
+            container.appendChild(escNote);
+            
+            testContent.innerHTML = '';
+            testContent.appendChild(container);
+            
+            // 更新横幅显示
+            currentTestTitle.textContent = '测试完成';
+            testProgressText.textContent = '已完成';
+            progressFill.style.width = '100%';
+            
+            // 显示UI
+            showUI();
+        }
+        
+        // 返回首页
+        function returnToHome() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            // 启用文本选择
+            enableTextSelection();
+            
+            // 启用Dock栏导航
+            enableDockNavigation();
+            
+            // 退出全屏（如果正在全屏）
+            if (document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.msFullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+            
+            isFullscreen = false;
+            allTestsCompleted = false;
+            
+            // 重置状态
+            currentTestIndex = 0;
+            currentSubTestIndex = 0;
+            currentColorIndex = 0;
+            currentGradientIndex = 0;
+            
+            // 显示首页
+            homePage.style.display = 'flex';
+            testPage.style.display = 'none';
+        }
+        
+        // 鼠标点击处理
+        function handleClick(e) {
+            // 防止在Dock栏上点击时误触发
+            if (e.target.closest('.dock') || e.target.closest('.exit-test') || 
+                e.target.closest('.home-page') || e.target.closest('.top-sensitive-area') || 
+                e.target.closest('.bottom-sensitive-area')) {
+                return;
+            }
+            
+            // 如果测试已完成，点击返回首页
+            if (allTestsCompleted) {
+                returnToHome();
+                return;
+            }
+            
+            // 否则正常切换到下一个测试
+            nextTest();
+        }
+        
+        // 右键点击处理 - 返回上一个测试项目
+        function handleRightClick(e) {
+            e.preventDefault();
+            
+            // 如果测试已完成，禁用右键返回
+            if (allTestsCompleted) {
+                return;
+            }
+            
+            // 防止在Dock栏上点击时误触发
+            if (e.target.closest('.dock') || e.target.closest('.exit-test') ||
+                e.target.closest('.home-page') || e.target.closest('.top-sensitive-area') ||
+                e.target.closest('.bottom-sensitive-area')) {
+                return;
+            }
+            
+            // 返回到上一个测试项目
+            prevTestItem();
+        }
+        
+        // 返回到上一个测试项目（优化后的逻辑）
+        function prevTestItem() {
+            const currentTest = tests[currentTestIndex];
+            
+            // 检查当前测试是否有子项目需要处理
+            if (isDeadPixelTest && currentTest.id === 'dead-pixel') {
+                // 坏点测试：如果当前不是第一个颜色，返回上一个颜色
+                if (currentColorIndex > 0) {
+                    currentColorIndex--;
+                    loadTest(currentTestIndex);
+                    return;
+                }
+                // 如果是第一个颜色，需要返回上一类测试
+            } 
+            else if (isInterferenceTest && currentTest.id === 'interference') {
+                // 干扰测试：如果当前不是第一个子测试，返回上一个子测试
+                if (currentSubTestIndex > 0) {
+                    currentSubTestIndex--;
+                    loadTest(currentTestIndex);
+                    return;
+                }
+                // 如果是第一个子测试，需要返回上一类测试
+            } 
+            else if (isGradientTest && currentTest.id === 'gradient') {
+                // 渐变测试：如果当前不是第一个渐变，返回上一个渐变
+                if (currentGradientIndex > 0) {
+                    currentGradientIndex--;
+                    loadTest(currentTestIndex);
+                    return;
+                }
+                // 如果是第一个渐变，需要返回上一类测试
+            } 
+            else if (isGhostingTest && currentTest.id === 'ghosting') {
+                // 拖影测试：如果当前不是第一个子测试，返回上一个子测试
+                if (currentSubTestIndex > 0) {
+                    currentSubTestIndex--;
+                    loadTest(currentTestIndex);
+                    return;
+                }
+                // 如果是第一个子测试，需要返回上一类测试
+            }
+            else if (isJellyTest && currentTest.id === 'jelly') {
+                // 果冻屏测试：如果当前不是第一个子测试，返回上一个子测试
+                if (currentSubTestIndex > 0) {
+                    currentSubTestIndex--;
+                    loadTest(currentTestIndex);
+                    return;
+                }
+                // 如果是第一个子测试，需要返回上一类测试
+            }
+            
+            // 如果没有子测试或者已经是第一个子测试，则返回上一类测试
+            // 查找上一个测试类别
+            let prevTestIndex = currentTestIndex - 1;
+            if (prevTestIndex < 0) {
+                prevTestIndex = tests.length - 1; // 循环到最后一个测试
+            }
+            
+            const prevTest = tests[prevTestIndex];
+            
+            // 设置新测试类别的初始状态
+            if (prevTest.id === 'dead-pixel') {
+                currentColorIndex = prevTest.colors.length - 1; // 设置为最后一个颜色
+                isDeadPixelTest = true;
+                isInterferenceTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (prevTest.id === 'interference') {
+                currentSubTestIndex = prevTest.subTests.length - 1; // 设置为最后一个子测试
+                isInterferenceTest = true;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (prevTest.id === 'gradient') {
+                currentGradientIndex = prevTest.gradients.length - 1; // 设置为最后一个渐变
+                isGradientTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (prevTest.id === 'ghosting') {
+                currentSubTestIndex = prevTest.subTests.length - 1; // 设置为最后一个子测试
+                isGhostingTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isJellyTest = false;
+            } else if (prevTest.id === 'jelly') {
+                currentSubTestIndex = prevTest.subTests.length - 1; // 设置为最后一个子测试
+                isJellyTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+            } else if (prevTest.id === 'grayscale') {
+                isGrayscaleTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else {
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            }
+            
+            currentTestIndex = prevTestIndex;
+            loadTest(currentTestIndex);
+        }
+        
+        // 添加事件监听器
+        document.addEventListener('click', handleClick);
+        document.addEventListener('contextmenu', handleRightClick);
+        
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // ESC键总是返回首页
+                returnToHome();
+                return;
+            }
+            
+            if (allTestsCompleted) {
+                // 测试完成后，其他按键也返回首页
+                returnToHome();
+                return;
+            }
+            
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextTest();
+            } else if (e.key === 'ArrowLeft') {
+                prevTestItem();
+            } else if (e.key === 'f' || e.key === 'F') {
+                showUI();
+            }
+        });
+        
+        // 鼠标进入感应区域
+        topSensitiveArea.addEventListener('mouseenter', showUI);
+        bottomSensitiveArea.addEventListener('mouseenter', showUI);
+        
+        // 退出测试按钮事件
+        exitTest.addEventListener('click', returnToHome);
+        
+        // 全屏模式
+        function enterFullscreenMode() {
+            const container = document.querySelector('.test-page');
+            
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            }
+            
+            isFullscreen = true;
+            setTimeout(() => {
+                showUI();
+            }, 500);
+        }
+        
+        // 测试导航 - 下一个测试
+        function nextTest() {
+            // 检查是否所有测试已完成
+            if (checkAllTestsCompleted()) {
+                showTestComplete();
+                return;
+            }
+            
+            const currentTest = tests[currentTestIndex];
+            
+            // 处理有子测试的情况
+            if (isDeadPixelTest && currentTest.id === 'dead-pixel') {
+                currentColorIndex++;
+                if (currentColorIndex >= currentTest.colors.length) {
+                    // 所有颜色测试完成，进入下一个测试类别
+                    currentColorIndex = 0;
+                    isDeadPixelTest = false;
+                    currentTestIndex = (currentTestIndex + 1) % tests.length;
+                }
+                loadTest(currentTestIndex);
+                return;
+            }
+            
+            if (isInterferenceTest && currentTest.id === 'interference') {
+                currentSubTestIndex++;
+                if (currentSubTestIndex >= currentTest.subTests.length) {
+                    // 所有子测试完成，进入下一个测试类别
+                    currentSubTestIndex = 0;
+                    isInterferenceTest = false;
+                    currentTestIndex = (currentTestIndex + 1) % tests.length;
+                }
+                loadTest(currentTestIndex);
+                return;
+            }
+            
+            if (isGradientTest && currentTest.id === 'gradient') {
+                currentGradientIndex++;
+                if (currentGradientIndex >= currentTest.gradients.length) {
+                    // 所有渐变测试完成，进入下一个测试类别
+                    currentGradientIndex = 0;
+                    isGradientTest = false;
+                    currentTestIndex = (currentTestIndex + 1) % tests.length;
+                }
+                loadTest(currentTestIndex);
+                return;
+            }
+            
+            if (isGhostingTest && currentTest.id === 'ghosting') {
+                currentSubTestIndex++;
+                if (currentSubTestIndex >= currentTest.subTests.length) {
+                    // 所有子测试完成，进入下一个测试类别
+                    currentSubTestIndex = 0;
+                    isGhostingTest = false;
+                    currentTestIndex = (currentTestIndex + 1) % tests.length;
+                }
+                loadTest(currentTestIndex);
+                return;
+            }
+            
+            if (isJellyTest && currentTest.id === 'jelly') {
+                currentSubTestIndex++;
+                if (currentSubTestIndex >= currentTest.subTests.length) {
+                    // 所有子测试完成，进入下一个测试类别
+                    currentSubTestIndex = 0;
+                    isJellyTest = false;
+                    currentTestIndex = (currentTestIndex + 1) % tests.length;
+                }
+                loadTest(currentTestIndex);
+                return;
+            }
+            
+            // 没有子测试或者不是子测试状态，直接进入下一个测试类别
+            currentTestIndex = (currentTestIndex + 1) % tests.length;
+            currentSubTestIndex = 0;
+            currentColorIndex = 0;
+            currentGradientIndex = 0;
+            
+            loadTest(currentTestIndex);
+        }
+        
+        // 加载测试
+        function loadTest(testIndex) {
+            // 停止之前的动画
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            const test = tests[testIndex];
+            currentTestIndex = testIndex;
+            
+            // 更新Dock栏活动状态
+            document.querySelectorAll('.dock-item').forEach((item, index) => {
+                if (index === testIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // 清空测试区域
+            testContent.innerHTML = '';
+            
+            // 更新横幅信息
+            if (test.id === 'interference') {
+                const subTest = test.subTests[currentSubTestIndex];
+                currentTestTitle.textContent = `${test.name} - ${subTest.name}`;
+                isInterferenceTest = true;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (test.id === 'dead-pixel') {
+                const color = test.colors[currentColorIndex];
+                currentTestTitle.textContent = `${test.name} - ${color.name}`;
+                isDeadPixelTest = true;
+                isInterferenceTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (test.id === 'gradient') {
+                const gradient = test.gradients[currentGradientIndex];
+                currentTestTitle.textContent = `${test.name} - ${gradient.name}`;
+                isGradientTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (test.id === 'ghosting') {
+                const subTest = test.subTests[currentSubTestIndex];
+                currentTestTitle.textContent = `${test.name} - ${subTest.name}`;
+                isGhostingTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isJellyTest = false;
+            } else if (test.id === 'jelly') {
+                const subTest = test.subTests[currentSubTestIndex];
+                currentTestTitle.textContent = `${test.name} - ${subTest.name}`;
+                isJellyTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+            } else if (test.id === 'grayscale') {
+                currentTestTitle.textContent = `${test.name}`;
+                isGrayscaleTest = true;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else if (test.id === 'vignetting') {
+                currentTestTitle.textContent = `${test.name}`;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            } else {
+                currentTestTitle.textContent = test.name;
+                isInterferenceTest = false;
+                isDeadPixelTest = false;
+                isGradientTest = false;
+                isGrayscaleTest = false;
+                isGhostingTest = false;
+                isJellyTest = false;
+            }
+            
+            // 计算和更新进度
+            const totalTests = calculateTotalTests();
+            const currentTestNum = calculateCurrentTestNumber();
+            
+            testProgressText.textContent = `${currentTestNum}/${totalTests}`;
+            progressFill.style.width = `${(currentTestNum / totalTests) * 100}%`;
+            
+            // 加载测试内容
+            switch (test.id) {
+                case 'dead-pixel':
+                    loadDeadPixelTest();
+                    break;
+                case 'light-bleed':
+                    loadLightBleedTest();
+                    break;
+                case 'vignetting':
+                    loadVignettingTest();
+                    break;
+                case 'interference':
+                    loadInterferenceTest();
+                    break;
+                case 'grayscale':
+                    loadGrayscaleTest();
+                    break;
+                case 'gradient':
+                    loadGradientTest();
+                    break;
+                case 'ghosting':
+                    loadGhostingTest();
+                    break;
+                case 'jelly':
+                    loadJellyTest();
+                    break;
+            }
+            
+            hideUI();
+        }
+        
+        // 坏点测试 - 按顺序显示颜色（无中间文字）
+        function loadDeadPixelTest() {
+            const test = tests[currentTestIndex];
+            const color = test.colors[currentColorIndex];
+            
+            const container = document.createElement('div');
+            container.className = 'dead-pixel-test';
+            
+            const colorDisplay = document.createElement('div');
+            colorDisplay.className = 'dead-pixel-color';
+            colorDisplay.style.backgroundColor = color.value;
+            
+            // 不再添加颜色名称文字
+            container.appendChild(colorDisplay);
+            testContent.appendChild(container);
+        }
+        
+        // 漏光测试 - 纯黑全屏，添加提示文字
+        function loadLightBleedTest() {
+            const container = document.createElement('div');
+            container.className = 'light-bleed-test';
+            
+            const instruction = document.createElement('div');
+            instruction.className = 'light-bleed-instruction';
+            instruction.innerHTML = `
+                <h2>漏光测试</h2>
+                <p>请在全黑环境下观察屏幕四边是否有漏光现象</p>
+                <p>理想状态下整个屏幕应该呈现均匀的黑色</p>
+                <p style="margin-top: 30px; font-size: 1rem; color: #aaa;">注意：轻微漏光是LCD背光屏幕的常见现象，无法完全避免，但如果漏光严重影响观看体验，可能需要调整显示器位置或联系售后服务。手机拍照会受进光量影响，无法正确反应漏光程度，请勿以照片作为判断标准</p>
+            `;
+            
+            container.appendChild(instruction);
+            testContent.appendChild(container);
+        }
+        
+        // 暗角测试 - 纯白全屏，添加提示文字
+        function loadVignettingTest() {
+            const container = document.createElement('div');
+            container.className = 'vignetting-test';
+            
+            const instruction = document.createElement('div');
+            instruction.className = 'vignetting-instruction';
+            instruction.innerHTML = `
+                <h2>暗角测试</h2>
+                <p>检查显示器四角是否有明显的亮度衰减或颜色变化</p>
+                <p style="margin-top: 30px; font-size: 1rem; color: #555;">注意：理想的显示器应该在整个屏幕上呈现均匀的白色，没有明显的暗角现象</p>
+            `;
+            
+            container.appendChild(instruction);
+            testContent.appendChild(container);
+        }
+        
+        // 干扰测试 - 全屏无标题
+        function loadInterferenceTest() {
+            const test = tests[currentTestIndex];
+            const subTest = test.subTests[currentSubTestIndex];
+            
+            let pattern;
+            switch (subTest.id) {
+                case 'horizontal':
+                    pattern = document.createElement('div');
+                    pattern.className = 'horizontal-lines';
+                    break;
+                case 'vertical':
+                    pattern = document.createElement('div');
+                    pattern.className = 'vertical-lines';
+                    break;
+                case 'dot-matrix':
+                    pattern = document.createElement('div');
+                    pattern.className = 'dot-matrix';
+                    break;
+                case 'square-grid':
+                    pattern = document.createElement('div');
+                    pattern.className = 'square-grid';
+                    break;
+                case 'color-grid':
+                    pattern = loadColorGridTest();
+                    break;
+                default:
+                    // 默认创建一个黑色背景
+                    pattern = document.createElement('div');
+                    pattern.style.width = '100%';
+                    pattern.style.height = '100%';
+                    pattern.style.backgroundColor = '#000';
+            }
+            
+            testContent.appendChild(pattern);
+        }
+        
+        // 彩色网格测试 - 三原色网格线
+        function loadColorGridTest() {
+            const container = document.createElement('div');
+            container.className = 'color-grid';
+            
+            const rows = 20;
+            const cols = 20;
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'color-grid-cell';
+                    
+                    // 根据位置决定网格线颜色
+                    let borderColor;
+                    if (row % 3 === 0) {
+                        borderColor = '#FF0000'; // 红色
+                    } else if (row % 3 === 1) {
+                        borderColor = '#00FF00'; // 绿色
+                    } else {
+                        borderColor = '#0000FF'; // 蓝色
+                    }
+                    
+                    if (col % 3 === 0) {
+                        borderColor = '#FF0000'; // 红色
+                    } else if (col % 3 === 1) {
+                        borderColor = '#00FF00'; // 绿色
+                    } else {
+                        borderColor = '#0000FF'; // 蓝色
+                    }
+                    
+                    cell.style.borderColor = borderColor;
+                    
+                    container.appendChild(cell);
+                }
+            }
+            
+            return container;
+        }
+        
+        // 灰阶测试 - 改进版（16x10的256级灰阶）
+        function loadGrayscaleTest() {
+            const container = document.createElement('div');
+            container.className = 'grayscale-test';
+            
+            // 创建灰阶网格
+            const grid = document.createElement('div');
+            grid.className = 'grayscale-grid';
+            
+            // 16列 x 10行 = 160个色块（实际使用156个，以便更好地显示0-255）
+            const cols = 16;
+            const rows = 10;
+            const totalCells = cols * rows;
+            
+            // 创建156个色块，从0到255
+            for (let i = 0; i < totalCells; i++) {
+                // 计算灰度值，从0到255
+                const grayValue = Math.floor((i / (totalCells - 1)) * 255);
+                
+                const cell = document.createElement('div');
+                cell.className = 'grayscale-cell';
+                cell.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                
+                // 设置文本颜色，深色背景用白色文字，浅色背景用黑色文字
+                const textColor = grayValue > 127 ? '#000' : '#fff';
+                cell.style.color = textColor;
+                
+                // 显示灰度值
+                cell.textContent = grayValue;
+                
+                grid.appendChild(cell);
+            }
+            
+            container.appendChild(grid);
+            
+            // 添加说明
+            const legend = document.createElement('div');
+            legend.className = 'grayscale-legend';
+            legend.innerHTML = `
+                <h3>灰阶测试说明</h3>
+                <p>观察每个灰阶色块是否能清晰分辨，特别是靠近黑色的深灰色块</p>
+                <p>理想的显示器应该能清晰显示0-255的所有灰阶，没有色块丢失或混在一起的情况</p>
+                <p>每个色块上方的数字表示该色块的灰度值（0为纯黑，255为纯白）</p>
+            `;
+            
+            container.appendChild(legend);
+            testContent.appendChild(container);
+        }
+        
+        // 渐变测试
+        function loadGradientTest() {
+            const test = tests[currentTestIndex];
+            const gradient = test.gradients[currentGradientIndex];
+            
+            const container = document.createElement('div');
+            container.className = 'gradient-test';
+            
+            if (gradient.type === 'rainbow') {
+                // 彩虹渐变
+                const rainbow = document.createElement('div');
+                rainbow.className = 'rainbow-gradient';
+                container.appendChild(rainbow);
+            } else {
+                // 单色渐变
+                container.style.background = `linear-gradient(to right, ${gradient.from}, ${gradient.to})`;
+            }
+            
+            testContent.appendChild(container);
+        }
+        
+        // 拖影测试
+        function loadGhostingTest() {
+            const test = tests[currentTestIndex];
+            const subTest = test.subTests[currentSubTestIndex];
+            
+            if (subTest.id === 'black-bg') {
+                loadBlackBgGhostingTest();
+            } else if (subTest.id === 'white-bg') {
+                loadWhiteBgGhostingTest();
+            }
+        }
+        
+        // 黑底白色方块拖影测试
+        function loadBlackBgGhostingTest() {
+            const container = document.createElement('div');
+            container.className = 'black-bg-ghosting';
+            
+            // 创建三个白色方块，分别位于上、中、下位置，以不同速度移动
+            const blocks = [
+                { id: 'block1', top: '20%', size: 80, speed: 2, color: '#FFFFFF' },
+                { id: 'block2', top: '45%', size: 80, speed: 4, color: '#FFFFFF' },
+                { id: 'block3', top: '70%', size: 80, speed: 6, color: '#FFFFFF' }
+            ];
+            
+            blocks.forEach(block => {
+                const blockElement = document.createElement('div');
+                blockElement.className = 'moving-block';
+                blockElement.id = block.id;
+                blockElement.style.width = `${block.size}px`;
+                blockElement.style.height = `${block.size}px`;
+                blockElement.style.backgroundColor = block.color;
+                blockElement.style.top = block.top;
+                blockElement.style.left = '0px';
+                
+                container.appendChild(blockElement);
+            });
+            
+            testContent.appendChild(container);
+            
+            // 开始动画
+            animateBlackBgGhosting(container);
+        }
+        
+        // 黑底白色方块动画
+        function animateBlackBgGhosting(container) {
+            const blocks = [
+                document.getElementById('block1'),
+                document.getElementById('block2'),
+                document.getElementById('block3')
+            ];
+            
+            const speeds = [2, 4, 6];
+            let positions = [0, 0, 0];
+            const containerWidth = container.offsetWidth;
+            
+            function animate() {
+                for (let i = 0; i < blocks.length; i++) {
+                    positions[i] += speeds[i];
+                    
+                    // 如果方块移出屏幕右侧，重置到左侧
+                    if (positions[i] > containerWidth) {
+                        positions[i] = -80; // 方块宽度
+                    }
+                    
+                    if (blocks[i]) {
+                        blocks[i].style.left = `${positions[i]}px`;
+                    }
+                }
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // 白底黑色方块拖影测试
+        function loadWhiteBgGhostingTest() {
+            const container = document.createElement('div');
+            container.className = 'white-bg-ghosting';
+            
+            const blocks = [
+                { id: 'block4', top: '20%', size: 80, speed: 3, color: '#000000' },
+                { id: 'block5', top: '45%', size: 80, speed: 5, color: '#000000' },
+                { id: 'block6', top: '70%', size: 80, speed: 7, color: '#000000' }
+            ];
+            
+            blocks.forEach(block => {
+                const blockElement = document.createElement('div');
+                blockElement.className = 'moving-block';
+                blockElement.id = block.id;
+                blockElement.style.width = `${block.size}px`;
+                blockElement.style.height = `${block.size}px`;
+                blockElement.style.backgroundColor = block.color;
+                blockElement.style.top = block.top;
+                blockElement.style.left = '0px';
+                
+                container.appendChild(blockElement);
+            });
+            
+            testContent.appendChild(container);
+            
+            // 开始动画
+            animateWhiteBgGhosting(container);
+        }
+        
+        // 白底黑色方块动画
+        function animateWhiteBgGhosting(container) {
+            const blocks = [
+                document.getElementById('block4'),
+                document.getElementById('block5'),
+                document.getElementById('block6')
+            ];
+            
+            const speeds = [3, 5, 7];
+            let positions = [0, 0, 0];
+            const containerWidth = container.offsetWidth;
+            
+            function animate() {
+                for (let i = 0; i < blocks.length; i++) {
+                    positions[i] += speeds[i];
+                    
+                    if (positions[i] > containerWidth) {
+                        positions[i] = -80;
+                    }
+                    
+                    if (blocks[i]) {
+                        blocks[i].style.left = `${positions[i]}px`;
+                    }
+                }
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // 果冻屏测试
+        function loadJellyTest() {
+            const test = tests[currentTestIndex];
+            const subTest = test.subTests[currentSubTestIndex];
+            
+            if (subTest.id === 'vertical-line') {
+                loadJellyVerticalTest();
+            } else if (subTest.id === 'horizontal-line') {
+                loadJellyHorizontalTest();
+            }
+        }
+        
+        // 果冻屏测试 - 横线上下移动（带刻度和中心竖线）
+        function loadJellyVerticalTest() {
+            const container = document.createElement('div');
+            container.className = 'jelly-test';
+            
+            // 创建中心竖线
+            const centerLine = document.createElement('div');
+            centerLine.className = 'jelly-center-line';
+            container.appendChild(centerLine);
+            
+            // 创建左侧刻度（每10%一格）
+            const leftScale = document.createElement('div');
+            leftScale.className = 'jelly-scale-vertical jelly-scale-left';
+            container.appendChild(leftScale);
+            
+            // 创建右侧刻度（每10%一格）
+            const rightScale = document.createElement('div');
+            rightScale.className = 'jelly-scale-vertical jelly-scale-right';
+            container.appendChild(rightScale);
+            
+            // 创建横线
+            const line = document.createElement('div');
+            line.className = 'jelly-horizontal-line';
+            container.appendChild(line);
+            
+            // 添加刻度标记（左侧，每10%一格）
+            for (let i = 0; i <= 10; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'jelly-scale-mark';
+                mark.style.top = `${i * 10}%`;
+                leftScale.appendChild(mark);
+            }
+            
+            // 添加刻度标记（右侧，每10%一格）
+            for (let i = 0; i <= 10; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'jelly-scale-mark';
+                mark.style.top = `${i * 10}%`;
+                rightScale.appendChild(mark);
+            }
+            
+            // 添加操作提示
+            const instruction = document.createElement('div');
+            instruction.className = 'jelly-instruction';
+            instruction.innerHTML = `
+                <h3>果冻屏测试 - 横线上下移动</h3>
+                <p>理想情况下，看到的应该是一根横线上下滑动</p>
+                <p>如果看到的是斜线，则说明存在果冻屏现象</p>
+                <p>观察横线是否与中心竖线保持垂直相交</p>
+                <p>果冻现象通常与显示器的分辨率有关</p>
+            `;
+            
+            container.appendChild(instruction);
+            testContent.appendChild(container);
+        }
+        
+        // 果冻屏测试 - 竖线左右移动（带刻度和中心横线）
+        function loadJellyHorizontalTest() {
+            const container = document.createElement('div');
+            container.className = 'jelly-test';
+            
+            // 创建中心横线
+            const centerHorizontalLine = document.createElement('div');
+            centerHorizontalLine.className = 'jelly-center-horizontal-line';
+            container.appendChild(centerHorizontalLine);
+            
+            // 创建顶部刻度（每10%一格）
+            const topScale = document.createElement('div');
+            topScale.className = 'jelly-scale-horizontal jelly-scale-top';
+            container.appendChild(topScale);
+            
+            // 创建底部刻度（每10%一格）
+            const bottomScale = document.createElement('div');
+            bottomScale.className = 'jelly-scale-horizontal jelly-scale-bottom';
+            container.appendChild(bottomScale);
+            
+            // 创建竖线
+            const line = document.createElement('div');
+            line.className = 'jelly-vertical-line';
+            container.appendChild(line);
+            
+            // 添加刻度标记（顶部，每10%一格）
+            for (let i = 0; i <= 10; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'jelly-scale-mark-horizontal';
+                mark.style.left = `${i * 10}%`;
+                topScale.appendChild(mark);
+            }
+            
+            // 添加刻度标记（底部，每10%一格）
+            for (let i = 0; i <= 10; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'jelly-scale-mark-horizontal';
+                mark.style.left = `${i * 10}%`;
+                bottomScale.appendChild(mark);
+            }
+            
+            // 添加操作提示
+            const instruction = document.createElement('div');
+            instruction.className = 'jelly-instruction';
+            instruction.innerHTML = `
+                <h3>果冻屏测试 - 竖线左右移动</h3>
+                <p>理想情况下，看到的应该是一根竖线左右滑动</p>
+                <p>如果看到的是斜线，则说明存在果冻屏现象</p>
+                <p>观察竖线是否与中心横线保持垂直相交</p>
+                <p>果冻现象通常与显示器的分辨率有关</p>
+            `;
+            
+            container.appendChild(instruction);
+            testContent.appendChild(container);
+        }
+        
+        // 初始化
+        function init() {
+            initDock();
+            
+            startButton.addEventListener('click', () => {
+                // 禁用文本选择
+                disableTextSelection();
+                
+                homePage.style.display = 'none';
+                testPage.style.display = 'block';
+                
+                setTimeout(() => {
+                    enterFullscreenMode();
+                    loadTest(0);
+                }, 100);
+            });
+            
+            homePage.style.display = 'flex';
+            testPage.style.display = 'none';
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+<script>
+(() => {
+  const postHeight = () => {
+    const contentBottom = Array.from(document.body.children).reduce(
+      (bottom, element) => Math.max(bottom, element.getBoundingClientRect().bottom + window.scrollY),
+      0,
+    );
+    const paddingBottom = Number.parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+    const height = Math.ceil(Math.max(document.body.scrollHeight, contentBottom + paddingBottom));
+    window.parent.postMessage({ source: "cdxkyhd-pcbox-tool", type: "height", height }, "*");
+  };
+  window.addEventListener("load", postHeight);
+  window.addEventListener("resize", postHeight);
+  if ("ResizeObserver" in window) new ResizeObserver(postHeight).observe(document.documentElement);
+  setTimeout(postHeight, 250);
+})();
+</script>
+</body>
+</html>

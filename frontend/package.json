@@ -16,7 +16,9 @@
     "test:part-select-render": "node --import tsx --test src/components/searchablePartSelectRender.test.tsx",
     "test:controls": "node --import tsx --test src/components/ui/controls.test.tsx",
     "test:contact": "node --import tsx src/lib/contact.test.ts",
-    "test:pricing": "node --import tsx --test src/lib/pricing.test.ts"
+    "test:gpu-ranking": "node --import tsx src/data/gpuRanking.test.ts",
+    "test:pricing": "node --import tsx --test src/lib/pricing.test.ts",
+    "test:routes": "node --import tsx --test src/routes/pageRoutes.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

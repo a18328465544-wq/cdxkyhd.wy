@@ -1,0 +1,696 @@
+:root {
+  color-scheme: light;
+  --tool-blue: #2563eb;
+  --tool-blue-hover: #1d4ed8;
+  --tool-blue-soft: #eff6ff;
+  --tool-text: #0f172a;
+  --tool-muted: #64748b;
+  --tool-border: #e2e8f0;
+  --tool-surface: #ffffff;
+  --tool-page: #f8fafc;
+}
+
+*,
+*::before,
+*::after {
+  letter-spacing: 0 !important;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.fas,
+.fa-solid {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+.far,
+.fa-regular {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 400 !important;
+}
+
+.fab,
+.fa-brands {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 400 !important;
+}
+
+html {
+  background: var(--tool-page);
+}
+
+body:not(.no-select) {
+  min-height: 0;
+  padding: 16px !important;
+  overflow-x: hidden;
+  background: var(--tool-page) !important;
+  color: var(--tool-text) !important;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+body:not(.no-select) .container:not(.test-page) {
+  width: 100% !important;
+  max-width: 80rem !important;
+  margin-inline: auto;
+}
+
+body:not(.no-select) .container > header {
+  margin-bottom: 20px !important;
+  text-align: left !important;
+}
+
+body:not(.no-select) .container > header > h1,
+body:not(.no-select) #homePage .title {
+  margin-bottom: 6px !important;
+  background: none !important;
+  color: var(--tool-text) !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: var(--tool-text) !important;
+}
+
+body:not(.no-select) .subtitle {
+  max-width: 760px;
+  margin: 0 !important;
+  color: var(--tool-muted) !important;
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+}
+
+body:not(.no-select) .keyboard-container,
+body:not(.no-select) .stats-panel,
+body:not(.no-select) .stats-section,
+body:not(.no-select) .sound-section,
+body:not(.no-select) .info-section,
+body:not(.no-select) .testing-area,
+body:not(.no-select) .chart-container,
+body:not(.no-select) .speaker-layout,
+body:not(.no-select) .surround-layout,
+body:not(.no-select) .frequency-slider-container,
+body:not(.no-select) .test-box,
+body:not(.no-select) .info-card,
+body:not(.no-select) .stat-card,
+body:not(.no-select) .sound-option,
+body:not(.no-select) .button-test,
+body:not(.no-select) .frequency-marker,
+body:not(.no-select) .config-btn,
+body:not(.no-select) .sound-btn {
+  border: 1px solid var(--tool-border) !important;
+  border-radius: 10px !important;
+  background: var(--tool-surface) !important;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%) !important;
+  color: var(--tool-text) !important;
+}
+
+body:not(.no-select) .keyboard-container,
+body:not(.no-select) .stats-section,
+body:not(.no-select) .sound-section,
+body:not(.no-select) .info-section,
+body:not(.no-select) .testing-area,
+body:not(.no-select) .stats-panel {
+  padding: 22px !important;
+}
+
+body:not(.no-select) .panel-title,
+body:not(.no-select) .info-title,
+body:not(.no-select) .section-title,
+body:not(.no-select) .info-card h3 {
+  color: var(--tool-text) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+body:not(.no-select) .stats-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+body:not(.no-select) .stats-heading .panel-title {
+  margin-bottom: 0;
+}
+
+body:not(.no-select) .reset-test-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1px solid var(--tool-border);
+  border-radius: 8px;
+  background: var(--tool-surface);
+  color: var(--tool-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+body:not(.no-select) .reset-test-button:hover {
+  border-color: var(--tool-blue);
+  background: var(--tool-blue-soft);
+  color: var(--tool-blue);
+}
+
+body:not(.no-select) .reset-test-button:focus-visible {
+  outline: 2px solid var(--tool-blue);
+  outline-offset: 2px;
+}
+
+body:not(.no-select) .stat-label,
+body:not(.no-select) .sound-description,
+body:not(.no-select) .button-desc,
+body:not(.no-select) .frequency-marker-label,
+body:not(.no-select) .info-card p,
+body:not(.no-select) footer {
+  color: var(--tool-muted) !important;
+}
+
+body:not(.no-select) .stat-value,
+body:not(.no-select) .frequency-value,
+body:not(.no-select) .frequency-marker-value,
+body:not(.no-select) .sound-icon,
+body:not(.no-select) .test-instructions i {
+  color: var(--tool-blue) !important;
+}
+
+body:not(.no-select) .keyboard {
+  border: 1px solid var(--tool-border) !important;
+  border-radius: 10px !important;
+  background: #f1f5f9 !important;
+  box-shadow: inset 0 1px 4px rgb(15 23 42 / 6%) !important;
+}
+
+body:not(.no-select) .key {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 1px rgb(15 23 42 / 8%) !important;
+  color: #334155 !important;
+}
+
+body:not(.no-select) .key.pressed {
+  border-color: #15803d !important;
+  background: #16a34a !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgb(22 163 74 / 18%) !important;
+}
+
+body:not(.no-select) .key.double-click {
+  border-color: #b91c1c !important;
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+body:not(.no-select) .sound-option.active,
+body:not(.no-select) .config-btn.active,
+body:not(.no-select) .sound-btn.active,
+body:not(.no-select) .frequency-marker.active,
+body:not(.no-select) .tab.active {
+  border-color: #bfdbfe !important;
+  background: var(--tool-blue-soft) !important;
+  color: var(--tool-blue-hover) !important;
+  box-shadow: inset 0 0 0 1px rgb(37 99 235 / 8%) !important;
+}
+
+body:not(.no-select) .tabs {
+  max-width: 100%;
+  gap: 3px;
+  padding: 4px !important;
+  border: 1px solid var(--tool-border) !important;
+  border-radius: 10px !important;
+  background: var(--tool-surface) !important;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+
+body:not(.no-select) .tab {
+  min-height: 38px;
+  padding: 8px 14px !important;
+  border: 1px solid transparent;
+  border-radius: 7px !important;
+  color: #475569;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+body:not(.no-select) .tab:hover {
+  background: #f8fafc !important;
+  color: var(--tool-text);
+}
+
+body:not(.no-select) .tab.active {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body:not(.no-select) .test-box {
+  min-height: 240px;
+  border: 1px dashed #93c5fd !important;
+  background: #f8fafc !important;
+}
+
+body:not(.no-select) .test-box.active {
+  border-color: var(--tool-blue) !important;
+  background: #eff6ff !important;
+  box-shadow: inset 0 0 0 1px rgb(37 99 235 / 8%) !important;
+}
+
+body:not(.no-select) .test-instructions {
+  border: 1px solid var(--tool-border);
+  background: rgb(255 255 255 / 94%) !important;
+  color: #475569 !important;
+}
+
+body:not(.no-select) .cursor-track {
+  background: #2563eb !important;
+  box-shadow: 0 0 0 4px rgb(37 99 235 / 15%) !important;
+}
+
+body:not(.no-select) .cursor-trail {
+  background: #60a5fa !important;
+}
+
+body:not(.no-select) .controls {
+  gap: 10px;
+}
+
+body:not(.no-select) .container:not(.test-page) button {
+  min-height: 40px;
+  padding: 9px 15px !important;
+  border: 1px solid var(--tool-border) !important;
+  border-radius: 9px !important;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+  color: var(--tool-text);
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+body:not(.no-select) .container:not(.test-page) button:hover:not(:disabled) {
+  border-color: #bfdbfe !important;
+  background: #f8fafc;
+}
+
+body:not(.no-select) .container:not(.test-page) button.btn-start,
+body:not(.no-select) .container:not(.test-page) button.btn-sweep,
+body:not(.no-select) .container:not(.test-page) button.btn-position,
+body:not(.no-select) #homePage .start-button {
+  border-color: var(--tool-blue) !important;
+  background: var(--tool-blue) !important;
+  color: #ffffff !important;
+}
+
+body:not(.no-select) .container:not(.test-page) button.btn-start:hover,
+body:not(.no-select) .container:not(.test-page) button.btn-sweep:hover,
+body:not(.no-select) .container:not(.test-page) button.btn-position:hover,
+body:not(.no-select) #homePage .start-button:hover {
+  border-color: var(--tool-blue-hover) !important;
+  background: var(--tool-blue-hover) !important;
+}
+
+body:not(.no-select) .container:not(.test-page) button.btn-stop {
+  border-color: #fecaca !important;
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+body:not(.no-select) .container:not(.test-page) button.btn-reset,
+body:not(.no-select) .container:not(.test-page) button.btn-surround {
+  border-color: var(--tool-border) !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+}
+
+body:not(.no-select) input:not([type="range"]),
+body:not(.no-select) select {
+  min-height: 40px;
+  border: 1px solid var(--tool-border) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: var(--tool-text) !important;
+}
+
+body:not(.no-select) input[type="range"] {
+  accent-color: var(--tool-blue);
+}
+
+body:not(.no-select) .info-card {
+  border-left: 3px solid #93c5fd !important;
+}
+
+body:not(.no-select) footer {
+  padding: 16px 8px !important;
+  font-size: 13px !important;
+}
+
+body:not(.no-select) #homePage.container {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-width: 80rem !important;
+  margin-inline: auto;
+  overflow: visible !important;
+  border: 1px solid var(--tool-border);
+  border-radius: 12px;
+  background: var(--tool-surface) !important;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+  padding: 28px 24px !important;
+}
+
+body:not(.no-select) #homePage .home-content {
+  max-width: 64rem !important;
+  margin: 0 auto !important;
+}
+
+body:not(.no-select) #homePage .logo {
+  margin-bottom: 12px !important;
+  color: var(--tool-blue) !important;
+  font-size: 30px !important;
+  text-shadow: none !important;
+}
+
+body:not(.no-select) #homePage .instructions {
+  margin: 20px auto !important;
+  border: 1px solid var(--tool-border) !important;
+  border-left: 3px solid var(--tool-blue) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  color: var(--tool-text) !important;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+
+body:not(.no-select) #homePage .instructions h3,
+body:not(.no-select) #homePage .instructions h3 i,
+body:not(.no-select) #homePage .instructions li::before {
+  color: var(--tool-blue) !important;
+}
+
+body:not(.no-select) #homePage .instructions li {
+  color: #475569 !important;
+}
+
+body:not(.no-select) #homePage .start-button {
+  margin: 12px 0 24px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 1px 2px rgb(37 99 235 / 20%) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  animation: none !important;
+}
+
+body:not(.no-select) #homePage .test-intro-section,
+body:not(.no-select) #homePage .recommendation-section {
+  max-width: 64rem !important;
+  margin-inline: auto;
+}
+
+body.no-select {
+  min-height: 100vh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.no-select .container.test-page:fullscreen,
+body.no-select .container.test-page:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #000000 !important;
+}
+
+@media (max-width: 768px) {
+  body:not(.no-select) {
+    padding: 12px !important;
+  }
+
+  body:not(.no-select) .container > header {
+    margin-bottom: 16px !important;
+  }
+
+  body:not(.no-select) .container > header > h1,
+  body:not(.no-select) #homePage .title {
+    font-size: 24px !important;
+  }
+
+  body:not(.no-select) .keyboard-container,
+  body:not(.no-select) .stats-section,
+  body:not(.no-select) .sound-section,
+  body:not(.no-select) .info-section,
+  body:not(.no-select) .testing-area,
+  body:not(.no-select) .stats-panel {
+    padding: 16px !important;
+  }
+
+  body:not(.no-select) .keyboard-container {
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  body:not(.no-select) .keyboard-wrapper {
+    width: max-content !important;
+    min-width: max-content;
+    justify-content: flex-start !important;
+  }
+
+  body:not(.no-select) .keyboard {
+    transform: none !important;
+    transform-origin: top left !important;
+  }
+
+  body:not(.no-select) .tabs {
+    width: 100%;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  body:not(.no-select) .tab {
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+
+  body:not(.no-select) .main-content {
+    gap: 14px !important;
+  }
+
+  body:not(.no-select) .test-box {
+    height: min(360px, 52vh) !important;
+    min-height: 220px;
+  }
+
+  body:not(.no-select) .stat-cards,
+  body:not(.no-select) .info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  body:not(.no-select) #homePage.container {
+    padding: 20px 16px !important;
+  }
+
+  body:not(.no-select) #homePage .start-button {
+    min-height: 44px;
+    padding: 10px 18px !important;
+  }
+}
+
+/* Shared visual system for the device checks. */
+body:not(.no-select) {
+  background: #f5f7fa !important;
+}
+
+body:not(.no-select) .container:not(.test-page) {
+  max-width: 76rem !important;
+}
+
+body:not(.no-select) .container:not(.test-page) > header {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--tool-border);
+}
+
+body:not(.no-select) .container:not(.test-page) > header > h1,
+body:not(.no-select) #homePage .title {
+  font-size: 30px !important;
+  line-height: 1.25 !important;
+}
+
+body:not(.no-select) .main-content {
+  gap: 16px !important;
+}
+
+body:not(.no-select) .stats-sound-container {
+  gap: 16px !important;
+}
+
+body:not(.no-select) .keyboard-container,
+body:not(.no-select) .stats-panel,
+body:not(.no-select) .stats-section,
+body:not(.no-select) .sound-section,
+body:not(.no-select) .info-section,
+body:not(.no-select) .testing-area,
+body:not(.no-select) .chart-container,
+body:not(.no-select) .speaker-layout,
+body:not(.no-select) .surround-layout,
+body:not(.no-select) .frequency-slider-container {
+  border-color: #e1e6ed !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 3%) !important;
+}
+
+body:not(.no-select) .stat-card,
+body:not(.no-select) .info-card,
+body:not(.no-select) .sound-option,
+body:not(.no-select) .config-btn,
+body:not(.no-select) .sound-btn,
+body:not(.no-select) .button-test {
+  border-color: #e6eaf0 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+body:not(.no-select) .stat-card:hover,
+body:not(.no-select) .info-card:hover,
+body:not(.no-select) .sound-option:hover {
+  transform: none !important;
+  border-color: #bfdbfe !important;
+  background: #f8fbff !important;
+}
+
+body:not(.no-select) .panel-title,
+body:not(.no-select) .info-title,
+body:not(.no-select) .section-title,
+body:not(.no-select) .info-card h3 {
+  margin-bottom: 14px;
+  color: #182230 !important;
+}
+
+body:not(.no-select) .stat-value,
+body:not(.no-select) .frequency-value,
+body:not(.no-select) .frequency-marker-value {
+  font-variant-numeric: tabular-nums;
+}
+
+body:not(.no-select) .container:not(.test-page) button:focus-visible,
+body:not(.no-select) .container:not(.test-page) a:focus-visible,
+body:not(.no-select) .tabs:focus-within {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+body:not(.no-select) .test-box {
+  border-width: 1px !important;
+  border-radius: 9px !important;
+  background-color: #f7f9fc !important;
+}
+
+body:not(.no-select) #homePage.container {
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+body:not(.no-select) #homePage .instructions {
+  border-left-width: 1px !important;
+  background: #f8fafc !important;
+  box-shadow: none !important;
+}
+
+body:not(.no-select) #homePage .logo {
+  display: none !important;
+}
+
+body:not(.no-select) .container:not(.test-page) .info-section,
+body:not(.no-select) .container:not(.test-page) > footer,
+body:not(.no-select) #homePage .test-intro-section,
+body:not(.no-select) #homePage .recommendation-section {
+  display: none !important;
+}
+
+body:not(.no-select) #homePage .instructions {
+  margin: 14px auto !important;
+  padding: 12px 14px !important;
+}
+
+body:not(.no-select) #homePage .instructions h3 {
+  display: none !important;
+}
+
+body:not(.no-select) #homePage .instructions ul {
+  margin: 0 !important;
+}
+
+body:not(.no-select) #homePage .instructions li {
+  margin-bottom: 4px !important;
+  font-size: 13px !important;
+}
+
+@media (min-width: 769px) {
+  body:not(.no-select) .keyboard-container {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  body:not(.no-select) .container:not(.test-page) > header {
+    padding-bottom: 14px;
+  }
+
+  body:not(.no-select) .container:not(.test-page) > header > h1,
+  body:not(.no-select) #homePage .title {
+    font-size: 24px !important;
+  }
+
+  body:not(.no-select) .stats-sound-container {
+    flex-direction: column;
+  }
+
+  body:not(.no-select) .stat-cards,
+  body:not(.no-select) .info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body:not(.no-select) .stat-value {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 420px) {
+  body:not(.no-select) .stat-cards,
+  body:not(.no-select) .info-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(.no-select) *,
+  body:not(.no-select) *::before,
+  body:not(.no-select) *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线键盘测试：按键失灵与机械键盘连击检测 - 成都显卡一号店</title>
+    <meta name="description" content="免费在线键盘检测工具，查看键位响应、按键记录和重复输入，辅助排查键盘按键失灵、机械键盘双击与连击问题，无需下载软件；部分系统快捷键可能被浏览器拦截。">
+    <link rel="canonical" href="https://cdgpu.cn/tools/keyboard">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        
+        .container { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; }
+        
+        header { text-align: center; margin-bottom: 30px; width: 100%; }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee, #f72585);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(76, 201, 240, 0.3);
+        }
+        
+        .subtitle { font-size: 1.2rem; color: #a0a0c0; margin-bottom: 20px; }
+        
+        .main-content { display: flex; flex-direction: column; gap: 30px; width: 100%; }
+        
+        .keyboard-container, .stats-panel, .info-section {
+            width: 100%;
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(76, 201, 240, 0.1);
+        }
+        
+        .keyboard-container { display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
+        .keyboard-wrapper { display: flex; justify-content: center; width: 100%; }
+        
+        /* 键盘样式 */
+        .keyboard {
+            display: flex;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px 1px rgba(102, 102, 102, 0.3) inset, 
+                        0px 0px 5px 1px rgba(255, 255, 255, 0.1);
+            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
+            padding: 30px;
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+
+        /* 按键样式 */
+        .key {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #3a3a4e, #2a2a3e);
+            box-shadow: 5px 5px 12px 2px rgba(0, 0, 0, 0.4),
+                        -3px -3px 8px 2px rgba(100, 100, 150, 0.1);
+            color: #a0a0c0;
+            font-size: 13px;
+            transition: all 0.1s;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+            user-select: none;
+            cursor: default;
+            pointer-events: none;
+        }
+        
+        .key span { display: block; line-height: 1.2; }
+        
+        .key.pressed {
+            background: linear-gradient(145deg, #4ade80, #22c55e);
+            color: white;
+            box-shadow: 0 0 15px 5px rgba(76, 201, 240, 0.5);
+            transform: translateY(2px);
+        }
+        
+        .key.double-click {
+            background: linear-gradient(145deg, #f72585, #b5179e);
+            color: white;
+            animation: doubleClickPulse 1s infinite ease-in-out;
+            transform: translateY(2px);
+        }
+        
+        .key-empty { width: 40px; height: 40px; visibility: hidden; }
+
+        /* 键盘布局区域 */
+        .area-1 { width: 740px; display: flex; flex-wrap: wrap; gap: 10px; align-content: baseline; }
+        .area-2 { width: 140px; margin-left: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .area-2-item { display: flex; flex-wrap: wrap; gap: 10px; }
+        .area-3 { width: 190px; margin-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .area-3-light { display: flex; gap: 10px; }
+        .area-3-light-item { width: 40px; height: 40px; line-height: 40px; text-align: center; color: #999; font-size: 18px; }
+        .area-3-number { display: flex; gap: 10px; }
+        .area-3-number-item { display: flex; flex-wrap: wrap; gap: 10px; }
+        
+        /* 统计和音效设置为左右排列 */
+        .stats-sound-container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .stats-section, .sound-section {
+            flex: 1;
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(76, 201, 240, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4cc9f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i { font-size: 1.3rem; }
+        
+        /* 统计卡片样式 */
+        .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card {
+            background: rgba(10, 10, 20, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+        
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(76, 201, 240, 0.2); }
+        .stat-value { font-size: 2.8rem; font-weight: 700; margin: 10px 0; color: #4cc9f0; }
+        .stat-label { font-size: 1rem; color: #a0a0c0; }
+        
+        /* 音效控制 */
+        .sound-controls { display: flex; flex-direction: column; gap: 15px; }
+        .sound-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 10, 20, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .sound-option:hover { background: rgba(67, 97, 238, 0.2); }
+        .sound-option.active { background: rgba(67, 97, 238, 0.3); border-color: #4361ee; }
+        .sound-icon { font-size: 1.5rem; color: #4cc9f0; }
+        .sound-name { font-size: 1.1rem; font-weight: bold; flex: 1; }
+        .sound-description { font-size: 0.9rem; color: #a0a0c0; }
+        
+        /* 信息区域样式 */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .info-card {
+            background: rgba(10, 10, 20, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #4361ee;
+        }
+        
+        .info-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #a0a0c0; }
+        .info-card p { color: #8a8ab5; line-height: 1.6; }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #6c6c8a;
+            font-size: 0.9rem;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .stats-sound-container { flex-direction: column; }
+        }
+        
+        @media (max-width: 768px) {
+            .keyboard-container, .stats-section, .sound-section, .info-section { padding: 20px; }
+            .keyboard-container { padding: 20px 10px; }
+            .keyboard { transform: scale(0.8); transform-origin: top center; padding: 20px; }
+            .key, .key-empty { width: 35px; height: 35px; font-size: 11px; }
+            .area-1 { width: 600px; }
+            .area-2, .area-3 { margin-left: 10px; }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(10, 10, 20, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #4361ee; border-radius: 10px; }
+        
+        /* 动画效果 */
+        @keyframes doubleClickPulse {
+            0% { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(247, 37, 133, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0); }
+        }
+        
+        .key-pulse { animation: pulse 0.5s; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 201, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0); }
+        }
+    </style>
+    <link rel="stylesheet" href="/hardware-tools/site-adapt.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-keyboard"></i> 键盘按键检测</h1>
+            <p class="subtitle">逐键检查按键响应，辅助确认键盘状态。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="keyboard-container">
+                <div class="keyboard-wrapper">
+                    <div class="keyboard">
+                        <div class="area-1">
+                            <div class="key" id="key-Esc">Esc</div>
+                            <div class="key" id="key-F1" style="margin-left: 50px;">F1</div>
+                            <div class="key" id="key-F2">F2</div>
+                            <div class="key" id="key-F3">F3</div>
+                            <div class="key" id="key-F4">F4</div>
+                            <div class="key" id="key-F5" style="margin-left: 25px;">F5</div>
+                            <div class="key" id="key-F6">F6</div>
+                            <div class="key" id="key-F7">F7</div>
+                            <div class="key" id="key-F8">F8</div>
+                            <div class="key" id="key-F9" style="margin-left: 25px;">F9</div>
+                            <div class="key" id="key-F10">F10</div>
+                            <div class="key" id="key-F11">F11</div>
+                            <div class="key" id="key-F12">F12</div>
+                            
+                            <div class="key" id="key-`"><span>~</span><span>`</span></div>
+                            <div class="key" id="key-1"><span>!</span><span>1</span></div>
+                            <div class="key" id="key-2"><span>@</span><span>2</span></div>
+                            <div class="key" id="key-3"><span>#</span><span>3</span></div>
+                            <div class="key" id="key-4"><span>$</span><span>4</span></div>
+                            <div class="key" id="key-5"><span>%</span><span>5</span></div>
+                            <div class="key" id="key-6"><span>^</span><span>6</span></div>
+                            <div class="key" id="key-7"><span>&</span><span>7</span></div>
+                            <div class="key" id="key-8"><span>*</span><span>8</span></div>
+                            <div class="key" id="key-9"><span>(</span><span>9</span></div>
+                            <div class="key" id="key-0"><span>)</span><span>0</span></div>
+                            <div class="key" id="key--"><span>-</span><span>-</span></div>
+                            <div class="key" id="key-="><span>=</span><span>+</span></div>
+                            <div class="key" id="key-Backspace" style="width: 90px;">←</div>
+                            
+                            <div class="key" id="key-Tab" style="width: 70px;">Tab</div>
+                            <div class="key" id="key-Q">Q</div>
+                            <div class="key" id="key-W">W</div>
+                            <div class="key" id="key-E">E</div>
+                            <div class="key" id="key-R">R</div>
+                            <div class="key" id="key-T">T</div>
+                            <div class="key" id="key-Y">Y</div>
+                            <div class="key" id="key-U">U</div>
+                            <div class="key" id="key-I">I</div>
+                            <div class="key" id="key-O">O</div>
+                            <div class="key" id="key-P">P</div>
+                            <div class="key" id="key-["><span>[</span><span>{</span></div>
+                            <div class="key" id="key-]"><span>]</span><span>}</span></div>
+                            <div class="key" id="key-\" style="width: 60px;"><span>\</span><span>|</span></div>
+                            
+                            <div class="key" id="key-CapsLock" style="width: 85px;">Caps Lock</div>
+                            <div class="key" id="key-A">A</div>
+                            <div class="key" id="key-S">S</div>
+                            <div class="key" id="key-D">D</div>
+                            <div class="key" id="key-F">F</div>
+                            <div class="key" id="key-G">G</div>
+                            <div class="key" id="key-H">H</div>
+                            <div class="key" id="key-J">J</div>
+                            <div class="key" id="key-K">K</div>
+                            <div class="key" id="key-L">L</div>
+                            <div class="key" id="key-;"><span>;</span><span>:</span></div>
+                            <div class="key" id="key-'"><span>'</span><span>"</span></div>
+                            <div class="key" id="key-Enter" style="width: 95px;">Enter</div>
+                            
+                            <div class="key" id="key-ShiftLeft" style="width: 115px;">Shift</div>
+                            <div class="key" id="key-Z">Z</div>
+                            <div class="key" id="key-X">X</div>
+                            <div class="key" id="key-C">C</div>
+                            <div class="key" id="key-V">V</div>
+                            <div class="key" id="key-B">B</div>
+                            <div class="key" id="key-N">N</div>
+                            <div class="key" id="key-M">M</div>
+                            <div class="key" id="key-,"><span>,</span><span><</span></div>
+                            <div class="key" id="key-."><span>.</span><span>></span></div>
+                            <div class="key" id="key-/"><span>/</span><span>?</span></div>
+                            <div class="key" id="key-ShiftRight" style="width: 115px;">Shift</div>
+                            
+                            <div class="key" id="key-CtrlLeft" style="width: 50px;">Ctrl</div>
+                            <div class="key" id="key-WinLeft" style="width: 50px;">Win</div>
+                            <div class="key" id="key-AltLeft" style="width: 50px;">Alt</div>
+                            <div class="key" id="key-Space" style="width: 320px;"></div>
+                            <div class="key" id="key-AltRight" style="width: 50px;">Alt</div>
+                            <div class="key" id="key-WinRight" style="width: 50px;">Win</div>
+                            <div class="key" id="key-Menu" style="width: 50px;">▤</div>
+                            <div class="key" id="key-CtrlRight" style="width: 50px;">Ctrl</div>
+                        </div>
+
+                        <div class="area-2">
+                            <div class="area-2-item">
+                                <div class="key" id="key-PrintScreen">Print</div>
+                                <div class="key" id="key-ScrollLock">Lock</div>
+                                <div class="key" id="key-PauseBreak">Pause</div>
+                                <div class="key" id="key-Insert">Insert</div>
+                                <div class="key" id="key-Home">Home</div>
+                                <div class="key" id="key-PageUp">UP</div>
+                                <div class="key" id="key-Delete">Del</div>
+                                <div class="key" id="key-End">End</div>
+                                <div class="key" id="key-PageDown">Down</div>
+                            </div>
+                            <div class="area-2-item">
+                                <div class="key-empty"></div>
+                                <div class="key" id="key-ArrowUp">↑</div>
+                                <div class="key-empty"></div>
+                                <div class="key" id="key-ArrowLeft">←</div>
+                                <div class="key" id="key-ArrowDown">↓</div>
+                                <div class="key" id="key-ArrowRight">→</div>
+                            </div>
+                        </div>
+
+                        <div class="area-3">
+                            <div class="area-3-light">
+                                <div class="area-3-light-item">o</div>
+                                <div class="area-3-light-item">o</div>
+                                <div class="area-3-light-item">o</div>
+                            </div>
+                            
+                            <div class="area-3-number">
+                                <div class="area-3-number-item">
+                                    <div class="key" id="key-NumLock">Num</div>
+                                    <div class="key" id="key-NumDivide">/</div>
+                                    <div class="key" id="key-NumMultiply">*</div>
+                                    <div class="key" id="key-Num7">7</div>
+                                    <div class="key" id="key-Num8">8</div>
+                                    <div class="key" id="key-Num9">9</div>
+                                    <div class="key" id="key-Num4">4</div>
+                                    <div class="key" id="key-Num5">5</div>
+                                    <div class="key" id="key-Num6">6</div>
+                                    <div class="key" id="key-Num1">1</div>
+                                    <div class="key" id="key-Num2">2</div>
+                                    <div class="key" id="key-Num3">3</div>
+                                    <div class="key" id="key-Num0" style="width: 90px;">0</div>
+                                    <div class="key" id="key-NumDecimal">.</div>
+                                </div>
+                                
+                                <div class="area-3-number-item">
+                                    <div class="key" id="key-NumSubtract">-</div>
+                                    <div class="key" id="key-NumAdd" style="height: 90px;">+</div>
+                                    <div class="key" id="key-NumEnter" style="height: 90px;">Enter</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-sound-container">
+                <div class="stats-section">
+                    <div class="stats-heading">
+                        <div class="panel-title"><i class="fas fa-chart-bar"></i> 本轮检测记录</div>
+                        <button class="reset-test-button" id="resetTestButton" type="button">
+                            <i class="fas fa-rotate-left" aria-hidden="true"></i>
+                            <span>清空本轮记录</span>
+                        </button>
+                    </div>
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-label">已测试按键</div>
+                            <div class="stat-value" id="keysTested">0</div>
+                            <div class="stat-label">数量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">双击按键</div>
+                            <div class="stat-value" id="doubleClickCount">0</div>
+                            <div class="stat-label">数量</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sound-section">
+                    <div class="panel-title"><i class="fas fa-volume-up"></i> 音效设置</div>
+                    <div class="sound-controls">
+                        <div class="sound-option active" data-sound="click">
+                            <div class="sound-icon"><i class="fas fa-mouse-pointer"></i></div>
+                            <div class="sound-name">点击音效</div>
+                            <div class="sound-description">清脆的点击声，模拟机械键盘</div>
+                        </div>
+                        <div class="sound-option" data-sound="beep">
+                            <div class="sound-icon"><i class="fas fa-bell"></i></div>
+                            <div class="sound-name">提示音</div>
+                            <div class="sound-description">简洁的提示音，反馈明确</div>
+                        </div>
+                        <div class="sound-option" data-sound="typewriter">
+                            <div class="sound-icon"><i class="fas fa-keyboard"></i></div>
+                            <div class="sound-name">打字机音效</div>
+                            <div class="sound-description">经典打字机声音，怀旧风格</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="panel-title"><i class="fas fa-info-circle"></i> 键盘测试说明</div>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>键盘按键测试</h3>
+                        <p>使用物理键盘进行测试。每个被按下的按键会变为绿色显示，双击的按键会变为红色并有脉冲特效。适合逐键检查键盘功能。</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>双击测试功能</h3>
+                        <p>双击任意按键可以测试键盘按键是否出现双击或连击。异常的按键会变为红色，用于测试按键是否存在损坏。</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>测试统计</h3>
+                        <p>实时显示已测试按键数量和双击按键数量。测试结果可以帮助您了解键盘的工作状态和潜在问题。</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>测试建议</h3>
+                        <p>1. 测试时注意观察按键响应速度<br>2. 测试所有按键是否正常工作<br>3. 测试按键时短按即可<br>4. 注意是否有按键粘连或无响应现象</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 键盘按键测试工具 | 专业键盘测试功能</p>
+            <p>注意：本工具仅用于测试键盘基本功能，实际性能可能因硬件和驱动程序而异。</p>
+        </footer>
+    </div>
+
+    <script>
+        // ==================== 全局变量 ====================
+        let audioContext = null;
+        let currentSoundType = 'click';
+        let keysPressed = new Set();
+        let keysDoubleClicked = new Set();
+        let keyLastClickTime = {};
+        const DOUBLE_CLICK_INTERVAL = 80; // 双击间隔80ms
+        
+        // 键盘映射表 (物理键盘按键到虚拟按键的映射)
+        const keyMap = {
+            'Escape': 'key-Esc',
+            'F1': 'key-F1',
+            'F2': 'key-F2',
+            'F3': 'key-F3',
+            'F4': 'key-F4',
+            'F5': 'key-F5',
+            'F6': 'key-F6',
+            'F7': 'key-F7',
+            'F8': 'key-F8',
+            'F9': 'key-F9',
+            'F10': 'key-F10',
+            'F11': 'key-F11',
+            'F12': 'key-F12',
+            'Backquote': 'key-`',
+            'Digit1': 'key-1',
+            'Digit2': 'key-2',
+            'Digit3': 'key-3',
+            'Digit4': 'key-4',
+            'Digit5': 'key-5',
+            'Digit6': 'key-6',
+            'Digit7': 'key-7',
+            'Digit8': 'key-8',
+            'Digit9': 'key-9',
+            'Digit0': 'key-0',
+            'Minus': 'key--',
+            'Equal': 'key-=',
+            'Backspace': 'key-Backspace',
+            'Tab': 'key-Tab',
+            'KeyQ': 'key-Q',
+            'KeyW': 'key-W',
+            'KeyE': 'key-E',
+            'KeyR': 'key-R',
+            'KeyT': 'key-T',
+            'KeyY': 'key-Y',
+            'KeyU': 'key-U',
+            'KeyI': 'key-I',
+            'KeyO': 'key-O',
+            'KeyP': 'key-P',
+            'BracketLeft': 'key-[',
+            'BracketRight': 'key-]',
+            'Backslash': 'key-\\',
+            'CapsLock': 'key-CapsLock',
+            'KeyA': 'key-A',
+            'KeyS': 'key-S',
+            'KeyD': 'key-D',
+            'KeyF': 'key-F',
+            'KeyG': 'key-G',
+            'KeyH': 'key-H',
+            'KeyJ': 'key-J',
+            'KeyK': 'key-K',
+            'KeyL': 'key-L',
+            'Semicolon': 'key-;',
+            'Quote': 'key-\'',
+            'Enter': 'key-Enter',
+            'ShiftLeft': 'key-ShiftLeft',
+            'ShiftRight': 'key-ShiftRight',
+            'KeyZ': 'key-Z',
+            'KeyX': 'key-X',
+            'KeyC': 'key-C',
+            'KeyV': 'key-V',
+            'KeyB': 'key-B',
+            'KeyN': 'key-N',
+            'KeyM': 'key-M',
+            'Comma': 'key-,',
+            'Period': 'key-.',
+            'Slash': 'key-/',
+            'ControlLeft': 'key-CtrlLeft',
+            'ControlRight': 'key-CtrlRight',
+            'MetaLeft': 'key-WinLeft',
+            'MetaRight': 'key-WinRight',
+            'AltLeft': 'key-AltLeft',
+            'AltRight': 'key-AltRight',
+            'Space': 'key-Space',
+            'ContextMenu': 'key-Menu',
+            'PrintScreen': 'key-PrintScreen',
+            'ScrollLock': 'key-ScrollLock',
+            'Pause': 'key-PauseBreak',
+            'Insert': 'key-Insert',
+            'Home': 'key-Home',
+            'PageUp': 'key-PageUp',
+            'Delete': 'key-Delete',
+            'End': 'key-End',
+            'PageDown': 'key-PageDown',
+            'ArrowUp': 'key-ArrowUp',
+            'ArrowLeft': 'key-ArrowLeft',
+            'ArrowDown': 'key-ArrowDown',
+            'ArrowRight': 'key-ArrowRight',
+            'NumLock': 'key-NumLock',
+            'NumpadDivide': 'key-NumDivide',
+            'NumpadMultiply': 'key-NumMultiply',
+            'Numpad7': 'key-Num7',
+            'Numpad8': 'key-Num8',
+            'Numpad9': 'key-Num9',
+            'Numpad4': 'key-Num4',
+            'Numpad5': 'key-Num5',
+            'Numpad6': 'key-Num6',
+            'Numpad1': 'key-Num1',
+            'Numpad2': 'key-Num2',
+            'Numpad3': 'key-Num3',
+            'Numpad0': 'key-Num0',
+            'NumpadDecimal': 'key-NumDecimal',
+            'NumpadSubtract': 'key-NumSubtract',
+            'NumpadAdd': 'key-NumAdd',
+            'NumpadEnter': 'key-NumEnter'
+        };
+        
+        // ==================== 初始化函数 ====================
+        function init() {
+            console.log('键盘测试工具初始化...');
+            document.getElementById('resetTestButton').addEventListener('click', resetTestStats);
+            
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioContext = new AudioContextClass();
+            } catch (e) {
+                console.error('无法创建 AudioContext:', e);
+            }
+            
+            // 初始化按键测试
+            initKeyTest();
+            
+            // 初始化音效选择
+            initSoundOptions();
+            
+            // 阻止网页滚动和特定功能键
+            preventPageScrolling();
+            
+            console.log('初始化完成！');
+        }
+        
+        function initKeyTest() {
+            // 监听物理键盘事件
+            document.addEventListener('keydown', handlePhysicalKeyDown);
+            document.addEventListener('keyup', handlePhysicalKeyUp);
+        }
+        
+        function initSoundOptions() {
+            document.querySelectorAll('.sound-option[data-sound]').forEach(option => {
+                option.addEventListener('click', function() {
+                    const sound = this.getAttribute('data-sound');
+                    setSoundType(sound);
+                });
+            });
+        }
+        
+        // 阻止网页滚动和特定功能键
+        function preventPageScrolling() {
+            document.addEventListener('keydown', function(event) {
+                const blockedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 
+                                   'Space', 'PageUp', 'PageDown', 'Home', 'End', 'Tab', 
+                                   'AltLeft', 'AltRight', 'ContextMenu', 'F5'];
+                
+                if (blockedKeys.includes(event.code) || event.code.startsWith('F')) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+        }
+        
+        // ==================== 按键测试功能 ====================
+        function handleKeyPress(keyId) {
+            console.log(`按键: ${keyId}`);
+            
+            // 获取按键元素
+            const keyElement = document.getElementById(keyId);
+            if (!keyElement) return;
+            
+            // 如果已经是双击状态，直接返回（保持双击状态）
+            if (keysDoubleClicked.has(keyId)) {
+                playKeySound();
+                return;
+            }
+            
+            // 检查是否为双击
+            const currentTime = new Date().getTime();
+            const lastClickTime = keyLastClickTime[keyId] || 0;
+            const timeDiff = currentTime - lastClickTime;
+            
+            // 更新最后点击时间
+            keyLastClickTime[keyId] = currentTime;
+            
+            // 如果是双击（在80ms内连续点击两次）
+            if (timeDiff < DOUBLE_CLICK_INTERVAL && timeDiff > 0) {
+                console.log(`检测到双击，间隔: ${timeDiff}ms`);
+                handleDoubleClick(keyId, keyElement);
+            } else {
+                handleSingleClick(keyId, keyElement);
+            }
+            
+            // 播放音效
+            playKeySound();
+            
+            // 更新统计
+            updateTestStats();
+        }
+        
+        function handleSingleClick(keyId, keyElement) {
+            // 如果已经是双击状态，不做任何改变
+            if (keysDoubleClicked.has(keyId)) {
+                return;
+            }
+            
+            // 移除双击状态
+            keyElement.classList.remove('double-click');
+            
+            // 添加单次点击状态
+            keyElement.classList.add('pressed');
+            keyElement.classList.add('key-pulse');
+            
+            // 添加到已按过的按键集合
+            if (!keysPressed.has(keyId)) {
+                keysPressed.add(keyId);
+            }
+            
+            // 300ms后移除脉冲特效（但保持绿色）
+            setTimeout(() => {
+                if (!keysDoubleClicked.has(keyId)) {
+                    keyElement.classList.remove('key-pulse');
+                }
+            }, 300);
+        }
+        
+        function handleDoubleClick(keyId, keyElement) {
+            // 移除单次点击状态
+            keyElement.classList.remove('pressed');
+            keyElement.classList.remove('key-pulse');
+            
+            // 添加双击状态（永久保持）
+            keyElement.classList.add('double-click');
+            
+            // 添加到双击集合
+            if (!keysDoubleClicked.has(keyId)) {
+                keysDoubleClicked.add(keyId);
+            }
+            
+            // 确保也在已按过的按键集合中
+            if (!keysPressed.has(keyId)) {
+                keysPressed.add(keyId);
+            }
+        }
+        
+        function handlePhysicalKeyDown(event) {
+            let keyId = keyMap[event.code];
+            
+            // 如果keyMap中没有找到，尝试其他方式
+            if (!keyId) {
+                // 特殊处理Shift、Ctrl、Alt、Meta键
+                if (event.key === 'Shift') {
+                    keyId = event.location === 2 ? 'key-ShiftRight' : 'key-ShiftLeft';
+                } else if (event.key === 'Control') {
+                    keyId = event.location === 2 ? 'key-CtrlRight' : 'key-CtrlLeft';
+                } else if (event.key === 'Alt') {
+                    keyId = event.location === 2 ? 'key-AltRight' : 'key-AltLeft';
+                } else if (event.key === 'Meta') {
+                    keyId = event.location === 2 ? 'key-WinRight' : 'key-WinLeft';
+                }
+            }
+            
+            if (keyId) {
+                handleKeyPress(keyId);
+            } else {
+                console.log('未找到键映射，无法处理按键:', event.code);
+            }
+        }
+        
+        function handlePhysicalKeyUp(event) {
+            // PrintScreen键特殊处理
+            if (event.code === 'PrintScreen') {
+                const keyId = keyMap[event.code];
+                if (keyId) handleKeyPress(keyId);
+            }
+        }
+        
+        function updateTestStats() {
+            const pressedCount = keysPressed.size;
+            const doubleClickCount = keysDoubleClicked.size;
+            
+            document.getElementById('keysTested').textContent = pressedCount;
+            document.getElementById('doubleClickCount').textContent = doubleClickCount;
+        }
+
+        function resetTestStats() {
+            keysPressed.clear();
+            keysDoubleClicked.clear();
+            keyLastClickTime = {};
+            document.querySelectorAll('.key').forEach(key => {
+                key.classList.remove('pressed', 'double-click', 'key-pulse');
+            });
+            updateTestStats();
+        }
+        
+        // ==================== 音效功能 ====================
+        function setSoundType(sound) {
+            currentSoundType = sound;
+            
+            document.querySelectorAll('.sound-option[data-sound]').forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-sound') === sound);
+            });
+        }
+        
+        function playKeySound() {
+            if (!audioContext) return;
+            
+            // 恢复音频上下文
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            switch (currentSoundType) {
+                case 'click':
+                    playClickSound();
+                    break;
+                case 'beep':
+                    playBeepSound();
+                    break;
+                case 'typewriter':
+                    playTypewriterSound();
+                    break;
+            }
+        }
+        
+        function playClickSound() {
+            // 创建点击音效
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            // 设置振荡器
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 800;
+            
+            // 设置音量包络（短促点击声）
+            const now = audioContext.currentTime;
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.3, now + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            
+            // 连接节点
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // 开始播放
+            oscillator.start(now);
+            oscillator.stop(now + 0.1);
+        }
+        
+        function playBeepSound() {
+            // 创建提示音效
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            // 设置振荡器
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 1000;
+            
+            // 设置音量包络
+            const now = audioContext.currentTime;
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.2, now + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0.2, now + 0.15);
+            gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
+            
+            // 连接节点
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // 开始播放
+            oscillator.start(now);
+            oscillator.stop(now + 0.2);
+        }
+        
+        function playTypewriterSound() {
+            // 创建打字机音效
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            // 设置振荡器
+            oscillator.type = 'square';
+            oscillator.frequency.value = 150;
+            
+            // 设置音量包络（打字机风格）
+            const now = audioContext.currentTime;
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.4, now + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            
+            // 连接节点
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // 开始播放
+            oscillator.start(now);
+            oscillator.stop(now + 0.15);
+        }
+        
+        // ==================== 页面加载初始化 ====================
+        window.addEventListener('load', init);
+    </script>
+<script>
+(() => {
+  const postHeight = () => {
+    const contentBottom = Array.from(document.body.children).reduce(
+      (bottom, element) => Math.max(bottom, element.getBoundingClientRect().bottom + window.scrollY),
+      0,
+    );
+    const paddingBottom = Number.parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+    const height = Math.ceil(Math.max(document.body.scrollHeight, contentBottom + paddingBottom));
+    window.parent.postMessage({ source: "cdxkyhd-pcbox-tool", type: "height", height }, "*");
+  };
+  window.addEventListener("load", postHeight);
+  window.addEventListener("resize", postHeight);
+  if ("ResizeObserver" in window) new ResizeObserver(postHeight).observe(document.documentElement);
+  setTimeout(postHeight, 250);
+})();
+</script>
+</body>
+</html>

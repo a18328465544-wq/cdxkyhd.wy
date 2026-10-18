@@ -9,6 +9,7 @@ function assert(condition: boolean, message: string) {
 
 const root = process.cwd();
 const app = readFileSync(join(root, "src/App.tsx"), "utf8");
+const homePage = readFileSync(join(root, "src/components/HomePage.tsx"), "utf8");
 const data = readFileSync(join(root, "src/data.ts"), "utf8");
 const gallery = readFileSync(join(root, "src/components/GallerySection.tsx"), "utf8");
 const inventory = readFileSync(join(root, "src/components/InventorySection.tsx"), "utf8");
@@ -16,7 +17,7 @@ const builder = readFileSync(join(root, "src/components/PcBuilderSection.tsx"), 
 const anchorIds = ["pricing", "inventory", "pc-builder", "process", "advantages", "workstation", "cases", "gallery", "faq", "contact"];
 
 assert(!app.includes("rootMargin: '900px 0px'"), "lazy sections should not preload 900px ahead");
-assert(app.includes("SectionFallback") && !app.includes("shouldRender ? undefined : minHeight"), "lazy placeholders should render visible fallback content");
+assert(homePage.includes("SectionFallback") && !homePage.includes("shouldRender ? undefined : minHeight"), "lazy placeholders should render visible fallback content");
 assert(app.includes("ContactModalFallback"), "contact modal should show a loading fallback on first open");
 assert(!data.includes("images.unsplash.com"), "gallery assets should not depend on Unsplash");
 assert(!gallery.includes("真实店面实拍"), "gallery should not claim real photos when using staged/local assets");

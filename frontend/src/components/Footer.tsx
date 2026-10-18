@@ -6,7 +6,9 @@ const FOOTER_LINKS = [
   { label: '现货库存', href: '/#inventory' },
   { label: '装机方案', href: '/build' },
   { label: 'SN 日期查询', href: '/gpu-sn.php' },
+  { label: '显卡性能天梯', href: '/gpu-ranking' },
   { label: '交流社区', href: '/community' },
+  { label: '硬件自检', href: '/tools' },
   { label: '到店指引', href: '/#contact' },
 ];
 

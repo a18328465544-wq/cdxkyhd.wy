@@ -7,3 +7,11 @@ coverage/
 .env*
 !.env.example
 /data/forum/
+/data/gpu-ranking-cache.json
+/data/gpu-ranking-cache.json.*.tmp
+/data/blender-ranking-cache.json
+/data/blender-ranking-cache.json.*.tmp
+/data/geekbench-ranking-cache.json
+/data/geekbench-ranking-cache.json.*.tmp
+/data/3dmark-ranking-cache.json
+/data/3dmark-ranking-cache.json.*.tmp

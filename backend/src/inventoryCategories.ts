@@ -1,4 +1,4 @@
-import type { InventoryItem } from "./server.js";
+import type { InventoryItem } from "./types/catalog.js";
 
 const ERP_INVENTORY_CATEGORY_ORDER: InventoryItem["category"][] = [
   "GPU",

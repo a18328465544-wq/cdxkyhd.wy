@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Cpu, MessageSquare, Phone, ScanLine, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { Menu, X, MessageSquare, Phone, ScanLine, ArrowUpRight, ChevronDown, Wrench, BarChart3 } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
 import { scrollToSectionTarget } from '../lib/navigation';
 import { Button } from './ui/controls';
@@ -14,8 +14,10 @@ export default function Header({ onOpenContact }: HeaderProps) {
   const isGpuSnPage = window.location.pathname === '/gpu-sn.php' || window.location.pathname === '/gpu-sn';
   const isCommunityPage = window.location.pathname === '/community' || window.location.pathname.startsWith('/community/');
   const isBuildPage = window.location.pathname === '/build' || window.location.pathname === '/build/';
-  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage;
-  const [activeSection, setActiveSection] = useState(isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : 'home');
+  const isHardwareToolsPage = window.location.pathname === '/tools' || window.location.pathname.startsWith('/tools/');
+  const isGpuRankingPage = window.location.pathname === '/gpu-ranking' || window.location.pathname === '/gpu-ranking/';
+  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage || isHardwareToolsPage || isGpuRankingPage;
+  const [activeSection, setActiveSection] = useState(isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
   const { phoneDisplay, phoneHref } = CONTACT_INFO;
 
   const navItems = [
@@ -27,7 +29,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
     { id: 'contact', name: '到店指引' }
   ];
   const primaryNavItems = navItems.filter((item) => item.id !== 'cases');
-  const moreIsActive = isCommunityPage || activeSection === 'cases';
+  const moreIsActive = isCommunityPage || isHardwareToolsPage || isGpuRankingPage || activeSection === 'cases';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,9 +92,12 @@ export default function Header({ onOpenContact }: HeaderProps) {
             onClick={() => scrollToSection('home')}
             className="flex shrink-0 items-center gap-2.5 whitespace-nowrap cursor-pointer group"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-500/10 group-hover:scale-105 transition duration-300">
-              <Cpu className="h-5 w-5" />
-            </div>
+            <img
+              src="/favicon.svg"
+              alt=""
+              aria-hidden="true"
+              className="h-10 w-10 rounded-lg shadow-sm shadow-blue-500/10 transition duration-300 group-hover:scale-105"
+            />
             <div>
               <span className="text-lg font-bold text-slate-900 tracking-tight sm:text-xl block whitespace-nowrap">
                 成都显卡一号店
@@ -145,6 +150,20 @@ export default function Header({ onOpenContact }: HeaderProps) {
                   className={`block rounded-md px-3 py-2.5 text-sm transition-colors ${isCommunityPage ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
                 >
                   交流社区
+                </a>
+                <a
+                  href="/gpu-ranking"
+                  aria-current={isGpuRankingPage ? 'page' : undefined}
+                  className={`flex items-center gap-2 rounded-md px-3 py-2.5 text-sm transition-colors ${isGpuRankingPage ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-700'}`}
+                >
+                  <BarChart3 className="h-4 w-4" aria-hidden="true" />显卡天梯
+                </a>
+                <a
+                  href="/tools"
+                  aria-current={isHardwareToolsPage ? 'page' : undefined}
+                  className={`flex items-center gap-2 rounded-md px-3 py-2.5 text-sm transition-colors ${isHardwareToolsPage ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-700'}`}
+                >
+                  <Wrench className="h-4 w-4" aria-hidden="true" />硬件自检
                 </a>
               </div>
             </details>
@@ -234,7 +253,25 @@ export default function Header({ onOpenContact }: HeaderProps) {
             </a>
           </div>
           <div className="border-y border-slate-100 bg-slate-50/70 px-4 py-3">
-            <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">独立查询工具</p>
+            <p className="mb-2 px-1 text-xs font-semibold text-slate-500">工具入口</p>
+            <a
+              href="/gpu-ranking"
+              aria-current={isGpuRankingPage ? 'page' : undefined}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mb-2 flex min-h-11 items-center justify-between rounded-xl border px-3.5 text-sm font-semibold transition ${isGpuRankingPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
+            >
+              <span className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-blue-600" />显卡性能天梯</span>
+              <ArrowUpRight className="h-4 w-4 text-slate-400" />
+            </a>
+            <a
+              href="/tools"
+              aria-current={isHardwareToolsPage ? 'page' : undefined}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mb-2 flex min-h-11 items-center justify-between rounded-xl border px-3.5 text-sm font-semibold transition ${isHardwareToolsPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
+            >
+              <span className="flex items-center gap-2"><Wrench className="h-4 w-4 text-blue-600" />硬件自检</span>
+              <ArrowUpRight className="h-4 w-4 text-slate-400" />
+            </a>
             <a
               href="/gpu-sn.php"
               aria-current={isGpuSnPage ? 'page' : undefined}

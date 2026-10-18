@@ -6,6 +6,13 @@
 - `backend/`: Express API Gateway，负责对接 ERP 后端
 - `shared/`: 前后端共享 TypeScript 类型
 
+## 模块边界
+
+- 前端 `routes/` 管理独立页面路径与页面容器，首页内容由 `components/HomePage.tsx` 组合；页面仍按需加载。
+- 后端 `routes/` 按健康检查、跑分、SN、库存行情和装机拆分 API 注册；论坛路由继续独立维护。
+- `services/erpCatalogService.ts` 封装 ERP Open API 与商品映射；`services/mockCatalogStore.ts` 只用于未配置 ERP 时的开发回退。
+- 这是单体应用内的模块化拆分，不拆服务。真实库存与商品数据仍以 ERP 为准，论坛仍使用独立持久化目录。
+
 ## 本地启动
 
 ```bash
@@ -56,6 +63,13 @@ ERP_API_KEY=your-token
 
 解析结果会区分规则推算、部分识别、格式无效和待验证；只有已有依据的格式才返回日期范围。ERP 后续接入时应复用 `@cdxkyhd/shared` 解析引擎，避免维护第二份 SN 规则。
 
+## 显卡性能天梯数据源
+
+- 游戏 FPS 来自 Tom's Hardware；Blender Cycles 来自 Blender Open Data。两者仍按各自版本和测试项目独立展示。
+- Geekbench 7 Vulkan / OpenCL / CUDA 使用 Geekbench Browser API。需配置 `GEEKBENCH_BROWSER_API_KEY`，并在确认可展示成绩后将 `GEEKBENCH_REDISPLAY_ALLOWED=true`。后端按型号查询最近最多 100 条有效可见结果，分别取中位数，每 6 小时同步；显存型号、移动版及 D 版不会混配。
+- 3DMark Time Spy Graphics / Port Royal 不抓取公开网页。需将获得展示授权、仅含有效默认频率成绩的导出文件放到持久路径，并配置 `THREE_DMARK_RANKING_DATA_FILE` 和 `THREE_DMARK_REDISPLAY_ALLOWED=true`。文件格式为 JSON，顶层字段为 `schemaVersion: 1`、`sourceUrl`（3dmark.com URL）、`sourceUpdatedAt`（ISO 时间）、`filtering: "valid-stock-only"` 和 `models`；每款显卡包含 `model`、`timeSpyGraphicsScores` 与/或 `portRoyalScores` 数组。后端取每组分数的中位数并记录样本数，每 15 分钟检查文件变化。
+- 未配置授权或数据文件时，网站保留对应模式入口但显示待接入状态，不生成估算成绩。新增跑分不会和 FPS 混成一个总分。
+
 ## 玩家交流社区
 
 - 网站入口：`/community`；审核入口：`/community/manage`
@@ -73,3 +87,10 @@ npm run lint
 npm run build
 npm start
 ```
+
+## 网站访问统计
+
+- 在百度统计中添加网站并获取跟踪代码，将 `hm.js?` 后的 32 位站点 ID 配置到项目根目录 `.env` 的 `VITE_BAIDU_TONGJI_ID`。
+- 前端构建会读取根目录 `.env`；统计脚本只在生产构建中加载。单页应用的 History 路由会记录页面访问，首页锚点跳转不会重复计为页面访问。
+- 安装后在百度统计“主页 → 网站概况”查看今日 PV、UV、IP；在“报告 → 流量分析 → 网站流量趋势分析”按天查看趋势。
+- 统计从启用并发布代码后开始，不能补录启用前的数据。

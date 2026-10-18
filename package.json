@@ -14,7 +14,7 @@
     "dev:web": "npm run dev -w frontend",
     "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
     "start": "npm run start -w backend",
-    "test": "npm test -w backend && npm run test:pagination -w frontend && npm run test:review-fixes -w frontend && npm run test:inventory-categories -w frontend && npm run test:part-search -w frontend && npm run test:part-select-render -w frontend && npm run test:controls -w frontend && npm run test:contact -w frontend && npm run test:pricing -w frontend",
+    "test": "npm test -w backend && npm run test:pagination -w frontend && npm run test:review-fixes -w frontend && npm run test:inventory-categories -w frontend && npm run test:part-search -w frontend && npm run test:part-select-render -w frontend && npm run test:controls -w frontend && npm run test:contact -w frontend && npm run test:gpu-ranking -w frontend && npm run test:pricing -w frontend && npm run test:routes -w frontend",
     "lint": "npm run lint -w shared && npm run lint -w backend && npm run lint -w frontend",
     "clean": "rm -rf backend/dist frontend/dist shared/dist"
   },

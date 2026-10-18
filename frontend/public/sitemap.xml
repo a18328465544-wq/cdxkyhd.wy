@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://cdgpu.cn/</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/gpu-ranking</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/gpu-sn.php</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/build</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/tools</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/tools/keyboard</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/tools/mouse</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/tools/audio</loc>
+  </url>
+  <url>
+    <loc>https://cdgpu.cn/tools/monitor</loc>
+  </url>
+</urlset>
