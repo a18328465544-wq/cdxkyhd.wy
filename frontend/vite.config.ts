@@ -7,6 +7,8 @@ export default defineConfig(() => {
   const apiProxyTarget = process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:3001';
 
   return {
+    // The root .env is shared by the backend and frontend build; only VITE_ values are exposed to the browser.
+    envDir: path.resolve(__dirname, '..'),
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
