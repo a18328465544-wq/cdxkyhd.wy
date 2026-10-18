@@ -368,6 +368,18 @@ assert(
   "memory speed variants stay separate",
 );
 assert(
+  gpuIdentity("Radeon AI Pro R9700") === null,
+  "unrecognized Radeon PRO R9700 never becomes a Radeon R9 700",
+);
+assert(
+  gpuIdentity("Radeon R9 700") === null,
+  "invalid cached R9 model is rejected",
+);
+assert(
+  gpuIdentity("蓝宝石 R9390 8G")?.base === "R9390",
+  "known R9 short models remain recognized",
+);
+assert(
   resolveGpuRankingScore(
     GPU_RANKING_DATA[0],
     [

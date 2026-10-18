@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Check, Clock, Copy, MapPin, MessageSquare, Navigation, Phone } from 'lucide-react';
+import { ArrowUpRight, Check, Clock, Copy, MapPin, MessageSquare, Navigation, Phone, Store } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
+import { storeLinks } from '../lib/storeLinks';
 import { Button } from './ui/controls';
 import SectionHeader from './ui/SectionHeader';
 
@@ -113,6 +114,32 @@ export default function ContactSection({ onOpenContact }: ContactSectionProps) {
                 打电话
               </a>
             </div>
+
+            {storeLinks.length > 0 && (
+              <div className="mt-6 border-t border-slate-100 pt-5">
+                <h4 className="mb-3 text-sm font-medium text-slate-700">线上店铺</h4>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {storeLinks.map((link) => (
+                    <a
+                      key={link.id}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      data-erp-control="button"
+                      data-variant="secondary"
+                      data-size="md"
+                      className="w-full justify-between"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Store className="h-4 w-4 text-blue-600" />
+                        {link.label}
+                      </span>
+                      <ArrowUpRight className="h-4 w-4 text-slate-400" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col rounded-2xl bg-white p-6 ring-1 ring-slate-200 sm:p-8 lg:col-span-7">

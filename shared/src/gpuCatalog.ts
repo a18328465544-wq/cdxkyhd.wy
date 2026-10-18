@@ -54,7 +54,9 @@ export function gpuIdentity(name: string): GpuIdentity | null {
     /\bRX\s*(\d{3,4})(?!\d)\s*(XTX|GRE|XT|M\s*XT|M|S(?=\s|$))?/,
   );
   const vega = text.match(/\b(?:RX\s*)?VEGA\s*(56|64)\b/);
-  const r9 = text.match(/\bR9\s*(\d{3})\s*(X)?/);
+  const r9 = text.match(
+    /\bR9\s*(270|280|285|290|295|360|370|380|390)(?!\d)\s*(X)?/,
+  );
   const arc = text.match(/\bARC\s*([AB])\s*(\d{3})(?!\d)/);
   if (rtxPro) {
     const edition =

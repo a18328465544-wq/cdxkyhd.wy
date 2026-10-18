@@ -43,7 +43,20 @@ production server. Time Spy therefore uses a publicly retrieved and locally
 verified snapshot (source history: 2026-09-24). Automatic attempts respect the
 denial, retain that snapshot and report failure; no proxy or identity spoofing is
 used. UL's Steel Nomad page was directly reachable from the production server.
-Port Royal and Speed Way are not populated by either reference and remain pending.
+Speed Way is additionally populated from the ComputerBase editorial Speed Way
+chart (61 recognized models). Port Royal uses the public ComputerBase community
+GPU rating, not individual high scores (66 recognized models). Its published
+sample counts are retained. The rating includes overclocking, undervolting and
+different systems; its methodology is explicitly `community-rating`, never
+`review` or `public-median`. Do not use this as a strict factory-stock target.
+Source denials retain the reference and a per-project warning. Old runtime caches
+merge per project by successful-check time so they cannot erase newly added tests.
+Refreshes shrinking a previously populated test by more than 30% are rejected.
+
+Geekbench OpenCL and Vulkan public charts were checked on 2026-10-18, but direct
+requests from the development machine returned HTTP 403. No protection bypass,
+estimated CUDA result, or fabricated API credential is included. The existing
+configured Geekbench API path remains required for these scores.
 
 ## Optional 3DMark import
 

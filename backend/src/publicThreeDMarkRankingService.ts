@@ -23,6 +23,18 @@ export const PUBLIC_3DMARK_SOURCES = {
     name: "UL 官方公开中位数",
     methodology: "public-median" as const,
   },
+  speedWay: {
+    source:
+      "https://www.computerbase.de/artikel/grafikkarten/3dmark-speed-way-benchmark.88644/",
+    name: "ComputerBase 编辑部实测",
+    methodology: "review" as const,
+  },
+  portRoyal: {
+    source:
+      "https://www.computerbase.de/artikel/grafikkarten/3dmark-community-benchmark.97826/seite-4",
+    name: "ComputerBase 社区汇总（含超频）",
+    methodology: "community-rating" as const,
+  },
 };
 type PublicBenchmark = keyof typeof PUBLIC_3DMARK_SOURCES;
 const TESTS = Object.keys(PUBLIC_3DMARK_SOURCES) as PublicBenchmark[];
@@ -59,20 +71,53 @@ export function parsePublicThreeDMarkHtml(
     throw new Error("Public 3DMark page exceeded size limit");
   const $ = load(html);
   const models: GpuRankingScoreModel[] = [];
-  if (benchmark === "timeSpyGraphics") {
-    const chart = $("#diagramm-3dmark-time-spy");
+  if (benchmark !== "steelNomad") {
+    const selectors = {
+      timeSpyGraphics: {
+        id: "#diagramm-3dmark-time-spy",
+        title: /^3DMark\s*[–-]\s*Time Spy$/,
+        header: "Graphics Score:",
+      },
+      speedWay: {
+        id: "#diagramm-3dmark-speed-way",
+        title: /^3DMark\s*[–-]\s*Speed Way$/,
+        header: "Speedway Score:",
+      },
+      portRoyal: {
+        id: '.chart[data-title="Port Royal – GPU-Rating"]',
+        title: /^Port Royal\s*[–-]\s*GPU-Rating$/,
+        header: "Port Royal:",
+      },
+    };
+    const spec = selectors[benchmark];
+    const chart = $(spec.id);
     if (
-      !/^3DMark\s*[–-]\s*Time Spy$/.test(chart.attr("data-title") ?? "") ||
+      chart.length !== 1 ||
+      !spec.title.test(chart.attr("data-title") ?? "") ||
       chart.find(".chart__group").length !== 1 ||
-      chart.find(".chart__group-header").text().trim() !== "Graphics Score:"
+      chart.find(".chart__group-header").text().trim() !== spec.header
     )
-      throw new Error("Time Spy Graphics chart was not found");
-    chart.find(".chart__row").each((_, element) => {
+      throw new Error(
+        `${benchmark === "timeSpyGraphics" ? "Time Spy Graphics" : benchmark} chart was not found`,
+      );
+    chart.find(".chart__row:not(.chart__row--sub-item)").each((_, element) => {
+      const item = $(element).find(".chart__item").clone();
+      item.find("button").remove();
       const row = modelRow(
-        $(element).find(".chart__item").text().replace(/\s+/g, " ").trim(),
+        item.text().replace(/\s+/g, " ").trim(),
         $(element).find(".chart__label").attr("data-value"),
         benchmark,
       );
+      if (row && benchmark === "portRoyal") {
+        const count = $(element)
+          .find(".chart__sub-items-button")
+          .text()
+          .trim()
+          .match(/^(\d+) Einzelwerte?$/);
+        if (!count || Number(count[1]) < 1 || Number(count[1]) > 1_000_000)
+          throw new Error("Invalid Port Royal sample count");
+        row.samples = Number(count[1]);
+      }
       if (row) models.push(row);
     });
   } else {
@@ -107,7 +152,7 @@ export function parsePublicThreeDMarkHtml(
   if (unambiguous.length < 40)
     throw new Error("Public 3DMark models incomplete or ambiguous");
   let sourceUpdatedAt: string | null = null;
-  if (benchmark === "timeSpyGraphics") {
+  if (benchmark !== "steelNomad") {
     const months = [
       "Januar",
       "Februar",
@@ -140,6 +185,22 @@ export function parsePublicThreeDMarkHtml(
         dates.push(date);
     });
     sourceUpdatedAt = dates.sort().at(-1) ?? null;
+    if (!sourceUpdatedAt) {
+      const times = $(
+        "article time[datetime], .article-update time[datetime], time[itemprop='dateModified']",
+      )
+        .map((_, element) => $(element).attr("datetime"))
+        .get();
+      sourceUpdatedAt =
+        times
+          .filter(
+            (value) =>
+              Number.isFinite(Date.parse(value)) &&
+              Date.parse(value) <= Date.now(),
+          )
+          .sort((a, b) => Date.parse(a) - Date.parse(b))
+          .at(-1) ?? null;
+    }
   }
   return { models: unambiguous, sourceUpdatedAt };
 }
@@ -217,7 +278,11 @@ export class PublicThreeDMarkRankingService {
           !Number.isFinite(model.score) ||
           model.score <= 0 ||
           model.score > 1_000_000 ||
-          model.samples !== null
+          (model.benchmark === "portRoyal"
+            ? !Number.isInteger(model.samples) ||
+              (model.samples ?? 0) < 1 ||
+              (model.samples ?? 0) > 1_000_000
+            : model.samples !== null)
         )
           return;
         const key = `${model.benchmark}:${gpuModelKey(model.model)}`;
@@ -240,7 +305,29 @@ export class PublicThreeDMarkRankingService {
           return;
       }
       if (!parsed.models.length) return;
-      this.snapshot = parsed;
+      // An older runtime cache must not hide newly bundled benchmark projects.
+      const previous = this.snapshot;
+      if (!previous) this.snapshot = parsed;
+      else {
+        const sources = { ...previous.sources };
+        let models = [...previous.models];
+        for (const benchmark of TESTS) {
+          const next = parsed.sources?.[benchmark];
+          if (
+            !next ||
+            (sources[benchmark] &&
+              Date.parse(sources[benchmark]!.checkedAt) >
+                Date.parse(next.checkedAt))
+          )
+            continue;
+          sources[benchmark] = next;
+          models = [
+            ...models.filter((model) => model.benchmark !== benchmark),
+            ...parsed.models.filter((model) => model.benchmark === benchmark),
+          ];
+        }
+        this.snapshot = { ...parsed, models, sources };
+      }
     } catch {
       /* A missing cache must not replace the bundled, verified reference. */
     }
@@ -272,6 +359,11 @@ export class PublicThreeDMarkRankingService {
         const previous = models.filter(
           (model) => model.benchmark === benchmark,
         );
+        if (
+          previous.length >= 40 &&
+          parsed.models.length < previous.length * 0.7
+        )
+          throw new Error("源站成绩数量异常减少，保留完整快照");
         const modelChanged =
           JSON.stringify(previous) !== JSON.stringify(parsed.models);
         const now = new Date().toISOString();

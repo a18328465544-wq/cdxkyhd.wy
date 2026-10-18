@@ -39,7 +39,7 @@ export interface GpuRankingScoreModel {
 export interface GpuRankingBenchmarkSource {
   source: string;
   name: string;
-  methodology: "review" | "public-median";
+  methodology: "review" | "public-median" | "community-rating";
   sourceUpdatedAt: string | null;
   checkedAt: string;
   updatedAt: string;

@@ -473,7 +473,13 @@ export default function GpuRankingPage({
               className="w-full sm:w-56"
               options={RANKING_MODES.filter(
                 (item) => item.family === family,
-              ).map((item) => ({ value: item.value, label: item.label }))}
+              ).map((item) => ({
+                value: item.value,
+                label:
+                  family === "threeDMark"
+                    ? `${item.label} · ${data.threeDMarkSnapshot?.models.filter((model) => model.benchmark === item.value).length ?? 0}款`
+                    : item.label,
+              }))}
               value={mode}
               onValueChange={(value) => setMode(value as GpuRankingMode)}
             />
@@ -800,6 +806,16 @@ export default function GpuRankingPage({
               : "，稍后将自动重试。"}
           </p>
         )}
+        {benchmarkSource && (
+          <p className="mb-3 text-xs leading-5 text-slate-600">
+            {benchmarkSource.name} ·{" "}
+            {benchmarkSource.methodology === "community-rating"
+              ? "社区提交汇总，含超频、降压和不同整机配置，非原厂标准分"
+              : benchmarkSource.methodology === "review"
+                ? "编辑部统一平台测试，非用户平均分"
+                : "公开用户成绩中位数，非默认频率限定样本"}
+          </p>
+        )}
         {activeStatus?.refreshFailed && (
           <p role="alert" className="mb-3 text-sm text-amber-700">
             数据源本次检查失败，以下为上次有效成绩。
@@ -1037,10 +1053,12 @@ export default function GpuRankingPage({
                     : mode.startsWith("geekbench")
                       ? "Geekbench 各计算 API 独立比较；只展示已接入的有效成绩，每 6 小时检查。"
                       : benchmarkSource?.methodology === "review"
-                        ? "Time Spy Graphics 取自 ComputerBase 编辑部实测，不是 UL 用户平均分，也不是含 CPU 的总分。样本次数未公开，不推测次数；每 6 小时尝试检查，源站拒绝访问时保留核验快照。"
+                        ? `${modeLabel} 取自 ComputerBase 编辑部实测，不是 UL 用户平均分，也不是含 CPU 的总分。样本次数未公开，不推测次数；每 6 小时尝试检查，源站拒绝访问时保留核验快照。`
                         : benchmarkSource?.methodology === "public-median"
                           ? "Steel Nomad 取自 UL 官方公开硬件榜的用户成绩中位数，官网每日更新，本站每 6 小时检查。不限定默认频率，不能当作严格原厂基准；同名但分数存在歧义的条目不展示。样本数未公开。"
-                          : "仅比较同一 3DMark 项目显卡成绩，不使用含 CPU 的总分。未收录项目不推算。"}
+                          : benchmarkSource?.methodology === "community-rating"
+                            ? "Port Royal 取自 ComputerBase 社区公开的 GPU 汇总值，保留源站样本数；不是编辑部实测或原厂标准分。包含超频、降压、功耗调整和不同驱动/整机配置，不能据此直接判断硬件故障。每 6 小时尝试检查；失败保留核验快照。"
+                            : "仅比较同一 3DMark 项目显卡成绩，不使用含 CPU 的总分。未收录项目不推算。"}
               </p>
               <p className="mt-2">
                 D 版、笔记本版及明确区分的显存容量不混用成绩。样本少于 5

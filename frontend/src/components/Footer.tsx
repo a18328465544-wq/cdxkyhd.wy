@@ -1,5 +1,6 @@
 import React from 'react';
 import { Cpu } from 'lucide-react';
+import { storeLinks } from '../lib/storeLinks';
 
 const FOOTER_LINKS = [
   { label: '回收行情', href: '/#pricing' },
@@ -35,6 +36,17 @@ export default function Footer() {
           <nav aria-label="页脚导航" className="grid grid-cols-2 gap-x-12 gap-y-3 text-sm sm:grid-cols-3">
             {FOOTER_LINKS.map(link => (
               <a key={link.href} href={link.href} className="transition-colors hover:text-white">{link.label}</a>
+            ))}
+            {storeLinks.map((link) => (
+              <a
+                key={link.id}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="transition-colors hover:text-white"
+              >
+                {link.label}
+              </a>
             ))}
           </nav>
         </div>
