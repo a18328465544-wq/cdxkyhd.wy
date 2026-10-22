@@ -13,7 +13,9 @@ type SearchablePagePath =
   | "/tools/keyboard"
   | "/tools/mouse"
   | "/tools/audio"
-  | "/tools/monitor";
+  | "/tools/monitor"
+  | "/tools/hashrate-rental"
+  | "/tools/prl-mining";
 
 type SearchablePage = {
   path: SearchablePagePath;
@@ -29,10 +31,12 @@ type SearchablePage = {
 };
 
 const toolLinks = [
+  { text: "算力租赁计算器", href: "/tools/hashrate-rental" },
   { text: "键盘按键检测", href: "/tools/keyboard" },
   { text: "鼠标状态检测", href: "/tools/mouse" },
   { text: "耳机与音响检测", href: "/tools/audio" },
   { text: "显示器画面检测", href: "/tools/monitor" },
+  { text: "PRL 珍珠币挖矿计算器", href: "/tools/prl-mining" },
 ];
 
 const searchablePages: Record<SearchablePagePath, SearchablePage> = {
@@ -115,17 +119,19 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
   },
   "/tools": {
     path: "/tools",
-    heading: "电脑硬件在线自检工具",
-    intro: "按需打开键盘、鼠标、音频或显示器检测页面，在浏览器中完成基础功能检查。",
-    about: "电脑外设在线检测工具",
+    heading: "硬件工具与收益计算器",
+    intro: "提供算力租赁和 PRL 珍珠币挖矿两类独立计算器，分别计算成本、净收益与设备回本，也提供键盘、鼠标、音频和显示器检测。",
+    about: "算力成本测算与电脑外设在线检测",
     sections: [
       {
-        heading: "选择检测项目",
+        heading: "选择工具",
         items: [
-          { ...toolLinks[0], text: "键盘按键检测：检查按键响应与输入状态" },
-          { ...toolLinks[1], text: "鼠标状态检测：检查按键、滚轮、拖动与回报率" },
-          { ...toolLinks[2], text: "耳机与音响检测：播放声道与频率测试音" },
-          { ...toolLinks[3], text: "显示器画面检测：查看纯色、灰阶、渐变与运动图案" },
+          { ...toolLinks[0], text: "算力租赁计算器：核算租金、电费、净收益与保本报价" },
+          { ...toolLinks[5], text: "PRL 珍珠币挖矿计算器：测算产币、电费与设备回本" },
+          { ...toolLinks[1], text: "键盘按键检测：检查按键响应与输入状态" },
+          { ...toolLinks[2], text: "鼠标状态检测：检查按键、滚轮、拖动与回报率" },
+          { ...toolLinks[3], text: "耳机与音响检测：播放声道与频率测试音" },
+          { ...toolLinks[4], text: "显示器画面检测：查看纯色、灰阶、渐变与运动图案" },
         ],
       },
       {
@@ -201,6 +207,30 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
     ],
     related: [{ text: "其他硬件自检工具", href: "/tools" }, { text: "显示器检测", href: "/tools/monitor" }],
   },
+  "/tools/prl-mining": {
+    path: "/tools/prl-mining",
+    heading: "PRL 珍珠币挖矿计算器",
+    intro: "通过实测算力和单位算力日产出，或整组设备实际到账量，测算 PRL 日产量、电费、经营净收益与设备回本周期。",
+    about: "PRL 产出、经营成本与静态回本测算",
+    sections: [
+      { heading: "选择产出计算方式", paragraphs: ["按算力推算时，总算力等于单卡算力乘显卡数量；按运行小时、有效算力比例、软件抽水和矿池费折算净产出。", "实际到账模式填写整组设备一个自然日的净产币量，不再乘数量、时长或重复扣除矿池与软件费用。"] },
+      { heading: "费用与回本", paragraphs: ["运行时功耗包括显卡和整组配套设备；停挖时段使用整机停挖功耗。每日净收益等于产币折算金额减折算费、电费及其他每日费用。", "初始投入为整组设备的一次性总投入，除以正的每日经营净收益得到静态回本天数。计划期结余扣除一次初始投入，净收益不为正时无法回本。"] },
+      { heading: "数据口径", paragraphs: ["币价默认使用 CoinGecko 的 Pearl 最新人民币参考价并每分钟刷新，显示报价时间，支持手动改价。行情失败或过期时不自动用于测算；单位算力产出仍由用户填写。固定输入外推不计设备残值或未来产出、价格变化。"] },
+    ],
+    related: [{ text: "算力租赁计算器", href: "/tools/hashrate-rental" }, { text: "全部硬件工具", href: "/tools" }],
+  },
+  "/tools/hashrate-rental": {
+    path: "/tools/hashrate-rental",
+    heading: "算力租赁计算器",
+    intro: "选择租入算力或自有设备出租模式，核算租金、服务费、电费及其他周期费用；填写初始投入，查看每日净收益、静态回本周期与计划期资本回报。",
+    about: "算力租赁成本与收益测算",
+    sections: [
+      { heading: "计费方式与单位换算", paragraphs: ["支持每单位算力按小时、按天报价，以及本次订单总价。一天按 24 小时折算；切换计量单位或计费方式会同步换算报价，保持订单总额不变。", "GH/s、TH/s、PH/s 的换算仅适用于同一计算任务与计量标准，不能用于比较不同任务的性能。"] },
+      { heading: "费用与收入计算", paragraphs: ["服务费可按租金或收入收取，电费可按设备总功耗或单位算力功耗计算。已包含在租价内的费用不再重复填写。", "有效交付率只折算收入，租金与电费按全租期计算。附加成本高于收入时，即使租金为零也无法保本。所有收益假设均由用户填写。"] },
+      { heading: "设备投入与静态回本周期", paragraphs: ["自有设备模式不计租入成本，服务费按实际收入计算。购机和部署等一次性支出计入初始投入，不重复扣除。", "按本期净收益除以测算天数折算每日经营净收益，初始投入除以正的每日经营净收益得到静态回本天数。净收益非正时无法回本；计划期现金结余等于计划期经营净收益减初始投入。外推假设收入与成本不变、连续运行，不计设备残值。"] },
+    ],
+    related: [{ text: "全部硬件工具", href: "/tools" }, { text: "显卡性能天梯", href: "/gpu-ranking" }],
+  },
   "/tools/monitor": {
     path: "/tools/monitor",
     heading: "在线显示器画面检测",
@@ -238,6 +268,8 @@ export const SEARCHABLE_SEO_PAGE_PATHS = [
   "/tools/mouse",
   "/tools/audio",
   "/tools/monitor",
+  "/tools/hashrate-rental",
+  "/tools/prl-mining",
 ] as const;
 
 function normalizeSearchablePath(pathname: string): SearchablePagePath | null {

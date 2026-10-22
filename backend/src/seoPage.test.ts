@@ -72,7 +72,7 @@ test("searchable tool pages expose unique metadata, canonical URLs, and readable
   const tools = load(renderSearchablePageSeoHtml(appShell, "/tools"));
   assert.deepEqual(
     tools('#root a[href^="/tools/"]').map((_, link) => tools(link).attr("href")).get(),
-    ["/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor"],
+    ["/tools/hashrate-rental", "/tools/prl-mining", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor"],
   );
 });
 

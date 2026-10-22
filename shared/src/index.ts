@@ -66,4 +66,5 @@ export * from "./gpuSnDate.js";
 export * from "./gpuRankingModels.js";
 export * from "./gpuRankingTypes.js";
 export * from "./seoPages.js";
+export * from "./prlMarket.js";
 export * from "./gpuCatalog.js";

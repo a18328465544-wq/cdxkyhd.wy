@@ -15,6 +15,7 @@ import {createForumRouter, type ForumProductOption} from "./forumRoutes.js";
 import {ForumStore} from "./forumStore.js";
 import { createErpCatalogService } from "./services/erpCatalogService.js";
 import { mockCatalogStore } from "./services/mockCatalogStore.js";
+import { registerPrlMarketRoutes } from "./routes/prlMarketRoutes.js";
 import { registerHealthRoutes } from "./routes/healthRoutes.js";
 import { registerGpuRankingRoutes } from "./routes/gpuRankingRoutes.js";
 import { registerGpuSnRoutes } from "./routes/gpuSnRoutes.js";
@@ -122,6 +123,7 @@ async function startServer() {
   // ----------------------------------------------------
 
   registerHealthRoutes(app, ERP_BASE_URL ? "connected" : "mock-fallback");
+  registerPrlMarketRoutes(app);
 
   registerGpuRankingRoutes(app, {
     gpu: gpuRankingService,

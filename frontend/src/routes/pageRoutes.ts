@@ -32,8 +32,8 @@ const standalonePages: Record<StandalonePageId, StandalonePageRoute> = {
   },
   "hardware-tools": {
     id: "hardware-tools",
-    title: "硬件自检工具 - 成都显卡一号店",
-    fallbackLabel: "硬件自检",
+    title: "硬件工具与收益计算器 - 成都显卡一号店",
+    fallbackLabel: "硬件工具",
     fallbackHeight: "760px",
     prefetchHomeSections: true,
   },

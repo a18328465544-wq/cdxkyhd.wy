@@ -9,7 +9,9 @@ const FOOTER_LINKS = [
   { label: 'SN 日期查询', href: '/gpu-sn.php' },
   { label: '显卡性能天梯', href: '/gpu-ranking' },
   { label: '交流社区', href: '/community' },
-  { label: '硬件自检', href: '/tools' },
+  { label: '硬件工具', href: '/tools' },
+  { label: '算力租赁计算器', href: '/tools/hashrate-rental' },
+  { label: 'PRL 珍珠币挖矿计算器', href: '/tools/prl-mining' },
   { label: '到店指引', href: '/#contact' },
 ];
 
@@ -54,7 +56,7 @@ export default function Footer() {
         <div className="mt-12 border-t border-white/10 pt-6 text-xs leading-5 text-slate-500">
           <p>© {currentYear} 成都显卡一号店 版权所有</p>
           <p className="mt-2 max-w-3xl">
-            本站显卡回收价格与 AI 工作站配置参数仅供参考，最终报价以门店检测结果为准。因违规改装或极端用途（如超负荷挖矿）造成的损失由当事人自行承担。
+            本站显卡回收价格与 AI 工作站配置参数仅供参考，最终报价以门店检测结果为准。因违规改装或超负荷运行造成的损失由当事人自行承担。
           </p>
         </div>
       </div>

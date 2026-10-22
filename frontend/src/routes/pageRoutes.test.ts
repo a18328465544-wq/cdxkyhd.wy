@@ -11,6 +11,7 @@ test("resolves the existing standalone page paths and aliases", () => {
   assert.equal(resolveStandalonePage("/build/")?.id, "build");
   assert.equal(resolveStandalonePage("/tools/keyboard")?.id, "hardware-tools");
   assert.equal(resolveStandalonePage("/gpu-ranking/")?.id, "gpu-ranking");
+  assert.equal(resolveStandalonePage("/tools/hashrate-rental/")?.id, "hardware-tools");
 });
 
 test("only the hardware-tools route retains homepage section prefetch", () => {

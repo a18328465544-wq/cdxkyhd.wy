@@ -18,7 +18,8 @@
     "test:contact": "node --import tsx src/lib/contact.test.ts",
     "test:gpu-ranking": "node --import tsx src/data/gpuRanking.test.ts && node --import tsx --test src/components/gpuRankingRender.test.tsx",
     "test:pricing": "node --import tsx --test src/lib/pricing.test.ts",
-    "test:routes": "node --import tsx --test src/routes/pageRoutes.test.ts"
+    "test:routes": "node --import tsx --test src/routes/pageRoutes.test.ts",
+    "test:rental-calculator": "node --import tsx --test src/lib/rentalCalculator.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

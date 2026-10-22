@@ -163,7 +163,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
                   aria-current={isHardwareToolsPage ? 'page' : undefined}
                   className={`flex items-center gap-2 rounded-md px-3 py-2.5 text-sm transition-colors ${isHardwareToolsPage ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-700'}`}
                 >
-                  <Wrench className="h-4 w-4" aria-hidden="true" />硬件自检
+                  <Wrench className="h-4 w-4" aria-hidden="true" />硬件工具
                 </a>
               </div>
             </details>
@@ -269,7 +269,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               onClick={() => setMobileMenuOpen(false)}
               className={`mb-2 flex min-h-11 items-center justify-between rounded-xl border px-3.5 text-sm font-semibold transition ${isHardwareToolsPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
             >
-              <span className="flex items-center gap-2"><Wrench className="h-4 w-4 text-blue-600" />硬件自检</span>
+              <span className="flex items-center gap-2"><Wrench className="h-4 w-4 text-blue-600" />硬件工具</span>
               <ArrowUpRight className="h-4 w-4 text-slate-400" />
             </a>
             <a
