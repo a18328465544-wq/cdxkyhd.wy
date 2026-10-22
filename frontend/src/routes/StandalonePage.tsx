@@ -12,6 +12,7 @@ const PcBuilderSection = lazy(() => import("../components/PcBuilderSection"));
 const AiWorkstationSection = lazy(() => import("../components/AiWorkstationSection"));
 const HardwareToolsRouter = lazy(() => import("../components/tools/HardwareToolsRouter"));
 const GpuRankingPage = lazy(() => import("../components/GpuRankingPage"));
+const GpuDailyPage = lazy(() => import("../components/GpuDailyPage"));
 
 interface StandalonePageProps {
   route: StandalonePageRoute;
@@ -21,6 +22,8 @@ interface StandalonePageProps {
 export default function StandalonePage({ route, onOpenContact }: StandalonePageProps) {
   const content = (() => {
     switch (route.id) {
+      case "gpu-daily":
+        return <GpuDailyPage />;
       case "gpu-sn":
         return <GpuSnLookupSection />;
       case "community":

@@ -4,6 +4,7 @@ import { resolveStandalonePage } from "./pageRoutes";
 
 test("resolves the existing standalone page paths and aliases", () => {
   assert.equal(resolveStandalonePage("/") , null);
+  assert.equal(resolveStandalonePage("/gpu-daily/")?.id, "gpu-daily");
   assert.equal(resolveStandalonePage("/inventory"), null);
   assert.equal(resolveStandalonePage("/gpu-sn")?.id, "gpu-sn");
   assert.equal(resolveStandalonePage("/gpu-sn.php")?.id, "gpu-sn");

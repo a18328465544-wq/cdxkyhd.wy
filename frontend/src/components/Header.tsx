@@ -16,8 +16,9 @@ export default function Header({ onOpenContact }: HeaderProps) {
   const isBuildPage = window.location.pathname === '/build' || window.location.pathname === '/build/';
   const isHardwareToolsPage = window.location.pathname === '/tools' || window.location.pathname.startsWith('/tools/');
   const isGpuRankingPage = window.location.pathname === '/gpu-ranking' || window.location.pathname === '/gpu-ranking/';
-  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage || isHardwareToolsPage || isGpuRankingPage;
-  const [activeSection, setActiveSection] = useState(isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
+  const isGpuDailyPage = window.location.pathname.replace(/\/$/, '') === '/gpu-daily';
+  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage || isHardwareToolsPage || isGpuRankingPage || isGpuDailyPage;
+  const [activeSection, setActiveSection] = useState(isGpuDailyPage ? 'gpu-daily' : isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
   const { phoneDisplay, phoneHref } = CONTACT_INFO;
 
   const navItems = [
@@ -124,6 +125,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 {item.name}
               </button>
             ))}
+            <a href="/gpu-daily" aria-current={isGpuDailyPage ? 'page' : undefined} className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-medium xl:px-2.5 xl:text-sm ${isGpuDailyPage ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'}`}>显卡日报</a>
             <details className="group relative shrink-0">
               <summary
                 aria-label="更多页面"
@@ -243,6 +245,14 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 {item.name}
               </button>
             ))}
+            <a
+              href="/gpu-daily"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-current={isGpuDailyPage ? 'page' : undefined}
+              className={`block w-full rounded-xl px-4 py-3 text-base font-medium ${isGpuDailyPage ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
+            >
+              显卡日报 · 全新价格
+            </a>
             <a
               href="/community"
               onClick={() => setMobileMenuOpen(false)}

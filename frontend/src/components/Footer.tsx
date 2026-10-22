@@ -3,6 +3,7 @@ import { Cpu } from 'lucide-react';
 import { storeLinks } from '../lib/storeLinks';
 
 const FOOTER_LINKS = [
+  { label: '显卡日报 · 全新价格', href: '/gpu-daily' },
   { label: '回收行情', href: '/#pricing' },
   { label: '现货库存', href: '/#inventory' },
   { label: '装机方案', href: '/build' },

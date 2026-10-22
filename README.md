@@ -15,6 +15,8 @@
 
 ## 本地启动
 
+显卡日报新增入口 `/gpu-daily`，对接独立采价模块导出的公开报价文件。配置、展示规则与上线步骤见 [GPU_DAILY_INTEGRATION.md](GPU_DAILY_INTEGRATION.md)。
+
 ```bash
 npm install
 npm run dev

@@ -6,6 +6,7 @@ const pageUrl = "https://cdgpu.cn/gpu-ranking";
 const { title, description } = resolveSeoPage("/gpu-ranking")!;
 
 type SearchablePagePath =
+  | "/gpu-daily"
   | "/"
   | "/gpu-sn.php"
   | "/build"
@@ -36,6 +37,13 @@ const toolLinks = [
 ];
 
 const searchablePages: Record<SearchablePagePath, SearchablePage> = {
+  "/gpu-daily": {
+    path: "/gpu-daily", heading: "显卡日报 · 今日全新显卡价格",
+    intro: "按型号和显存分别查看 RTX 50 系列当天已核对的全新整卡采样最低挂牌价、商家和采价时间。",
+    about: "每日显卡价格与商家比较",
+    sections: [{ heading: "报价范围与更新", paragraphs: ["只比较已接入平台的全新整卡采样，二手和工包不混入；缺少有效报价时显示待更新，跨日隐藏过期价格。", "具体优惠资格、税费、运费、库存与保修以外部商家页面为准，报价不代表本店库存或本店售价。"] }],
+    related: [{ text: "显卡性能天梯", href: "/gpu-ranking" }, { text: "本店现货库存", href: "/#inventory" }],
+  },
   "/": {
     path: "/",
     heading: "成都显卡一号店",
@@ -229,6 +237,7 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
 };
 
 export const SEARCHABLE_SEO_PAGE_PATHS = [
+  "/gpu-daily",
   "/",
   "/gpu-sn.php",
   "/gpu-sn",
