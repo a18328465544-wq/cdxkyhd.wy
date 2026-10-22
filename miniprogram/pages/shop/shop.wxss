@@ -1,0 +1,142 @@
+.search-row {
+  display: flex;
+  gap: 14rpx;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-button {
+  width: 132rpx;
+  height: 88rpx;
+  margin: 0;
+  padding: 0;
+  line-height: 88rpx;
+}
+
+.category-scroll {
+  margin: 18rpx -28rpx 0;
+  white-space: nowrap;
+}
+
+.category-list {
+  display: inline-flex;
+  gap: 10rpx;
+  padding: 0 28rpx 4rpx;
+}
+
+.category-chip {
+  padding: 13rpx 20rpx;
+  border-radius: 99rpx;
+  background: #ffffff;
+  color: #6e7974;
+  font-size: 22rpx;
+}
+
+.category-chip.active {
+  background: #147d64;
+  color: #ffffff;
+}
+
+.result-label {
+  margin: 22rpx 4rpx 12rpx;
+  color: #7b8581;
+  font-size: 22rpx;
+}
+
+.product-card {
+  padding: 20rpx;
+}
+
+.product-main {
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.product-mark {
+  display: flex;
+  width: 82rpx;
+  height: 82rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14rpx;
+  background: #e8f1ee;
+  color: #147d64;
+  font-size: 21rpx;
+  font-weight: 700;
+}
+
+.product-info {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.product-title {
+  color: #27332e;
+  font-size: 26rpx;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.product-subtitle,
+.product-sku {
+  word-break: break-all;
+  color: #7c8682;
+  font-size: 21rpx;
+}
+
+.product-sku {
+  color: #929b97;
+  font-size: 19rpx;
+}
+
+.product-foot {
+  gap: 12rpx;
+  margin-top: 20rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #edf0ee;
+}
+
+.price-block {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.product-price {
+  color: #147d64;
+  font-size: 27rpx;
+  font-weight: 750;
+}
+
+.stock-text {
+  color: #7c8682;
+  font-size: 20rpx;
+}
+
+.inquire-button {
+  min-width: 160rpx;
+  height: 70rpx;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 14rpx;
+  font-size: 22rpx;
+  line-height: 70rpx;
+}
+
+.shop-note {
+  padding: 18rpx 6rpx;
+  color: #85908b;
+  font-size: 20rpx;
+  line-height: 1.6;
+}
+
+.pagination { gap: 20rpx; margin-top: 24rpx; font-size: 24rpx; }
+.page-button { width: 150rpx; height: 72rpx; margin: 0; padding: 0; line-height: 72rpx; }

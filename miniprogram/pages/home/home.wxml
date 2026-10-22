@@ -1,0 +1,47 @@
+<view class="page home-page">
+  <view class="masthead">
+    <text class="brand-kicker">GPU · DIGITAL MARKET</text>
+    <text class="masthead-title">数码圈工具站</text>
+    <text class="masthead-copy">看行情、做估价、挑好物</text>
+    <navigator class="market-cta" url="/pages/market/market" open-type="switchTab">
+      <text>查看显卡行情</text><text class="cta-arrow">›</text>
+    </navigator>
+  </view>
+
+  <view class="section-title"><text>行情速览</text><navigator class="link-text" url="/pages/market/market" open-type="switchTab">全部行情 ›</navigator></view>
+  <view wx:if="{{loading}}" class="surface empty">正在更新行情…</view>
+  <view wx:elif="{{error}}" class="surface empty">行情暂时无法加载，请稍后刷新</view>
+  <view wx:elif="{{!quotes.length}}" class="surface empty">暂无行情数据</view>
+  <navigator wx:for="{{quotes}}" wx:key="id" class="quote-preview surface" url="/pages/market/market" open-type="switchTab">
+    <view class="row quote-title-row">
+      <view class="quote-name-wrap"><text class="quote-name">{{item.model}}</text><text wx:if="{{item.variant}}" class="quote-variant">{{item.variant}}</text></view>
+      <text class="quote-date">{{item.dateText}}</text>
+    </view>
+    <view class="quote-values">
+      <view class="quote-value"><text class="quote-label">回收参考</text><text class="quote-price recycle">{{item.recycleText}}</text></view>
+    </view>
+  </navigator>
+
+  <view class="section-title"><text>实用工具</text><navigator class="link-text" url="/pages/tools/tools" open-type="switchTab">打开工具 ›</navigator></view>
+  <view class="tool-strip">
+    <navigator class="tool-tile" url="/pages/tools/tools" open-type="switchTab">
+      <text class="tool-index">01 / PRICE</text><text class="tool-name">显卡回收估价</text><text class="tool-hint">按回收报价估算总价</text>
+    </navigator>
+    <navigator class="tool-tile dark-tile" url="/pages/shop/shop" open-type="switchTab">
+      <text class="tool-index">02 / SHOP</text><text class="tool-name">在售数码好物</text><text class="tool-hint">查看库存与参考售价</text>
+    </navigator>
+  </view>
+
+  <view class="section-title"><text>精选在售</text><navigator class="link-text" url="/pages/shop/shop" open-type="switchTab">去选购 ›</navigator></view>
+  <view wx:if="{{error && !loading}}" class="surface empty">商品暂时无法加载，请稍后刷新</view>
+  <view wx:elif="{{!products.length && !loading}}" class="surface empty">暂时没有在售商品</view>
+  <navigator wx:for="{{products}}" wx:key="id" class="product-preview surface" url="/pages/inquiry/inquiry?productId={{item.id}}">
+    <view class="product-mark">{{item.categoryShort}}</view>
+    <view class="product-copy">
+      <text class="product-name">{{item.name}}</text>
+      <text class="product-meta">{{item.status}} · {{item.conditionLevel}}</text>
+    </view>
+    <text class="product-price">{{item.priceText}}</text>
+  </navigator>
+  <view class="footer-note">行情为门店回收参考报价，实际回收价以成色、配置和检测结果为准。</view>
+</view>

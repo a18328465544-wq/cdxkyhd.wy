@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/market/market",
+    "pages/tools/tools",
+    "pages/shop/shop",
+    "pages/inquiry/inquiry"
+  ],
+  "window": {
+    "navigationBarTitleText": "数码圈工具站",
+    "navigationBarBackgroundColor": "#f7f8fa",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f3f5f7",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#737b86",
+    "selectedColor": "#147d64",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/market/market", "text": "行情" },
+      { "pagePath": "pages/tools/tools", "text": "工具" },
+      { "pagePath": "pages/shop/shop", "text": "选购" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

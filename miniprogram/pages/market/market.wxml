@@ -1,0 +1,26 @@
+<view class="page">
+  <text class="page-title">显卡行情</text>
+  <text class="page-subtitle">查看门店更新的显卡回收参考价</text>
+
+  <view class="search-row">
+    <input class="input search-input" value="{{keyword}}" placeholder="搜索型号或版本" confirm-type="search" bindinput="onKeyword" bindconfirm="search" />
+    <button class="primary-button search-button" loading="{{loading}}" bindtap="search">搜索</button>
+  </view>
+  <view class="market-caption"><text>型号</text><text>回收参考</text></view>
+
+  <view wx:if="{{error && !loading}}" class="surface empty">行情暂时无法加载，请稍后刷新</view>
+  <view wx:elif="{{!rows.length && !loading}}" class="surface empty">没有匹配的行情报价</view>
+  <view wx:for="{{rows}}" wx:key="id" class="surface market-card">
+    <view class="row model-row">
+      <view class="model-heading"><text class="model-name">{{item.model}}</text><text wx:if="{{item.variant}}" class="variant-name">{{item.variant}}</text></view>
+      <text class="date-label">{{item.dateText}}</text>
+    </view>
+    <view class="price-columns">
+      <view class="price-column">
+        <text class="price-label">回收参考</text>
+        <text class="recycle-range">{{item.recycleText}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="disclaimer">回收参考价会随成色、版本、配件和市场变化，实际回收价以门店检测确认结果为准。</view>
+</view>

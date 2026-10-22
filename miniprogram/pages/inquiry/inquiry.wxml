@@ -1,0 +1,30 @@
+<view class="page">
+  <text class="page-title">询价 / 购买</text>
+  <text class="page-subtitle">联系门店确认成色、价格和交易方式</text>
+  <view wx:if="{{loading}}" class="surface empty">正在读取商品信息…</view>
+  <view wx:if="{{error}}" class="surface empty">{{error}}</view>
+  <view wx:if="{{product}}" class="surface product-summary">
+    <view class="product-mark">{{product.categoryShort}}</view>
+    <view class="product-info">
+      <text class="product-name">{{product.name}}</text>
+      <text class="product-meta">{{product.brand}} {{product.model}}</text>
+      <text class="product-price">{{product.priceText}}</text>
+      <text class="product-stock">{{product.status}} · {{product.conditionLevel}}</text>
+      <text wx:if="{{product.fullBox === true}}" class="product-meta">原盒齐全</text>
+      <text wx:if="{{product.inWarranty === true}}" class="product-meta">在保</text>
+      <text wx:if="{{product.repaired === true}}" class="danger-text">有维修记录</text>
+      <text wx:if="{{product.gpuRisk === true}}" class="danger-text">存在风险标记，购买前请向门店核实</text>
+      <text class="product-meta">库存编号 {{product.id}}</text>
+    </view>
+  </view>
+  <view wx:if="{{contact}}" class="inquiry-form">
+    <text class="field-label">门店电话</text>
+    <text>{{contact.phoneDisplay}}</text>
+    <text class="field-label">门店微信</text>
+    <text>{{contact.wechatId}}</text>
+    <button class="primary-button submit-button" bindtap="callStore">致电门店</button>
+    <button class="secondary-button submit-button" bindtap="copyWechat">复制微信号</button>
+    <button wx:if="{{product}}" class="secondary-button submit-button" bindtap="copyProduct">复制商品询价信息</button>
+    <text class="consent-note">报价及库存以门店确认结果为准，付款前请核对商品和交易方式。</text>
+  </view>
+</view>

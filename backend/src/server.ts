@@ -14,6 +14,7 @@ import { PublicThreeDMarkRankingService, PUBLIC_3DMARK_REFRESH_INTERVAL_MS } fro
 import {createForumRouter, type ForumProductOption} from "./forumRoutes.js";
 import {ForumStore} from "./forumStore.js";
 import { createErpCatalogService } from "./services/erpCatalogService.js";
+import { registerMiniprogramRoutes } from "./routes/miniprogramRoutes.js";
 import { mockCatalogStore } from "./services/mockCatalogStore.js";
 import { registerPrlMarketRoutes } from "./routes/prlMarketRoutes.js";
 import { registerGpuDailyRoutes } from "./routes/gpuDailyRoutes.js";
@@ -124,6 +125,7 @@ async function startServer() {
   // ----------------------------------------------------
 
   registerHealthRoutes(app, ERP_BASE_URL ? "connected" : "mock-fallback");
+  registerMiniprogramRoutes(app, { erpConnected: Boolean(ERP_BASE_URL), erp: erpCatalog });
   registerPrlMarketRoutes(app);
   registerGpuDailyRoutes(app, process.env.GPU_DAILY_PRICE_FILE
     ? path.resolve(process.env.GPU_DAILY_PRICE_FILE)

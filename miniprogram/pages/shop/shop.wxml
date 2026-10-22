@@ -1,0 +1,44 @@
+<view class="page">
+  <text class="page-title">选购数码</text>
+  <text class="page-subtitle">查看门店当前有货商品，联系门店确认购买</text>
+
+  <view class="search-row">
+    <input class="input search-input" value="{{keyword}}" placeholder="搜索商品、品牌、型号" confirm-type="search" bindinput="onKeyword" bindconfirm="search" />
+    <button class="primary-button search-button" loading="{{loading}}" bindtap="search">搜索</button>
+  </view>
+
+  <scroll-view wx:if="{{categories.length}}" class="category-scroll" scroll-x="true" show-scrollbar="false">
+    <view class="category-list">
+      <view wx:for="{{categories}}" wx:key="key" class="category-chip {{category === item.key ? 'active' : ''}}" data-category="{{item.key}}" bindtap="selectCategory">{{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="result-label">{{totalLabel}}</view>
+  <view wx:if="{{error && !loading}}" class="surface empty">商品暂时无法加载，请稍后刷新</view>
+  <view wx:elif="{{!products.length && !loading}}" class="surface empty">当前分类暂无在售商品</view>
+  <view wx:for="{{visibleProducts}}" wx:key="id" class="surface product-card" data-id="{{item.id}}" bindtap="openInquiry">
+    <view class="row product-main">
+      <view class="product-mark">{{item.categoryShort}}</view>
+      <view class="product-info">
+        <text class="product-title">{{item.name}}</text>
+        <text class="product-subtitle">{{item.brand || ''}} {{item.model || ''}}</text>
+        <text class="product-sku">库存编号 {{item.id}}</text>
+      </view>
+    </view>
+    <view class="row product-foot">
+      <view class="price-block">
+        <text class="product-price">{{item.priceText}}</text>
+        <text class="stock-text">{{item.status}} · {{item.conditionLevel}}</text>
+        <text wx:if="{{item.repaired === true}}" class="danger-text">有维修记录</text>
+        <text wx:if="{{item.gpuRisk === true}}" class="danger-text">存在风险标记</text>
+      </view>
+      <button class="secondary-button inquire-button" data-id="{{item.id}}" catchtap="openInquiry">询价 / 购买</button>
+    </view>
+  </view>
+  <view wx:if="{{pageCount > 1 && !error}}" class="row pagination">
+    <button class="secondary-button page-button" disabled="{{page <= 1}}" bindtap="previousPage">上一页</button>
+    <text>{{page}} / {{pageCount}}</text>
+    <button class="secondary-button page-button" disabled="{{page >= pageCount}}" bindtap="nextPage">下一页</button>
+  </view>
+  <view class="shop-note">联系门店确认最终价格、成色和付款方式。</view>
+</view>

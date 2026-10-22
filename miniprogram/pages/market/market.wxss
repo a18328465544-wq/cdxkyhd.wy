@@ -1,0 +1,91 @@
+.search-row {
+  display: flex;
+  gap: 14rpx;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-button {
+  width: 132rpx;
+  height: 88rpx;
+  margin: 0;
+  padding: 0;
+  line-height: 88rpx;
+}
+
+.market-caption {
+  display: flex;
+  justify-content: space-between;
+  margin: 24rpx 6rpx 12rpx;
+  color: #858e8b;
+  font-size: 21rpx;
+}
+
+.market-card {
+  padding: 22rpx;
+}
+
+.model-row {
+  align-items: flex-start;
+  gap: 14rpx;
+}
+
+.model-heading {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8rpx 12rpx;
+}
+
+.model-name {
+  color: #293431;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.variant-name,
+.date-label {
+  color: #858e8b;
+  font-size: 21rpx;
+}
+
+.date-label {
+  flex-shrink: 0;
+}
+
+.price-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16rpx;
+  margin-top: 22rpx;
+}
+
+.price-column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.price-label {
+  color: #7b8581;
+  font-size: 21rpx;
+}
+
+.recycle-range {
+  color: #bc6534;
+  font-size: 23rpx;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.disclaimer {
+  padding: 18rpx 6rpx 8rpx;
+  color: #858e8b;
+  font-size: 20rpx;
+  line-height: 1.6;
+}

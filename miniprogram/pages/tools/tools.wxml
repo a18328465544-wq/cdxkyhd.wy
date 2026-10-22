@@ -1,0 +1,33 @@
+<view class="page">
+  <text class="page-title">显卡回收估价</text>
+  <text class="page-subtitle">根据门店显卡回收报价，估算多件回收总价</text>
+
+  <view class="surface calculator">
+    <text class="field-label">显卡型号</text>
+    <picker wx:if="{{options.length}}" range="{{options}}" range-key="label" value="{{selectedIndex}}" bindchange="onQuoteChange">
+      <view class="picker-field">{{selectedQuote.label}}</view>
+    </picker>
+    <view wx:else class="picker-field muted">{{loading ? '正在加载行情…' : error ? '行情暂时不可用，请稍后重试' : '暂无可计算的行情'}}</view>
+
+    <text class="field-label">数量</text>
+    <view class="quantity-control">
+      <button class="step-button" bindtap="decrease">−</button>
+      <input class="quantity-input" type="number" value="{{quantity}}" bindinput="onQuantity" bindblur="onQuantityBlur" />
+      <button class="step-button" bindtap="increase">＋</button>
+    </view>
+
+    <view wx:if="{{selectedQuote}}" class="estimate-panel">
+      <text class="estimate-caption">回收参考总价 · {{quantity}} 件</text>
+      <text class="estimate-value">{{totalText}}</text>
+      <text class="unit-range">单件参考：{{unitText}}</text>
+      <text class="estimate-date">行情日期 {{selectedQuote.dateText}}</text>
+    </view>
+
+    <navigator class="primary-button inquiry-link" url="/pages/shop/shop" open-type="switchTab">查看在售商品</navigator>
+  </view>
+
+  <view class="tool-note surface">
+    <text class="note-title">测算说明</text>
+    <text class="note-copy">总价为当前回收报价乘以数量，不包含成色、版本、配件及检测差异。最终回收价以门店检测确认结果为准。</text>
+  </view>
+</view>

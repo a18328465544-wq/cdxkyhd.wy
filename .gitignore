@@ -16,3 +16,4 @@ coverage/
 /data/geekbench-ranking-cache.json.*.tmp
 /data/3dmark-ranking-cache.json
 /data/3dmark-ranking-cache.json.*.tmp
+/miniprogram/project.private.config.json

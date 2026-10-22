@@ -69,3 +69,4 @@ export * from "./seoPages.js";
 export * from "./prlMarket.js";
 export * from "./gpuCatalog.js";
 export * from "./gpuDailyPrices.js";
+export * from "./contact.js";

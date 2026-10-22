@@ -1,0 +1,101 @@
+.calculator {
+  padding: 24rpx;
+}
+
+.picker-field {
+  display: flex;
+  min-height: 88rpx;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0 22rpx;
+  border: 1rpx solid #e2e8e5;
+  border-radius: 12rpx;
+  background: #ffffff;
+  color: #27332e;
+  font-size: 24rpx;
+}
+
+.quantity-control {
+  display: flex;
+  height: 84rpx;
+  align-items: center;
+  border: 1rpx solid #e2e8e5;
+  border-radius: 12rpx;
+  background: #ffffff;
+}
+
+.step-button {
+  width: 84rpx;
+  height: 82rpx;
+  margin: 0;
+  padding: 0;
+  background: #f6f8f7;
+  color: #147d64;
+  font-size: 34rpx;
+  line-height: 82rpx;
+}
+
+.quantity-input {
+  flex: 1;
+  text-align: center;
+}
+
+.estimate-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-top: 26rpx;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  background: #eef6f3;
+}
+
+.estimate-caption,
+.estimate-date {
+  color: #63746d;
+  font-size: 22rpx;
+}
+
+.estimate-value {
+  color: #126c55;
+  font-size: 38rpx;
+  font-weight: 750;
+  word-break: break-all;
+}
+
+.unit-range {
+  color: #4e5f58;
+  font-size: 22rpx;
+}
+
+.estimate-date {
+  color: #81908a;
+  font-size: 20rpx;
+}
+
+.inquiry-link {
+  display: block;
+  margin-top: 24rpx;
+  padding: 20rpx;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.tool-note {
+  margin-top: 18rpx;
+}
+
+.note-title {
+  display: block;
+  color: #34413c;
+  font-size: 25rpx;
+  font-weight: 650;
+}
+
+.note-copy {
+  display: block;
+  margin-top: 12rpx;
+  color: #75807b;
+  font-size: 22rpx;
+  line-height: 1.65;
+}

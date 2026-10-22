@@ -1,0 +1,225 @@
+.home-page {
+  padding-top: 20rpx;
+}
+
+.masthead {
+  position: relative;
+  overflow: hidden;
+  padding: 32rpx 30rpx 28rpx;
+  border-radius: 18rpx;
+  background: #147d64;
+  color: #ffffff;
+}
+
+.brand-kicker {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 20rpx;
+  font-weight: 650;
+}
+
+.masthead-title {
+  display: block;
+  margin-top: 24rpx;
+  font-size: 44rpx;
+  font-weight: 750;
+}
+
+.masthead-copy {
+  display: block;
+  margin-top: 8rpx;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 25rpx;
+}
+
+.market-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 32rpx;
+  padding: 15rpx 18rpx 15rpx 22rpx;
+  border-radius: 10rpx;
+  background: #ffffff;
+  color: #11664f;
+  font-size: 24rpx;
+  font-weight: 650;
+}
+
+.cta-arrow {
+  font-size: 34rpx;
+  line-height: 24rpx;
+}
+
+.section-title {
+  margin-top: 32rpx;
+}
+
+.quote-preview {
+  padding: 22rpx;
+}
+
+.quote-title-row {
+  gap: 18rpx;
+}
+
+.quote-name-wrap {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 10rpx;
+}
+
+.quote-name {
+  word-break: break-all;
+  color: #293431;
+  font-size: 27rpx;
+  font-weight: 700;
+}
+
+.quote-variant,
+.quote-date {
+  color: #828c88;
+  font-size: 21rpx;
+}
+
+.quote-date {
+  flex-shrink: 0;
+}
+
+.quote-values {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14rpx;
+  margin-top: 20rpx;
+}
+
+.quote-value {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.quote-label {
+  color: #7b8581;
+  font-size: 21rpx;
+}
+
+.quote-price {
+  color: #147d64;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.quote-price.recycle {
+  color: #c16b36;
+}
+
+.tool-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14rpx;
+}
+
+.tool-tile {
+  display: flex;
+  min-height: 174rpx;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  background: #ffffff;
+}
+
+.dark-tile {
+  background: #263c36;
+  color: #ffffff;
+}
+
+.tool-index {
+  color: #76827d;
+  font-size: 18rpx;
+  font-weight: 700;
+}
+
+.dark-tile .tool-index,
+.dark-tile .tool-hint {
+  color: #c1d0cb;
+}
+
+.tool-name {
+  margin-top: 18rpx;
+  color: #25312d;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.dark-tile .tool-name {
+  color: #ffffff;
+}
+
+.tool-hint {
+  margin-top: 8rpx;
+  color: #78827e;
+  font-size: 20rpx;
+}
+
+.product-preview {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 18rpx;
+}
+
+.product-mark {
+  display: flex;
+  width: 76rpx;
+  height: 76rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  background: #e8f1ee;
+  color: #147d64;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.product-copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.product-name {
+  overflow: hidden;
+  color: #293431;
+  font-size: 24rpx;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-meta {
+  overflow: hidden;
+  color: #7c8682;
+  font-size: 20rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-price {
+  flex-shrink: 0;
+  color: #147d64;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.footer-note {
+  padding: 22rpx 6rpx 10rpx;
+  color: #87918d;
+  font-size: 20rpx;
+  line-height: 1.6;
+}
