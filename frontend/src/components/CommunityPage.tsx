@@ -307,7 +307,7 @@ export default function CommunityPage() {
 
   return (
     <div className="flex-1 bg-slate-50 pt-16 text-slate-900 sm:pt-20">
-      <main className="mx-auto max-w-7xl px-4 pb-16 pt-5 sm:px-6 sm:pt-7 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-8">
         {notice && (
           <div role="status" className="mb-4 flex items-center justify-between rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             <span>{notice}</span>
@@ -402,11 +402,11 @@ export default function CommunityPage() {
           </section>
         ) : (
           <>
-            <section className="mb-5 border-b border-slate-200 pb-5 sm:mb-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <section className="page-heading">
+              <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0">
-                  <h1 className="text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">显卡与装机交流</h1>
-                  <p className="mt-1.5 text-sm leading-6 text-slate-600">选卡、装机、二手检测与故障排查，分享真实经验。</p>
+                  <h1 className="page-title">显卡与装机交流</h1>
+                  <p className="page-description">选卡、装机、二手检测与故障排查，分享真实经验。</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 md:justify-end">
                   {accountActions}
@@ -423,7 +423,7 @@ export default function CommunityPage() {
                   <SearchInput aria-label="搜索话题、型号或标签" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="搜索话题、型号或标签" className="w-full lg:max-w-72 lg:shrink-0" />
               </div>
 
-              <p className="flex items-start gap-2 border-b border-slate-200 py-3 text-xs leading-5 text-slate-500">
+              <p className="flex items-start gap-2 border-b border-slate-200 py-3 text-xs leading-6 text-slate-600">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
                 <span>请勿发布手机号、完整 SN 或订单信息。内容审核后公开；账号名不会随帖子展示。</span>
               </p>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Package, RefreshCw, AlertTriangle, ShieldCheck, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
+import { Package, RefreshCw, AlertTriangle, ShieldCheck, ChevronDown, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import { buildInventoryCategoryTabs, InventoryCategoryTab } from "../lib/inventoryCategories";
 import { paginateItems } from "../lib/pagination";
-import { Button, SearchInput, SegmentedControl } from "./ui/controls";
+import { Button, SearchInput, Select, SegmentedControl } from "./ui/controls";
 import SectionHeader from "./ui/SectionHeader";
 
 interface InventoryItem {
@@ -21,6 +21,8 @@ interface InventoryItem {
   warehouseLocation?: string;
   specs: string;
   status: string;
+  pinCode?: string;
+  ramType?: string;
 }
 
 export default function InventorySection({ onOpenContact }: { onOpenContact: () => void }) {
@@ -47,7 +49,7 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
         setError("获取库存数据失败");
       }
     } catch (err) {
-      setError("无法连接到后端服务器API，请检查运行状态。");
+      setError("库存暂时无法读取，请稍后重试。");
     } finally {
       setLoading(false);
     }
@@ -83,7 +85,7 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
         : "bg-slate-100 text-slate-600";
 
   return (
-    <section className="border-t border-slate-200 bg-slate-50 py-16 sm:py-24">
+    <section className="border-t border-slate-200 bg-slate-50 py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="现货库存"
@@ -91,15 +93,22 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
           description="库存与门店系统同步。标注有货的商品可以到店自提，也可以当天顺丰发出。"
         />
 
-        <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="mb-6 flex flex-col gap-3">
+          <div className="sm:hidden">
+            <Select aria-label="选择库存类目" options={categoryTabs.map(cat => ({ value: cat.key, label: cat.label }))} value={selectedCategory} onValueChange={setSelectedCategory} />
+          </div>
+          <div className="hidden sm:block">
           <SegmentedControl
             label="库存类目"
-            className="w-full md:w-auto md:max-w-[60%]"
+            className="inventory-categories"
             options={categoryTabs.map(cat => ({ value: cat.key, label: cat.label }))}
             value={selectedCategory}
             onChange={setSelectedCategory}
           />
-          <div className="flex w-full items-center gap-2 md:w-80">
+          </div>
+          <div className="flex items-center justify-between gap-4 border-t border-slate-200 pt-3">
+          <span className="hidden text-sm text-slate-600 sm:block">{categoryTabs.find(cat => cat.key === selectedCategory)?.label} · {filteredItems.length} 件</span>
+          <div className="flex w-full items-center gap-2 sm:w-80">
             <div className="min-w-0 flex-1">
               <SearchInput
                 aria-label="搜索库存"
@@ -111,6 +120,7 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
             <Button onClick={fetchInventory} title="刷新库存" aria-label="刷新库存" size="icon">
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin text-blue-600" : ""}`} />
             </Button>
+          </div>
           </div>
         </div>
 
@@ -136,13 +146,13 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
           </div>
         ) : (
           <div>
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
               {pagination.pageItems.map(item => (
                 <article
                   key={item.id}
-                  className="flex flex-col rounded-2xl bg-white ring-1 ring-slate-200 transition hover:shadow-[0_16px_40px_-20px_rgba(15,23,42,0.3)] hover:ring-slate-300"
+                  className="flex flex-col rounded-lg border border-slate-200 bg-white transition-colors hover:border-slate-300"
                 >
-                  <div className="flex-1 p-5 sm:p-6">
+                  <div className="flex-1 p-5">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-sm text-slate-500">{item.categoryLabel || item.category}</span>
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusTone(item.status)}`}>
@@ -150,14 +160,12 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
                       </span>
                     </div>
 
-                    <h3 className="mt-3 min-h-14 text-lg font-semibold leading-7 text-slate-950 line-clamp-2">
+                    <h3 className="mt-3 min-h-14 break-words text-lg font-semibold leading-7 text-slate-950">
                       {item.name}
                     </h3>
-                    {item.specs && (
-                      <p className="mt-1 text-sm leading-6 text-slate-500 line-clamp-2">{item.specs}</p>
-                    )}
+                    {(item.pinCode || item.ramType) && <p className="mt-1 text-sm text-slate-600">{[item.pinCode, item.ramType].filter(Boolean).join(' · ')}</p>}
 
-                    <ul className="mt-4 flex flex-wrap gap-1.5 text-xs font-medium">
+                    <ul className="mt-3 flex flex-wrap gap-1.5 text-xs font-medium">
                       <li className="rounded-md bg-blue-50 px-2 py-1 text-blue-700">成色 {item.condition}</li>
                       {typeof item.fullBox === "boolean" && (
                         <li className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">{item.fullBox ? "箱说齐全" : "箱说不齐"}</li>
@@ -176,21 +184,26 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
                     </ul>
                   </div>
 
-                  <div className="flex items-end justify-between gap-3 border-t border-slate-100 px-5 py-4 sm:px-6">
+                  <div className="flex items-end justify-between gap-3 border-t border-slate-100 px-5 py-4">
                     <div className="min-w-0">
-                      <span className="block text-xs text-slate-500">到店自提价</span>
+                      <span className="block text-xs text-slate-600">{Number.isFinite(item.price) && item.price > 0 ? '到店自提价' : '价格待确认'}</span>
                       <span className="mt-1 block font-display text-2xl font-bold tabular-nums tracking-tight text-slate-950">
-                        ¥{item.price.toLocaleString("zh-CN")}
+                        {Number.isFinite(item.price) && item.price > 0 ? `¥${item.price.toLocaleString("zh-CN")}` : '微信询价'}
                       </span>
-                      {item.warehouseLocation && (
-                        <span className="mt-1 block truncate text-xs text-slate-400">库位 {item.warehouseLocation}</span>
-                      )}
                     </div>
                     <Button size="sm" onClick={onOpenContact} className="shrink-0">
                       <MessageSquare className="h-4 w-4 text-blue-600" />
-                      咨询这台
+                      咨询商品
                     </Button>
                   </div>
+                  <details className="group border-t border-slate-100 px-5">
+                    <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between text-xs font-medium text-slate-600 [&::-webkit-details-marker]:hidden">商品详情<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></summary>
+                    <dl className="space-y-2 pb-4 text-sm leading-6 text-slate-600">
+                      <div><dt className="font-medium text-slate-800">规格信息</dt><dd className="break-words">{item.specs || '暂未提供'}</dd></div>
+                      {item.warehouseLocation && <div className="flex flex-wrap gap-x-3"><dt className="font-medium text-slate-800">库位</dt><dd>{item.warehouseLocation}</dd></div>}
+                      <div className="flex flex-wrap gap-x-3"><dt className="font-medium text-slate-800">商品编号</dt><dd>{item.id}</dd></div>
+                    </dl>
+                  </details>
                 </article>
               ))}
             </div>

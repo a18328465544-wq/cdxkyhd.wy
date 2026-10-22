@@ -10,6 +10,7 @@ import {
   Plus,
   RefreshCw,
   Share2,
+  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { apiFetch } from "../lib/api";
@@ -157,6 +158,7 @@ export default function GpuRankingPage({
   const [memory, setMemory] = useState("0");
   const [budget, setBudget] = useState("0");
   const [search, setSearch] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [scoredOnly, setScoredOnly] = useState(true);
   const [limit, setLimit] = useState(50);
@@ -410,25 +412,21 @@ export default function GpuRankingPage({
   }
 
   return (
-    <main className="min-h-screen flex-1 bg-slate-50 pt-20 sm:pt-24">
+    <main className="min-h-screen flex-1 bg-slate-50 pt-24 sm:pt-28">
       <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-        <header className="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 py-6">
-          <div>
-            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-700">
-              <BarChart3 className="h-4 w-4" />
-              显卡数据库
-            </div>
-            <h1 className="text-3xl font-bold text-slate-950">显卡性能天梯</h1>
-            <p className="mt-2 text-sm text-slate-600">
+        <header className="page-heading">
+          <div className="min-w-0 flex-1">
+            <h1 className="page-title flex items-center gap-2.5"><BarChart3 className="h-6 w-6 text-blue-600" />显卡性能天梯</h1>
+            <p className="page-description">
               游戏帧数、渲染与计算成绩 · 门店现货
             </p>
           </div>
           <div className="flex items-center gap-2">
             <span
-              className={`text-xs ${inventoryState === "error" ? "text-amber-700" : "text-slate-500"}`}
+              className={`hidden text-xs sm:inline ${inventoryState === "error" ? "text-amber-700" : "text-slate-600"}`}
             >
               {inventoryState === "ready"
-                ? "ERP 库存已同步"
+                ? "门店库存已同步"
                 : inventoryState === "loading"
                   ? "库存同步中"
                   : "库存暂不可用"}
@@ -445,18 +443,18 @@ export default function GpuRankingPage({
                 className={`h-4 w-4 ${inventoryState === "loading" ? "animate-spin" : ""}`}
               />
             </Button>
-            <Button size="sm" onClick={onOpenContact}>
+            <Button size="sm" onClick={onOpenContact} title="咨询选卡" aria-label="咨询选卡" className="h-10 w-10 px-0! sm:w-auto sm:px-3!">
               <MessageSquare className="h-4 w-4" />
-              咨询选卡
+              <span className="sr-only sm:not-sr-only">咨询选卡</span>
             </Button>
           </div>
         </header>
 
         <section
           aria-label="天梯筛选"
-          className="space-y-4 border-b border-slate-200 py-5"
+          className="space-y-3 border-b border-slate-200 pb-4"
         >
-          <div className="flex flex-wrap items-center gap-3">
+          <div className={`grid items-center gap-3 sm:grid-cols-2 ${gameMode ? 'grid-cols-[minmax(0,1fr)_auto] xl:grid-cols-[auto_180px_auto_minmax(200px,1fr)]' : 'grid-cols-1 lg:grid-cols-[auto_220px_minmax(200px,1fr)]'}`}>
             <SegmentedControl
               label="成绩分类"
               options={FAMILIES}
@@ -466,11 +464,10 @@ export default function GpuRankingPage({
                   RANKING_MODES.find((item) => item.family === next)!.value,
                 )
               }
-              className="w-full sm:w-auto"
+              className={gameMode ? 'col-span-2 sm:col-span-1' : ''}
             />
-            <Select
+            <div className="min-w-0"><Select
               aria-label="测试项目"
-              className="w-full sm:w-56"
               options={RANKING_MODES.filter(
                 (item) => item.family === family,
               ).map((item) => ({
@@ -482,16 +479,17 @@ export default function GpuRankingPage({
               }))}
               value={mode}
               onValueChange={(value) => setMode(value as GpuRankingMode)}
-            />
+            /></div>
             {gameMode && (
               <SegmentedControl<GpuResolution>
                 label="游戏分辨率"
                 options={RESOLUTIONS}
                 value={resolution}
                 onChange={setResolution}
+                className="ranking-resolution"
               />
             )}
-            <div className="min-w-0 flex-1 basis-52">
+            <div className={gameMode ? 'col-span-2 min-w-0 sm:col-span-1' : 'min-w-0'}>
               <SearchInput
                 aria-label="搜索显卡型号"
                 placeholder="搜索型号，如 4080S、GTX 1080"
@@ -500,8 +498,8 @@ export default function GpuRankingPage({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <Select
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="w-[calc(50%-4px)] sm:w-36"><Select
               aria-label="显卡类型"
               options={Object.entries(KIND_NAMES).map(([value, label]) => ({
                 value,
@@ -509,8 +507,8 @@ export default function GpuRankingPage({
               }))}
               value={kind}
               onValueChange={setKind}
-            />
-            <Select
+            /></div>
+            <div className="w-[calc(50%-4px)] sm:w-36"><Select
               aria-label="显卡品牌"
               options={[
                 { value: "all", label: "全部品牌" },
@@ -521,7 +519,18 @@ export default function GpuRankingPage({
               ]}
               value={brand}
               onValueChange={setBrand}
-            />
+            /></div>
+            <Button variant="ghost" size="sm" aria-expanded={filtersOpen} aria-controls="ranking-advanced-filters" onClick={() => setFiltersOpen(open => !open)}>
+              <SlidersHorizontal className="h-4 w-4" />更多筛选{Number(memory !== '0') + Number(budget !== '0') > 0 && <span className="rounded bg-blue-50 px-1.5 text-xs text-blue-700">{Number(memory !== '0') + Number(budget !== '0')}</span>}
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
+            </Button>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600 sm:ml-auto">
+              <label className="flex min-h-10 items-center gap-2"><input type="checkbox" className="h-4 w-4 accent-blue-600" checked={scoredOnly} onChange={event => setScoredOnly(event.target.checked)} />仅看已有成绩</label>
+              <label className="flex min-h-10 items-center gap-2"><input type="checkbox" className="h-4 w-4 accent-blue-600" disabled={inventoryState !== 'ready'} checked={inStockOnly} onChange={event => setInStockOnly(event.target.checked)} />只看有货</label>
+            </div>
+          </div>
+          <div id="ranking-advanced-filters" className={filtersOpen ? 'grid grid-cols-1 gap-3 border-t border-slate-200 pt-3 sm:grid-cols-2 lg:max-w-xl' : 'hidden'}>
+            <label className="min-w-0 space-y-1.5"><span className="text-xs font-medium text-slate-600">最低显存</span>
             <Select
               aria-label="最低显存"
               options={[
@@ -534,6 +543,8 @@ export default function GpuRankingPage({
               value={memory}
               onValueChange={setMemory}
             />
+            </label>
+            <label className="min-w-0 space-y-1.5"><span className="text-xs font-medium text-slate-600">门店预算</span>
             <Select
               aria-label="门店预算"
               disabled={inventoryState !== "ready"}
@@ -547,31 +558,19 @@ export default function GpuRankingPage({
               value={budget}
               onValueChange={setBudget}
             />
-          </div>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-600">
-            <label className="flex min-h-9 items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-blue-600"
-                checked={scoredOnly}
-                onChange={(event) => setScoredOnly(event.target.checked)}
-              />
-              仅看已有成绩
             </label>
-            <label className="flex min-h-9 items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-blue-600"
-                disabled={inventoryState !== "ready"}
-                checked={inStockOnly}
-                onChange={(event) => setInStockOnly(event.target.checked)}
-              />
-              只看 ERP 有货
-            </label>
-            <span className="sm:ml-auto text-xs text-slate-500">
-              已收录 {catalog.length} 款 · 当前类型有成绩 {measuredCount} 款
-            </span>
           </div>
+          {(kind !== 'desktop' || brand !== 'all' || memory !== '0' || budget !== '0' || inStockOnly || !scoredOnly) && <div aria-label="已选筛选条件" className="flex flex-wrap items-center gap-2 pt-1">
+            {[
+              ...(kind !== 'desktop' ? [{ label: KIND_NAMES[kind as keyof typeof KIND_NAMES], clear: () => setKind('desktop') }] : []),
+              ...(brand !== 'all' ? [{ label: brand, clear: () => setBrand('all') }] : []),
+              ...(memory !== '0' ? [{ label: `${memory}GB 及以上`, clear: () => setMemory('0') }] : []),
+              ...(budget !== '0' ? [{ label: `¥${Number(budget).toLocaleString()} 以内`, clear: () => setBudget('0') }] : []),
+              ...(inStockOnly ? [{ label: '仅看有货', clear: () => setInStockOnly(false) }] : []),
+              ...(!scoredOnly ? [{ label: '包含待收录型号', clear: () => setScoredOnly(true) }] : []),
+            ].map(filter => <span key={filter.label} className="inline-flex items-center gap-1 rounded-md bg-blue-50 py-1 pl-2.5 pr-1 text-xs text-blue-800">{filter.label}<button type="button" onClick={filter.clear} aria-label={`清除筛选：${filter.label}`} title="清除筛选" className="flex h-7 w-7 items-center justify-center rounded hover:bg-blue-100"><X className="h-3.5 w-3.5" /></button></span>)}
+          </div>}
+          <p className="text-xs leading-5 text-slate-600">已收录 {catalog.length} 款 · 当前类型有成绩 {measuredCount} 款</p>
         </section>
 
         {selected.length > 0 && (
