@@ -10,6 +10,7 @@
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test:pagination": "node --import tsx src/lib/pagination.test.ts",
+    "test:performance": "node --import tsx --test src/lib/visiblePolling.test.ts src/lib/api.test.ts src/components/performanceRender.test.tsx",
     "test:review-fixes": "node --import tsx src/lib/review-fixes.test.ts",
     "test:inventory-categories": "node --import tsx src/lib/inventoryCategories.test.ts",
     "test:part-search": "node --import tsx --test src/lib/partSearch.test.ts",
@@ -32,7 +33,7 @@
     "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "vite": "^6.2.3"
+    "web-vitals": "^6.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
@@ -41,6 +42,6 @@
     "autoprefixer": "^10.4.21",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3"
+    "vite": "^6.4.5"
   }
 }

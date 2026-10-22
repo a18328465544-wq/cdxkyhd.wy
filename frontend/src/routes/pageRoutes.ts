@@ -39,7 +39,7 @@ const standalonePages: Record<StandalonePageId, StandalonePageRoute> = {
     title: "硬件工具与收益计算器 - 成都显卡一号店",
     fallbackLabel: "硬件工具",
     fallbackHeight: "760px",
-    prefetchHomeSections: true,
+    prefetchHomeSections: false,
   },
   "gpu-ranking": {
     id: "gpu-ranking",

@@ -1,6 +1,8 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import HeroSection from "./HeroSection";
+import PriceSection from "./PriceSection";
+import InventorySection from "./InventorySection";
 import Footer from "./Footer";
 import FloatingContactButton from "./FloatingContactButton";
 import { SectionFallback } from "./PageLoading";
@@ -8,8 +10,6 @@ import { scrollToSectionTarget } from "../lib/navigation";
 import PageQuestions from "./PageQuestions";
 
 const homeSectionLoaders = {
-  price: () => import("./PriceSection"),
-  inventory: () => import("./InventorySection"),
   process: () => import("./ProcessSection"),
   advantage: () => import("./AdvantageSection"),
   cases: () => import("./CaseSection"),
@@ -17,14 +17,11 @@ const homeSectionLoaders = {
   contact: () => import("./ContactSection"),
 };
 
-const PriceSection = lazy(homeSectionLoaders.price);
-const InventorySection = lazy(homeSectionLoaders.inventory);
 const ProcessSection = lazy(homeSectionLoaders.process);
 const AdvantageSection = lazy(homeSectionLoaders.advantage);
 const CaseSection = lazy(homeSectionLoaders.cases);
 const FAQSection = lazy(homeSectionLoaders.faq);
 const ContactSection = lazy(homeSectionLoaders.contact);
-const loadContactModal = () => import("./ContactModal");
 
 interface LazySectionProps {
   id: string;
@@ -69,16 +66,20 @@ function LazySection({ id, label, minHeight, children }: LazySectionProps) {
   );
 }
 
-export function prefetchHomePage() {
-  [...Object.values(homeSectionLoaders), loadContactModal].forEach((load) => void load());
-}
-
 interface HomePageProps {
   onOpenContact: () => void;
 }
 
 export default function HomePage({ onOpenContact }: HomePageProps) {
   const [estimateModel, setEstimateModel] = useState("NVIDIA RTX 4090");
+
+  useEffect(() => {
+    try {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      const target = id && document.getElementById(id);
+      if (target) scrollToSectionTarget(target, 80);
+    } catch { /* Ignore malformed external anchor links. */ }
+  }, []);
 
   const handleScrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -101,12 +102,12 @@ export default function HomePage({ onOpenContact }: HomePageProps) {
           estimateModel={estimateModel}
           onEstimateModelChange={setEstimateModel}
         />
-        <LazySection id="pricing" label="今日行情" minHeight="760px">
+        <div id="pricing">
           <PriceSection onOpenContact={onOpenContact} onEstimate={handleEstimate} />
-        </LazySection>
-        <LazySection id="inventory" label="实时库存" minHeight="760px">
+        </div>
+        <div id="inventory">
           <InventorySection onOpenContact={onOpenContact} />
-        </LazySection>
+        </div>
         <LazySection id="process" label="服务流程" minHeight="420px"><ProcessSection /></LazySection>
         <LazySection id="advantages" label="门店优势" minHeight="560px"><AdvantageSection /></LazySection>
         <LazySection id="cases" label="客户案例" minHeight="520px"><CaseSection /></LazySection>

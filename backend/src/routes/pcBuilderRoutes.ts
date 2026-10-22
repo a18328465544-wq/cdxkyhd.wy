@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import type { InventoryItem } from "../types/catalog.js";
+import { inventoryPickerItem, publicInventoryItem } from "../inventoryViews.js";
 
 interface PcBuilderRouteDependencies {
   getInventory(): InventoryItem[];
@@ -13,13 +14,13 @@ export function registerPcBuilderRoutes(app: Express, dependencies: PcBuilderRou
     if (dependencies.erpConnected) {
       try {
         const parts = await dependencies.fetchErpParts(req.query as Record<string, string | string[] | undefined>);
-        if (parts.length > 0) dependencies.replaceInventory(parts);
+        dependencies.replaceInventory(parts);
         return res.json({
           success: true,
           source: "erp-open-api",
           mode: "stocked-single-items",
           categories: ["CPU", "GPU", "Motherboard", "RAM", "SSD", "PSU", "Cooler", "Case"],
-          parts,
+          parts: parts.map(item => req.query.view === "picker" ? inventoryPickerItem(item) : publicInventoryItem(item)),
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : "ERP 装机配件接口请求失败";
@@ -30,7 +31,7 @@ export function registerPcBuilderRoutes(app: Express, dependencies: PcBuilderRou
     return res.json({
       success: true,
       categories: ["CPU", "GPU", "Motherboard", "RAM", "SSD", "PSU", "Cooler", "Case"],
-      parts: dependencies.getInventory(),
+      parts: dependencies.getInventory().map(item => req.query.view === "picker" ? inventoryPickerItem(item) : publicInventoryItem(item)),
     });
   });
 

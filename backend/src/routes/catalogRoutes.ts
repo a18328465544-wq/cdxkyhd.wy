@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { buildInventoryCategories } from "../inventoryCategories.js";
+import { inventoryAvailability, inventoryListItem, inventoryPagination, publicInventoryItem } from "../inventoryViews.js";
 import type { GpuPrice, InventoryItem } from "../types/catalog.js";
 import type { ErpInventoryCard, ErpInventorySummaryRow, ErpMarketQuote, ErpQueryValue } from "../types/erpCatalog.js";
 
@@ -29,43 +30,49 @@ export function registerCatalogRoutes(app: Express, dependencies: CatalogRouteDe
   const { erpConnected, inventory, prices, erp } = dependencies;
 
   app.get("/api/inventory", async (req, res) => {
+    const view = req.query.view;
+    const pagination = inventoryPagination(req.query);
+    if ((view !== undefined && view !== "list" && view !== "availability") || (view === "list" && !pagination)) {
+      return res.status(400).json({ success: false, error: "库存查询参数无效" });
+    }
+    if (req.query.detailId !== undefined && (typeof req.query.detailId !== "string" || req.query.detailId.length > 200)) {
+      return res.status(400).json({ success: false, error: "商品编号无效" });
+    }
+    const respond = (sourceItems: InventoryItem[], source?: string) => {
+      const categories = buildInventoryCategories(sourceItems);
+      let items = sourceItems;
+      if (req.query.category && req.query.category !== "All") items = items.filter(item => item.category.toLowerCase() === String(req.query.category).toLowerCase());
+      const search = String(req.query.search || "").trim().toLowerCase();
+      if (search) items = items.filter(item => `${item.name} ${item.specs}`.toLowerCase().includes(search));
+      if (req.query.inStock === "true") items = items.filter(item => item.quantity > 0);
+      if (req.query.detailId) {
+        items = items.filter(item => item.id === req.query.detailId);
+        if (!items.length) return res.status(404).json({ success: false, error: "该商品已不在当前库存，请刷新库存" });
+      }
+      const count = items.length;
+      const totalPages = pagination ? Math.max(1, Math.ceil(count / pagination.pageSize)) : 1;
+      const page = pagination ? Math.min(pagination.page, totalPages) : 1;
+      if (view === "list" && pagination) items = items.slice((page - 1) * pagination.pageSize, page * pagination.pageSize);
+      return res.json({ success: true, source, mode: "stocked-single-items", lastUpdated: new Date().toLocaleTimeString(), totalCount: count, count: items.length, categories,
+        ...(view === "list" && pagination ? { page, pageSize: pagination.pageSize, totalPages } : {}),
+        items: items.map(item => view === "list" ? inventoryListItem(item) : view === "availability" ? inventoryAvailability(item) : publicInventoryItem(item)),
+      });
+    };
     if (erpConnected) {
       try {
-        const rows = await erp.fetchStockedInventoryItems(req.query as Record<string, ErpQueryValue>);
+        // The ERP keyword matcher is narrower than the website's substring search.
+        const query = view === "list" ? { ...req.query, search: undefined, keyword: undefined } : req.query;
+        const rows = await erp.fetchStockedInventoryItems(query as Record<string, ErpQueryValue>);
         const items = rows.map(erp.mapCardToInventoryItem);
-        if (items.length > 0) inventory.replace(items);
-        return res.json({
-          success: true,
-          source: "erp-open-api",
-          mode: "stocked-single-items",
-          lastUpdated: new Date().toLocaleTimeString(),
-          totalCount: items.length,
-          count: items.length,
-          categories: buildInventoryCategories(items),
-          items,
-        });
+        if (!req.query.category && !req.query.search && !req.query.detailId) inventory.replace(items);
+        return respond(items, "erp-open-api");
       } catch (error) {
         const message = error instanceof Error ? error.message : "ERP 库存接口请求失败";
         return res.status(502).json({ success: false, error: message });
       }
     }
 
-    const { category, inStock } = req.query;
-    let filtered = [...inventory.get()];
-    if (category) {
-      filtered = filtered.filter((item) => item.category.toLowerCase() === (category as string).toLowerCase());
-    }
-    if (inStock === "true") filtered = filtered.filter((item) => item.quantity > 0);
-
-    const allItems = inventory.get();
-    return res.json({
-      success: true,
-      lastUpdated: new Date().toLocaleTimeString(),
-      totalCount: allItems.length,
-      count: filtered.length,
-      categories: buildInventoryCategories(allItems),
-      items: filtered,
-    });
+    return respond(inventory.get());
   });
 
   app.post("/api/inventory/update-stock", async (req, res) => {

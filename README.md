@@ -84,6 +84,8 @@ ERP_API_KEY=your-token
 
 ## 构建与检查
 
+性能预算、匿名性能采样、静态缓存和发布时的旧资源保留要求见 [PERFORMANCE.md](PERFORMANCE.md)。发布前还需运行 `npm test` 和 `npm run check:performance`。
+
 ```bash
 npm run lint
 npm run build

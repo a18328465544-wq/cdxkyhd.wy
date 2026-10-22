@@ -15,7 +15,8 @@ test("resolves the existing standalone page paths and aliases", () => {
   assert.equal(resolveStandalonePage("/tools/hashrate-rental/")?.id, "hardware-tools");
 });
 
-test("only the hardware-tools route retains homepage section prefetch", () => {
-  assert.equal(resolveStandalonePage("/tools")?.prefetchHomeSections, true);
+test("standalone tools never prefetch unrelated homepage sections", () => {
+  assert.equal(resolveStandalonePage("/tools")?.prefetchHomeSections, false);
+  assert.equal(resolveStandalonePage("/tools/hashrate-rental")?.prefetchHomeSections, false);
   assert.equal(resolveStandalonePage("/community")?.prefetchHomeSections, false);
 });

@@ -53,32 +53,43 @@ export default function PcBuilderSection() {
   const [quoteOpen, setQuoteOpen] = useState(false);
 
   // Fetch Parts catalog
-  const fetchParts = async () => {
+  const fetchParts = async (signal: AbortSignal) => {
     try {
-      const data = await apiFetch<{ success: boolean; parts: PartItem[] }>("/api/pc-parts");
-      if (data.success) {
+      const data = await apiFetch<{ success: boolean; parts: PartItem[] }>("/api/pc-parts?view=picker", { signal });
+      if (data.success && !signal.aborted) {
         setParts(data.parts);
       }
     } catch (err) {
-      console.error("加载配件数据失败:", err);
+      if (!signal.aborted) console.error("加载配件数据失败:", err);
     } finally {
-      setLoading(false);
+      if (!signal.aborted) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchParts();
+    const controller = new AbortController();
+    void fetchParts(controller.signal);
+    return () => controller.abort();
   }, []);
 
   // Recalculate build when selections modify
   useEffect(() => {
     if (loading) return;
+    if (![selectedCpuId, selectedGpuId, selectedMbId, selectedRamId, selectedSsdId, selectedPsuId, selectedCoolerId, selectedCaseId].some(Boolean)) {
+      setBuildData(null);
+      setCalculating(false);
+      return;
+    }
+    const controller = new AbortController();
+    setCalculating(true);
+    setBuildData(null);
 
     const calculateBuild = async () => {
       setCalculating(true);
       try {
         const data = await apiFetch<BuildResults & { success: boolean }>("/api/pc-builder/build", {
           method: "POST",
+          signal: controller.signal,
           body: JSON.stringify({
             cpuId: selectedCpuId || undefined,
             gpuId: selectedGpuId || undefined,
@@ -90,7 +101,7 @@ export default function PcBuilderSection() {
             caseId: selectedCaseId || undefined
           })
         });
-        if (data.success) {
+        if (data.success && !controller.signal.aborted) {
           setBuildData({
             totalPrice: data.totalPrice,
             totalWattageNeed: data.totalWattageNeed,
@@ -102,13 +113,14 @@ export default function PcBuilderSection() {
           });
         }
       } catch (err) {
-        console.error("计算整机账单参数出错:", err);
+        if (!controller.signal.aborted) console.error("计算整机账单参数出错:", err);
       } finally {
-        setCalculating(false);
+        if (!controller.signal.aborted) setCalculating(false);
       }
     };
 
-    calculateBuild();
+    const timer = window.setTimeout(() => void calculateBuild(), 150);
+    return () => { window.clearTimeout(timer); controller.abort(); };
   }, [
     selectedCpuId,
     selectedGpuId,

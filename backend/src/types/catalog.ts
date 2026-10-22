@@ -12,6 +12,7 @@ export interface InventoryItem {
   gpuRisk?: boolean;
   warehouseLocation?: string;
   specs: string;
+  publicSpecs?: string;
   status: string;
   pinCode?: string;
   ramType?: "DDR4" | "DDR5" | "ECC DDR5";

@@ -10,6 +10,7 @@ interface ErpCatalogConfig {
 export function createErpCatalogService(config: ErpCatalogConfig) {
   const ERP_BASE_URL = config.baseUrl?.replace(/\/+$/, "");
   const ERP_API_KEY = config.apiKey;
+  const pendingReads = new Map<string, Promise<unknown>>();
 
   type PaginatedErpResponse<T> = {
     data?: T[] | { data?: T[]; meta?: { total?: number; page?: number; pageSize?: number } };
@@ -40,19 +41,32 @@ export function createErpCatalogService(config: ErpCatalogConfig) {
     }
 
     const query = options.query?.toString();
-    const response = await fetch(`${baseUrl}${pathname}${query ? `?${query}` : ""}`, {
-      method: options.method ?? "GET",
-      headers: getErpHeaders(),
-      body: options.method && options.method !== "GET" ? JSON.stringify(options.body ?? {}) : undefined,
-    });
+    const url = `${baseUrl}${pathname}${query ? `?${query}` : ""}`;
+    const readOnly = !options.method || options.method === "GET";
+    if (readOnly && pendingReads.has(url)) return pendingReads.get(url) as Promise<T>;
+    if (!readOnly) pendingReads.clear();
+    const operation = (async () => {
+      const response = await fetch(url, {
+        method: options.method ?? "GET",
+        headers: getErpHeaders(),
+        body: options.method && options.method !== "GET" ? JSON.stringify(options.body ?? {}) : undefined,
+        signal: AbortSignal.timeout(8000),
+      });
 
-    const text = await response.text();
-    const payload = text ? JSON.parse(text) as T : ({} as T);
-    if (!response.ok) {
-      const message = (payload as { error?: { message?: string } })?.error?.message || `ERP Open API 请求失败：${response.status}`;
-      throw new Error(message);
+      const text = await response.text();
+      const payload = text ? JSON.parse(text) as T : ({} as T);
+      if (!response.ok) {
+        const message = (payload as { error?: { message?: string } })?.error?.message || `ERP Open API 请求失败：${response.status}`;
+        throw new Error(message);
+      }
+      return payload;
+    })();
+    if (readOnly && pendingReads.size < 128) pendingReads.set(url, operation);
+    try { return await operation; }
+    finally {
+      if (!readOnly) pendingReads.clear();
+      else if (pendingReads.get(url) === operation) pendingReads.delete(url);
     }
-    return payload;
   }
 
   function extractRows<T>(payload: PaginatedErpResponse<T>) {
@@ -153,6 +167,7 @@ export function createErpCatalogService(config: ErpCatalogConfig) {
       price: Math.round(Number(card.estSellPrice || card.marketPrice || 0)),
       quantity,
       specs: [card.brand, card.version, card.model, card.vram, card.sn, card.warehouseLocation].filter(Boolean).join(" | "),
+      publicSpecs: [card.brand, card.version, card.model, card.vram].filter(Boolean).join(" | "),
       wattage: inferWattage(name, category),
       ...mapErpInventoryPresentation(card),
     };

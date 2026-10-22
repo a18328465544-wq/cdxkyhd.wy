@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FAQ_DATA } from '../data';
 import { Plus } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import SectionHeader from './ui/SectionHeader';
 
 export default function FAQSection() {
@@ -38,20 +37,13 @@ export default function FAQSection() {
                   </span>
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
+                    <div
                       id={`faq-answer-${idx}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      hidden={!isOpen}
                       className="overflow-hidden"
                     >
                       <p className="max-w-3xl pb-6 pr-12 text-base leading-7 text-slate-600">{faq.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
               </div>
             );
           })}

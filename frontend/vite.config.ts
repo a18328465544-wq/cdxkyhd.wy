@@ -10,6 +10,7 @@ export default defineConfig(() => {
     // The root .env is shared by the backend and frontend build; only VITE_ values are exposed to the browser.
     envDir: path.resolve(__dirname, '..'),
     plugins: [react(), tailwindcss()],
+    build: { manifest: true },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),

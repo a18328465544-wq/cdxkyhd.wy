@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { startVisiblePolling } from "../lib/visiblePolling";
 import {
   ArrowUpRight,
   BarChart3,
@@ -158,6 +159,7 @@ export default function GpuRankingPage({
   const [memory, setMemory] = useState("0");
   const [budget, setBudget] = useState("0");
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [scoredOnly, setScoredOnly] = useState(true);
@@ -217,39 +219,29 @@ export default function GpuRankingPage({
       SOURCE_URLS[family as keyof typeof SOURCE_URLS]);
 
   useEffect(() => {
-    const abort = new AbortController();
-    let timer: number | undefined;
-    const refresh = async () => {
+    return startVisiblePolling(async signal => {
       try {
         const result = await apiFetch<RankingResponse>("/api/gpu-ranking", {
-          signal: abort.signal,
+          signal,
         });
         if (!result.success) throw new Error("GPU ranking unavailable");
-        if (abort.signal.aborted) return;
+        if (signal.aborted) return;
         setData(result);
         setDataState("ready");
-        timer = window.setTimeout(
-          () => void refresh(),
-          result.snapshot || result.blenderSnapshot ? 15 * 60_000 : 15_000,
-        );
+        return result.snapshot || result.blenderSnapshot ? 15 * 60_000 : 15_000;
       } catch {
-        if (abort.signal.aborted) return;
+        if (signal.aborted) return;
         setDataState("error");
-        timer = window.setTimeout(() => void refresh(), 30_000);
+        return 30_000;
       }
-    };
-    void refresh();
-    return () => {
-      abort.abort();
-      window.clearTimeout(timer);
-    };
+    }, 30_000);
   }, []);
 
   useEffect(() => {
     const abort = new AbortController();
     setInventoryState("loading");
     void apiFetch<{ success: boolean; items?: InventoryItem[] }>(
-      "/api/inventory",
+      "/api/inventory?view=availability&category=GPU",
       { signal: abort.signal },
     )
       .then((result) => {
@@ -347,8 +339,8 @@ export default function GpuRankingPage({
     selectedRows[0] ??
     allRows.find((row) => row.entry.kind === kind && row.value !== null);
   const baseValue = baseRow?.value ?? null;
-  const query = search.trim().toUpperCase().replace(/\s/g, "");
-  const queryIdentity = gpuIdentity(search);
+  const query = deferredSearch.trim().toUpperCase().replace(/\s/g, "");
+  const queryIdentity = gpuIdentity(deferredSearch);
   const rows = allRows
     .filter((row) => row.entry.kind === kind)
     .filter((row) => brand === "all" || row.entry.brand === brand)

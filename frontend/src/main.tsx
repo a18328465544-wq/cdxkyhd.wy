@@ -9,3 +9,8 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 );
+
+const metricSampleRate = Number(import.meta.env.VITE_PERFORMANCE_SAMPLE_RATE ?? 0.1);
+if (import.meta.env.PROD && Math.random() < Math.min(1, Math.max(0, metricSampleRate))) {
+  void import('./lib/performanceMetrics').then(module => module.startPerformanceMetrics()).catch(() => {});
+}

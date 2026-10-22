@@ -24,7 +24,7 @@ function isStoreOpen(now = new Date()): boolean {
 }
 
 export default function HeroSection({ onOpenContact, onScrollToSection, estimateModel, onEstimateModelChange }: HeroSectionProps) {
-  const prices = useGpuPrices();
+  const { prices, status: pricesStatus } = useGpuPrices();
   const [condition, setCondition] = useState<Condition>('perfect');
   const [brand, setBrand] = useState<BrandTier>('mid');
   const [optionsOpen, setOptionsOpen] = useState(false);
@@ -92,7 +92,7 @@ export default function HeroSection({ onOpenContact, onScrollToSection, estimate
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-lg font-semibold text-slate-950">30 秒估个价</h2>
-                <p className="mt-1 text-sm text-slate-500">按今日门店回收行情计算</p>
+                <p role="status" className="mt-1 text-sm text-slate-500">{pricesStatus === "loading" ? "正在读取门店行情…" : pricesStatus === "error" ? "行情暂不可用，请微信询价" : "按门店回收参考行情计算"}</p>
               </div>
               <span className="shrink-0 rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800">
                 限时加价 ¥50–200

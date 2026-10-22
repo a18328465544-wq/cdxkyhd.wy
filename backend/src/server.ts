@@ -23,6 +23,8 @@ import { registerGpuRankingRoutes } from "./routes/gpuRankingRoutes.js";
 import { registerGpuSnRoutes } from "./routes/gpuSnRoutes.js";
 import { registerCatalogRoutes } from "./routes/catalogRoutes.js";
 import { registerPcBuilderRoutes } from "./routes/pcBuilderRoutes.js";
+import { registerHttpPerformance, registerStaticFiles } from "./httpPerformance.js";
+import { registerPerformanceRoutes } from "./routes/performanceRoutes.js";
 import { renderGpuRankingSeoHtml, renderSearchablePageSeoHtml, SEARCHABLE_SEO_PAGE_PATHS } from "./seoPage.js";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
@@ -59,6 +61,7 @@ const {
 
 async function startServer() {
   const app = express();
+  registerHttpPerformance(app);
   const PORT = Number(process.env.PORT ?? 3001);
   const gpuRankingCacheFile = process.env.GPU_RANKING_CACHE_FILE
     ? path.resolve(process.env.GPU_RANKING_CACHE_FILE)
@@ -125,6 +128,7 @@ async function startServer() {
   // ----------------------------------------------------
 
   registerHealthRoutes(app, ERP_BASE_URL ? "connected" : "mock-fallback");
+  registerPerformanceRoutes(app, process.env.PERFORMANCE_DATA_DIR || path.resolve(currentDir, "../../data/performance"), process.env.PERFORMANCE_SITE_ORIGIN);
   registerMiniprogramRoutes(app, { erpConnected: Boolean(ERP_BASE_URL), erp: erpCatalog });
   registerPrlMarketRoutes(app);
   registerGpuDailyRoutes(app, process.env.GPU_DAILY_PRICE_FILE
@@ -238,17 +242,17 @@ async function startServer() {
         next(error);
       }
     });
-    app.use(express.static(frontendDist));
+    registerStaticFiles(app, frontendDist, process.env.STATIC_ASSET_FALLBACK_DIR);
     app.get("*", (req, res, next) => {
       if (req.path.startsWith("/api/")) {
         next();
         return;
       }
-      res.sendFile(path.join(frontendDist, "index.html"));
+      res.set("Cache-Control", "no-cache").sendFile(path.join(frontendDist, "index.html"));
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  app.listen(PORT, process.env.HOST || "0.0.0.0", () => {
     console.log(`[Express API Gateway] running on http://localhost:${PORT}`);
     console.log(`[Express API Gateway] ERP mode: ${ERP_BASE_URL ? ERP_BASE_URL : "mock fallback"}`);
     console.log(`[Express API Gateway] frontend: ${frontendDist || "not found"}`);

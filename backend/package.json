@@ -8,16 +8,18 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "lint": "tsc --noEmit -p tsconfig.json",
-    "test": "node --import tsx --test src/inventoryPresentation.test.ts src/inventoryCategories.test.ts src/gpuSnDate.test.ts src/gpuRankingService.test.ts src/blenderRankingService.test.ts src/geekbenchGpuRankingService.test.ts src/threeDMarkRankingService.test.ts src/publicThreeDMarkRankingService.test.ts src/seoPage.test.ts src/forumStore.test.ts src/forumSecurity.test.ts src/forumRoutes.test.ts src/routes/domainRoutes.test.ts src/routes/gpuDailyRoutes.test.ts src/routes/miniprogramRoutes.test.ts src/services/prlMarketService.test.ts"
+    "test": "node --import tsx --test src/httpPerformance.test.ts src/inventoryViews.test.ts src/routes/performanceRoutes.test.ts src/services/erpCatalogService.test.ts src/inventoryPresentation.test.ts src/inventoryCategories.test.ts src/gpuSnDate.test.ts src/gpuRankingService.test.ts src/blenderRankingService.test.ts src/geekbenchGpuRankingService.test.ts src/threeDMarkRankingService.test.ts src/publicThreeDMarkRankingService.test.ts src/seoPage.test.ts src/forumStore.test.ts src/forumSecurity.test.ts src/forumRoutes.test.ts src/routes/domainRoutes.test.ts src/routes/gpuDailyRoutes.test.ts src/routes/miniprogramRoutes.test.ts src/services/prlMarketService.test.ts"
   },
   "dependencies": {
     "@cdxkyhd/shared": "file:../shared",
     "cheerio": "^1.0.0",
+    "compression": "^1.8.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",

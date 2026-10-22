@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, RefreshCw, Store, Clock3, ShieldCheck } from "lucide-react";
 import { emptyDailyGpuPrices, normalizeDailyGpuPrices, type DailyGpuPrices, type DailyGpuRow } from "@cdxkyhd/shared";
 import { apiFetch } from "../lib/api";
+import { startVisiblePolling } from "../lib/visiblePolling";
 
 const time = (at: string) => new Date(at).toLocaleTimeString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false, hour: "2-digit", minute: "2-digit" });
 const money = (cents: number) => (cents / 100).toLocaleString("zh-CN", { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 });
@@ -37,23 +38,21 @@ export default function GpuDailyPage() {
   const [query, setQuery] = useState("");
   const [reload, setReload] = useState(0);
   useEffect(() => {
-    const controller = new AbortController();
-    let active = true;
-    const load = async () => {
+    return startVisiblePolling(async signal => {
       try {
-        const data = await apiFetch<DailyGpuPrices>("/api/gpu-daily", { signal: controller.signal, cache: "no-store" });
-        if (active) { setSource(data); setError(false); setNow(Date.now()); }
-      } catch { if (active) { setError(true); setSource(null); } }
-      finally { if (active) setLoading(false); }
-    };
-    void load();
-    const refresh = window.setInterval(load, 60000);
-    const tick = window.setInterval(() => setNow(Date.now()), 1000);
-    const visible = () => { if (document.visibilityState === "visible") { setNow(Date.now()); void load(); } };
-    document.addEventListener("visibilitychange", visible);
-    return () => { active = false; controller.abort(); window.clearInterval(refresh); window.clearInterval(tick); document.removeEventListener("visibilitychange", visible); };
+        const data = await apiFetch<DailyGpuPrices>("/api/gpu-daily", { signal, cache: "no-store" });
+        if (!signal.aborted) { setSource(data); setError(false); setNow(Date.now()); }
+      } catch { if (!signal.aborted) { setError(true); setSource(null); } }
+      finally { if (!signal.aborted) setLoading(false); }
+    }, 60_000);
   }, [reload]);
   const data = useMemo(() => source ? normalizeDailyGpuPrices(source, now) : emptyDailyGpuPrices("unavailable", now), [source, now]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setNow(Date.now()), Math.max(1, Date.parse(data.expires_at) - Date.now()));
+    const visible = () => { if (!document.hidden) setNow(Date.now()); };
+    document.addEventListener("visibilitychange", visible);
+    return () => { window.clearTimeout(timer); document.removeEventListener("visibilitychange", visible); };
+  }, [data.expires_at]);
   const rows = data.rows.filter(v => v.label.replace(/\s/g, "").toLowerCase().includes(query.replace(/\s/g, "").toLowerCase()));
   return <main className="flex-1 pb-16 pt-24 sm:pt-32">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
