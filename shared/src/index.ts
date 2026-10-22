@@ -68,3 +68,4 @@ export * from "./gpuRankingTypes.js";
 export * from "./seoPages.js";
 export * from "./prlMarket.js";
 export * from "./gpuCatalog.js";
+export * from "./gpuDailyPrices.js";

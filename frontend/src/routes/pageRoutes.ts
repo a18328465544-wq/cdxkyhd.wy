@@ -1,4 +1,4 @@
-export type StandalonePageId = "gpu-sn" | "community" | "build" | "hardware-tools" | "gpu-ranking";
+export type StandalonePageId = "gpu-sn" | "community" | "build" | "hardware-tools" | "gpu-ranking" | "gpu-daily";
 
 export interface StandalonePageRoute {
   id: StandalonePageId;
@@ -9,6 +9,10 @@ export interface StandalonePageRoute {
 }
 
 const standalonePages: Record<StandalonePageId, StandalonePageRoute> = {
+  "gpu-daily": {
+    id: "gpu-daily", title: "显卡日报 · 今日全新显卡价格 - 成都显卡一号店",
+    fallbackLabel: "显卡日报", fallbackHeight: "900px", prefetchHomeSections: false,
+  },
   "gpu-sn": {
     id: "gpu-sn",
     title: "显卡 SN 码查询生产日期 - 成都显卡一号店",
@@ -47,6 +51,7 @@ const standalonePages: Record<StandalonePageId, StandalonePageRoute> = {
 };
 
 export function resolveStandalonePage(pathname: string): StandalonePageRoute | null {
+  if (pathname === "/gpu-daily" || pathname === "/gpu-daily/") return standalonePages["gpu-daily"];
   if (pathname === "/gpu-sn.php" || pathname === "/gpu-sn") return standalonePages["gpu-sn"];
   if (pathname === "/community" || pathname.startsWith("/community/")) return standalonePages.community;
   if (pathname === "/build" || pathname === "/build/") return standalonePages.build;

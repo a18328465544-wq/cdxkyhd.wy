@@ -16,8 +16,9 @@ export default function Header({ onOpenContact }: HeaderProps) {
   const isBuildPage = window.location.pathname === '/build' || window.location.pathname === '/build/';
   const isHardwareToolsPage = window.location.pathname === '/tools' || window.location.pathname.startsWith('/tools/');
   const isGpuRankingPage = window.location.pathname === '/gpu-ranking' || window.location.pathname === '/gpu-ranking/';
-  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage || isHardwareToolsPage || isGpuRankingPage;
-  const [activeSection, setActiveSection] = useState(isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
+  const isGpuDailyPage = window.location.pathname.replace(/\/$/, '') === '/gpu-daily';
+  const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage || isHardwareToolsPage || isGpuRankingPage || isGpuDailyPage;
+  const [activeSection, setActiveSection] = useState(isGpuDailyPage ? 'gpu-daily' : isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
   const { phoneDisplay, phoneHref } = CONTACT_INFO;
 
   const navItems = [
@@ -29,7 +30,28 @@ export default function Header({ onOpenContact }: HeaderProps) {
     { id: 'contact', name: '到店指引' }
   ];
   const primaryNavItems = navItems.filter((item) => item.id !== 'cases');
-  const moreIsActive = isCommunityPage || isHardwareToolsPage || isGpuRankingPage || activeSection === 'cases';
+  const moreIsActive = isHardwareToolsPage || isGpuRankingPage || isGpuSnPage || activeSection === 'cases';
+  const toolLabel = isGpuRankingPage ? '显卡天梯' : isGpuSnPage ? 'SN 日期查询' : activeSection === 'cases' ? '客户案例' : '硬件工具';
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+        document.getElementById('mobile-menu-toggle-btn')?.focus();
+      }
+    };
+    const onResize = () => { if (window.innerWidth >= 1280) setMobileMenuOpen(false); };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('resize', onResize);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,6 +97,8 @@ export default function Header({ onOpenContact }: HeaderProps) {
   };
 
   return (
+    <>
+    {mobileMenuOpen && <button type="button" tabIndex={-1} aria-label="关闭导航菜单" onClick={() => setMobileMenuOpen(false)} className="fixed inset-x-0 bottom-0 top-16 z-30 bg-slate-950/20 sm:top-20 xl:hidden" />}
     <header
       id="main-app-header"
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
@@ -83,30 +107,32 @@ export default function Header({ onOpenContact }: HeaderProps) {
           : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative bg-white/95 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 sm:h-20 items-center justify-between">
           
           {/* Logo Brand Title */}
-          <div
+          <button
+            type="button"
             id="brand-logo-container"
             onClick={() => scrollToSection('home')}
-            className="flex shrink-0 items-center gap-2.5 whitespace-nowrap cursor-pointer group"
+            aria-label="成都显卡一号店首页"
+            className="flex shrink-0 items-center gap-2.5 whitespace-nowrap cursor-pointer group text-left"
           >
             <img
               src="/favicon.svg"
               alt=""
               aria-hidden="true"
-              className="h-10 w-10 rounded-lg shadow-sm shadow-blue-500/10 transition duration-300 group-hover:scale-105"
+              className="h-9 w-9 shrink-0 sm:h-10 sm:w-10"
             />
-            <div>
-              <span className="text-lg font-bold text-slate-900 tracking-tight sm:text-xl block whitespace-nowrap">
+            <span>
+              <span className="text-base font-bold text-slate-900 sm:text-xl block whitespace-nowrap">
                 成都显卡一号店
               </span>
               <span className="mt-0.5 block text-xs font-medium text-slate-600">
                 实体仓储 · 同城极速发货
               </span>
-            </div>
-          </div>
+            </span>
+          </button>
 
           {/* Desktop Navigation Linkages */}
           <nav id="desktop-navbar" aria-label="主导航" className="hidden xl:flex items-center gap-0.5">
@@ -124,33 +150,18 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 {item.name}
               </button>
             ))}
+            <a href="/gpu-daily" aria-current={isGpuDailyPage ? 'page' : undefined} className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-medium xl:px-2.5 xl:text-sm ${isGpuDailyPage ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'}`}>显卡日报</a>
+            <a href="/community" aria-current={isCommunityPage ? 'page' : undefined} className={`shrink-0 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium ${isCommunityPage ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'}`}>交流社区</a>
             <details className="group relative shrink-0">
               <summary
-                aria-label="更多页面"
+                aria-label="硬件工具与更多页面"
                 className={`flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-medium transition-colors marker:hidden [&::-webkit-details-marker]:hidden xl:px-2.5 xl:text-sm ${moreIsActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'}`}
               >
-                更多
+                {toolLabel}
                 <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
               </summary>
-              <div className="absolute right-0 top-full z-50 mt-2 min-w-36 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    scrollToSection('cases');
-                    event.currentTarget.closest('details')?.removeAttribute('open');
-                  }}
-                  aria-current={!isCommunityPage && activeSection === 'cases' ? 'location' : undefined}
-                  className={`block w-full rounded-md px-3 py-2.5 text-left text-sm transition-colors ${!isCommunityPage && activeSection === 'cases' ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
-                >
-                  客户案例
-                </button>
-                <a
-                  href="/community"
-                  aria-current={isCommunityPage ? 'page' : undefined}
-                  className={`block rounded-md px-3 py-2.5 text-sm transition-colors ${isCommunityPage ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
-                >
-                  交流社区
-                </a>
+              <div className="absolute right-0 top-full z-50 mt-2 min-w-44 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
+                <p className="px-3 py-2 text-xs font-medium text-slate-600">硬件查询与检测</p>
                 <a
                   href="/gpu-ranking"
                   aria-current={isGpuRankingPage ? 'page' : undefined}
@@ -158,6 +169,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 >
                   <BarChart3 className="h-4 w-4" aria-hidden="true" />显卡天梯
                 </a>
+                <a href="/gpu-sn.php" aria-current={isGpuSnPage ? 'page' : undefined} className={`flex min-h-11 items-center gap-2 rounded-md px-3 py-2.5 text-sm ${isGpuSnPage ? 'bg-blue-50 font-medium text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}><ScanLine className="h-4 w-4" />SN 日期查询</a>
                 <a
                   href="/tools"
                   aria-current={isHardwareToolsPage ? 'page' : undefined}
@@ -165,6 +177,9 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 >
                   <Wrench className="h-4 w-4" aria-hidden="true" />硬件工具
                 </a>
+                <div className="mx-2 mt-1 border-t border-slate-200 pt-1">
+                  <button type="button" onClick={event => { scrollToSection('cases'); event.currentTarget.closest('details')?.removeAttribute('open'); }} aria-current={!isCommunityPage && activeSection === 'cases' ? 'location' : undefined} className={`block min-h-11 w-full rounded-md px-1 py-2.5 text-left text-sm ${!isCommunityPage && activeSection === 'cases' ? 'font-medium text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>客户案例</button>
+                </div>
               </div>
             </details>
           </nav>
@@ -173,20 +188,12 @@ export default function Header({ onOpenContact }: HeaderProps) {
           <div id="header-actions" className="hidden shrink-0 items-center gap-2 xl:flex xl:gap-3">
             <a
               href={phoneHref}
+              title={phoneDisplay}
               className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-600 xl:px-3"
             >
               <Phone className="h-3.5 w-3.5 text-blue-600" />
-              {phoneDisplay}
-            </a>
-            <a
-              href="/gpu-sn.php"
-              aria-current={isGpuSnPage ? 'page' : undefined}
-              className={isGpuSnPage
-                ? 'hidden lg:flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 text-xs font-semibold text-blue-700 transition xl:px-3'
-                : 'hidden lg:flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 xl:px-3'}
-            >
-              <ScanLine className="h-3.5 w-3.5 text-blue-600" />
-              SN 日期查询
+              <span className="hidden 2xl:inline">{phoneDisplay}</span>
+              <span className="sr-only 2xl:hidden">电话联系 {phoneDisplay}</span>
             </a>
             <Button
               id="header-quick-estimate"
@@ -207,7 +214,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               onClick={onOpenContact}
               aria-label="微信估价"
               title="微信估价"
-              className="flex h-9 items-center justify-center gap-1 rounded-full bg-blue-600 px-3 text-xs font-bold text-white max-[360px]:w-9 max-[360px]:px-0"
+              className="flex h-10 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white max-[360px]:w-10 max-[360px]:px-0"
             >
               <MessageSquare className="h-3.5 w-3.5" />
               <span className="max-[360px]:sr-only">微信估价</span>
@@ -218,6 +225,8 @@ export default function Header({ onOpenContact }: HeaderProps) {
               size="icon"
               variant="ghost"
               aria-label={mobileMenuOpen ? "关闭菜单" : "打开菜单"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navbar-drawer"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -228,13 +237,13 @@ export default function Header({ onOpenContact }: HeaderProps) {
 
       {/* Mobile Drawer Navigation Panels */}
       {mobileMenuOpen && (
-        <div id="mobile-navbar-drawer" className="xl:hidden bg-white border-b border-slate-100 shadow-lg divide-y divide-slate-50 animate-fade-in">
-          <div className="px-3 py-4 space-y-1">
+        <nav id="mobile-navbar-drawer" aria-label="手机导航" className="site-mobile-menu xl:hidden bg-white border-y border-slate-200 shadow-lg divide-y divide-slate-200">
+          <div className="grid grid-cols-2 gap-1 px-3 py-3">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                className={`min-h-11 w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   activeSection === item.id
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -244,21 +253,29 @@ export default function Header({ onOpenContact }: HeaderProps) {
               </button>
             ))}
             <a
+              href="/gpu-daily"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-current={isGpuDailyPage ? 'page' : undefined}
+              className={`flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm font-medium ${isGpuDailyPage ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
+            >
+              显卡日报
+            </a>
+            <a
               href="/community"
               onClick={() => setMobileMenuOpen(false)}
               aria-current={isCommunityPage ? 'page' : undefined}
-              className={`block w-full rounded-xl px-4 py-3 text-base font-medium transition-colors ${isCommunityPage ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-700'}`}
+              className={`flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isCommunityPage ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-700'}`}
             >
               交流社区
             </a>
           </div>
           <div className="border-y border-slate-100 bg-slate-50/70 px-4 py-3">
-            <p className="mb-2 px-1 text-xs font-semibold text-slate-500">工具入口</p>
+            <p className="mb-2 px-1 text-xs font-semibold text-slate-600">硬件查询与检测</p>
             <a
               href="/gpu-ranking"
               aria-current={isGpuRankingPage ? 'page' : undefined}
               onClick={() => setMobileMenuOpen(false)}
-              className={`mb-2 flex min-h-11 items-center justify-between rounded-xl border px-3.5 text-sm font-semibold transition ${isGpuRankingPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
+              className={`mb-2 flex min-h-11 items-center justify-between rounded-lg border px-3.5 text-sm font-semibold transition ${isGpuRankingPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
             >
               <span className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-blue-600" />显卡性能天梯</span>
               <ArrowUpRight className="h-4 w-4 text-slate-400" />
@@ -267,7 +284,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               href="/tools"
               aria-current={isHardwareToolsPage ? 'page' : undefined}
               onClick={() => setMobileMenuOpen(false)}
-              className={`mb-2 flex min-h-11 items-center justify-between rounded-xl border px-3.5 text-sm font-semibold transition ${isHardwareToolsPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
+              className={`mb-2 flex min-h-11 items-center justify-between rounded-lg border px-3.5 text-sm font-semibold transition ${isHardwareToolsPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
             >
               <span className="flex items-center gap-2"><Wrench className="h-4 w-4 text-blue-600" />硬件工具</span>
               <ArrowUpRight className="h-4 w-4 text-slate-400" />
@@ -277,14 +294,14 @@ export default function Header({ onOpenContact }: HeaderProps) {
               aria-current={isGpuSnPage ? 'page' : undefined}
               onClick={() => setMobileMenuOpen(false)}
               className={isGpuSnPage
-                ? 'flex min-h-11 items-center justify-between rounded-xl border border-blue-200 bg-blue-50 px-3.5 text-sm font-semibold text-blue-700 transition'
-                : 'flex min-h-11 items-center justify-between rounded-xl border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700'}
+                ? 'flex min-h-11 items-center justify-between rounded-lg border border-blue-200 bg-blue-50 px-3.5 text-sm font-semibold text-blue-700 transition'
+                : 'flex min-h-11 items-center justify-between rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700'}
             >
               <span className="flex items-center gap-2"><ScanLine className="h-4 w-4 text-blue-600" />显卡 SN 出厂日期</span>
               <ArrowUpRight className="h-4 w-4 text-slate-400" />
             </a>
           </div>
-          <div className="p-4 bg-slate-50 space-y-3">
+          <div className="grid grid-cols-2 items-center gap-3 bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <Button
               id="mobile-drawer-contact-btn"
               onClick={() => {
@@ -292,22 +309,23 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 onOpenContact();
               }}
               variant="primary"
-              size="lg"
+              size="sm"
               className="w-full"
             >
               <MessageSquare className="h-4 w-4" />
-              立即微信估价 (3分钟出价)
+              微信咨询
             </Button>
             <a
               href={phoneHref}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-slate-700 active:scale-98"
+              className="flex min-h-11 items-center justify-center gap-1.5 text-sm font-medium text-slate-700"
             >
               <Phone className="h-4 w-4 text-blue-600" />
-              联系客服电话：{phoneDisplay}
+              {phoneDisplay}
             </a>
           </div>
-        </div>
+        </nav>
       )}
     </header>
+    </>
   );
 }

@@ -42,9 +42,9 @@ const TOOLS = [
 export default function ToolCenterPage() {
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-8">
-      <header className="border-b border-slate-200 pb-5">
-        <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">硬件工具</h1>
-        <p className="mt-2 text-sm text-slate-600">两类独立收益计算器与电脑外设检测</p>
+      <header className="page-heading">
+        <div><h1 className="page-title">硬件工具</h1>
+        <p className="page-description">两类独立收益计算器与电脑外设检测</p></div>
       </header>
 
       {[{ title: "收益计算器", tools: TOOLS.slice(0, 2) }, { title: "电脑外设检测", tools: TOOLS.slice(2) }].map(group => <section key={group.title} className="mt-6">
@@ -65,7 +65,7 @@ export default function ToolCenterPage() {
         </div>
       </section>)}
 
-      <aside className="mt-4 border-t border-slate-200 pt-3 text-xs leading-5 text-slate-500">
+      <aside className="mt-4 border-t border-slate-200 pt-3 text-xs leading-6 text-slate-600">
         计算与检测在浏览器本地进行，结果仅供参考。
       </aside>
     </main>

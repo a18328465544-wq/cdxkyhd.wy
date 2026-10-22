@@ -12,6 +12,7 @@ const PcBuilderSection = lazy(() => import("../components/PcBuilderSection"));
 const AiWorkstationSection = lazy(() => import("../components/AiWorkstationSection"));
 const HardwareToolsRouter = lazy(() => import("../components/tools/HardwareToolsRouter"));
 const GpuRankingPage = lazy(() => import("../components/GpuRankingPage"));
+const GpuDailyPage = lazy(() => import("../components/GpuDailyPage"));
 
 interface StandalonePageProps {
   route: StandalonePageRoute;
@@ -21,6 +22,8 @@ interface StandalonePageProps {
 export default function StandalonePage({ route, onOpenContact }: StandalonePageProps) {
   const content = (() => {
     switch (route.id) {
+      case "gpu-daily":
+        return <GpuDailyPage />;
       case "gpu-sn":
         return <GpuSnLookupSection />;
       case "community":
@@ -56,11 +59,11 @@ export default function StandalonePage({ route, onOpenContact }: StandalonePageP
   );
 
   return (
-    <div className={`flex min-h-screen flex-col font-sans text-slate-800 antialiased ${route.id === "build" ? "bg-white selection:bg-blue-500/25 selection:text-blue-900" : "bg-slate-50"}`}>
+    <div className={`flex min-h-screen flex-col font-sans text-slate-800 antialiased ${route.id === "build" ? "bg-white pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0 selection:bg-blue-500/25 selection:text-blue-900" : "bg-slate-50"}`}>
       <Header onOpenContact={onOpenContact} />
       {pageContent}
       <PageQuestions pathname={window.location.pathname} />
-      <Footer />
+      <Footer compact={route.id !== "build"} />
       {route.id === "build" && <FloatingContactButton onOpenContact={onOpenContact} />}
     </div>
   );
