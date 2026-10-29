@@ -1,4 +1,5 @@
 /** Public prices are an allowlisted snapshot, never the collector's admin state. */
+import { GPU_LAUNCH_PRICES, type GpuLaunchPrice } from "./gpuLaunchPrices.js";
 export const GPU_DAILY_MODELS = [
   ["5050", "RTX 5050", 8], ["5060", "RTX 5060", 8],
   ["5060ti8", "RTX 5060 Ti", 8], ["5060ti16", "RTX 5060 Ti", 16],
@@ -18,6 +19,7 @@ export interface DailyGpuOffer {
   observed_at: string;
   conditions: string[];
   terms: string;
+  specification?: string;
 }
 export interface DailyGpuRow {
   id: string;
@@ -27,6 +29,8 @@ export interface DailyGpuRow {
   status: "available" | "awaiting_review" | "unavailable";
   lowest: DailyGpuOffer | null;
   offers: DailyGpuOffer[];
+  launch_price: GpuLaunchPrice | null;
+  failure_reason: string | null;
 }
 export interface DailyGpuPrices {
   schema_version: 1;
@@ -35,14 +39,14 @@ export interface DailyGpuPrices {
   generated_at: string | null;
   expires_at: string;
   scope: string;
-  publication_policy: "confirmed_new_retail_only";
+  publication_policy: "confirmed_new_retail_only" | "validated_new_retail_auto";
   available_models: number;
   total_models: number;
   feed_status: "ready" | "unavailable" | "expired" | "invalid";
   rows: DailyGpuRow[];
 }
 const platforms = { pdd: "拼多多", taobao: "淘宝 / 天猫" };
-const scope = "已核对的当日全新整卡采样最低挂牌价，非全平台最低价或成交价";
+const scope = "当日规格、价格及店铺信息完整的全新整卡采样最低挂牌价，非全平台最低价或成交价";
 export const beijingPriceDate = (now = Date.now()) => new Date(now + 8 * 3600000).toISOString().slice(0, 10);
 
 export function emptyDailyGpuPrices(status: DailyGpuPrices["feed_status"] = "unavailable", now = Date.now()): DailyGpuPrices {
@@ -50,10 +54,11 @@ export function emptyDailyGpuPrices(status: DailyGpuPrices["feed_status"] = "una
   const expires = Date.parse(`${date}T00:00:00+08:00`) + 86400000;
   return {
     schema_version: 1, date, timezone: "Asia/Shanghai", generated_at: null,
-    expires_at: new Date(expires).toISOString(), scope, publication_policy: "confirmed_new_retail_only",
+    expires_at: new Date(expires).toISOString(), scope, publication_policy: "validated_new_retail_auto",
     available_models: 0, total_models: GPU_DAILY_MODELS.length, feed_status: status,
     rows: GPU_DAILY_MODELS.map(([id, model, memory_gb]) => ({ id, model, memory_gb,
-      label: `${model} ${memory_gb}GB`, status: "unavailable", lowest: null, offers: [] })),
+      label: `${model} ${memory_gb}GB`, status: "unavailable", lowest: null, offers: [],
+      launch_price: GPU_LAUNCH_PRICES[id] ?? null, failure_reason: null })),
   };
 }
 
@@ -77,7 +82,9 @@ function readOffer(value: unknown, date: string, generated: number, now: number)
     && !/https?:\/\/|token|cookie|password|账号|手机号|\d{11}/i.test(v)).slice(0, 12) : [];
   return { platform: value.platform, platform_name: platforms[value.platform], merchant: value.merchant,
     title: value.title, price_cents: Number(value.price_cents), currency: "CNY", url: value.url,
-    observed_at: value.observed_at, conditions, terms: "商家页面挂牌报价；优惠条件、运费及供货情况以商品页面为准" };
+    observed_at: value.observed_at, conditions,
+    specification: text(value.specification, 300) && !/https?:\/\/|token|cookie|password|账号|手机号/i.test(value.specification) ? value.specification : undefined,
+    terms: "商家页面挂牌报价；优惠条件、运费及供货情况以商品页面为准" };
 }
 
 /** Used again in the browser so an already-open tab cannot show yesterday as today. */
@@ -88,7 +95,7 @@ export function normalizeDailyGpuPrices(input: unknown, now = Date.now()): Daily
     return emptyDailyGpuPrices(input.feed_status, now);
   }
   if (!object(input) || input.schema_version !== 1 || input.timezone !== "Asia/Shanghai"
-    || input.publication_policy !== "confirmed_new_retail_only" || !timestamp(input.generated_at)
+    || !["confirmed_new_retail_only", "validated_new_retail_auto"].includes(String(input.publication_policy)) || !timestamp(input.generated_at)
     || !timestamp(input.expires_at) || !Array.isArray(input.rows)) return empty;
   const generated = Date.parse(input.generated_at);
   if (input.date !== empty.date || Date.parse(input.expires_at) <= now) return emptyDailyGpuPrices("expired", now);
@@ -100,7 +107,8 @@ export function normalizeDailyGpuPrices(input: unknown, now = Date.now()): Daily
     if (found.length !== 1) return row;
     const raw = found[0] as ObjectValue;
     if (raw.model !== row.model || raw.memory_gb !== row.memory_gb) return row;
-    if (raw.status !== "available") return { ...row, status: raw.status === "awaiting_review" ? "awaiting_review" as const : "unavailable" as const };
+    const failure_reason = text(raw.failure_reason, 300) && !/https?:\/\/|token|cookie|password|账号|手机号|\d{11}/i.test(raw.failure_reason) ? raw.failure_reason : null;
+    if (raw.status !== "available") return { ...row, failure_reason, status: raw.status === "awaiting_review" ? "awaiting_review" as const : "unavailable" as const };
     const offers: DailyGpuOffer[] = [];
     for (const candidate of Array.isArray(raw.offers) ? raw.offers.slice(0, 20) : []) {
       const offer = readOffer(candidate, empty.date, generated, now);

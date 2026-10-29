@@ -47,9 +47,9 @@ test("compact empty states contain neither a fake chart nor three empty statisti
   const summary = priceHistorySummary(null, ["pdd"]);
   assert.equal(renderToStaticMarkup(createElement(GpuPriceHistorySummary, { summary })), "");
   const empty = renderToStaticMarkup(createElement(GpuPriceHistoryPlaceholder, { state: "empty", message: "TEST 暂无已核对记录" }));
-  assert.ok(empty.includes("暂无已核对的历史报价")); assert.ok(!empty.includes("<canvas"));
+  assert.ok(empty.includes("暂无有效的历史报价")); assert.ok(!empty.includes("<canvas"));
   const error = renderToStaticMarkup(createElement(GpuPriceHistoryPlaceholder, { state: "error", message: "请稍后刷新" }));
-  assert.ok(error.includes('role="alert"')); assert.ok(!error.includes("暂无已核对的历史报价"));
+  assert.ok(error.includes('role="alert"')); assert.ok(!error.includes("暂无有效的历史报价"));
   const populated = renderToStaticMarkup(createElement(GpuPriceHistorySummary, { summary: { recordedDays: 2, latestDay: "2026-10-28", latestCents: 432140, minCents: 420000, maxCents: 440000 } }));
   assert.ok(populated.includes("报价日期 2026-10-28")); assert.ok(!populated.includes("今日"));
   assert.ok(populated.includes("text-[32px]")); assert.ok(populated.includes("¥4,321.40"));

@@ -29,7 +29,7 @@ export function GpuPriceHistoryPlaceholder({ state, message }: { state: "loading
   return <div role={state === "error" ? "alert" : "status"} className={`flex h-full flex-col items-center justify-center px-4 text-center ${state === "loading" ? "bg-slate-50" : ""}`}>
     {state === "loading" ? <p className="text-sm text-slate-500">正在读取历史报价…</p> : <>
       <ChartNoAxesCombined className="mb-2 h-6 w-6 text-slate-400" aria-hidden="true" />
-      <p className="text-sm font-semibold text-slate-800">{state === "error" ? "历史报价暂时无法读取" : state === "unselected" ? "未选择报价平台" : "暂无已核对的历史报价"}</p>
+      <p className="text-sm font-semibold text-slate-800">{state === "error" ? "历史报价暂时无法读取" : state === "unselected" ? "未选择报价平台" : "暂无有效的历史报价"}</p>
       {message && <p className="mt-1.5 max-w-md text-xs leading-5 text-slate-500">{message}</p>}
     </>}
   </div>;
@@ -64,7 +64,7 @@ export default function GpuPriceHistorySection({ model, onModelChange, refreshTo
 
   return <section id="gpu-daily-history" aria-labelledby="gpu-history-title" className="mt-8 min-w-0 border-y border-slate-200 py-4 sm:py-6">
     <div className="flex items-start justify-between gap-3">
-      <div><h2 id="gpu-history-title" className="text-lg font-bold leading-6 text-slate-900">全新售价走势</h2><p className="mt-0.5 text-xs leading-5 text-slate-500">已核对采样 · 人民币</p></div>
+      <div><h2 id="gpu-history-title" className="text-lg font-bold leading-6 text-slate-900">全新售价走势</h2><p className="mt-0.5 text-xs leading-5 text-slate-500">当日有效采样 · 人民币</p></div>
       <div className="flex items-center gap-1">
         <Button size="icon" variant="ghost" title="查看历史明细" aria-label="查看历史明细" aria-expanded={showTable} aria-controls="gpu-history-table" onClick={() => setShowTable(value => !value)}><Table2 className="h-4 w-4" aria-hidden="true" /></Button>
         <Button size="icon" variant="ghost" title="刷新历史报价" aria-label="刷新历史报价" onClick={() => setReload(value => value + 1)}><RefreshCw className="h-4 w-4" aria-hidden="true" /></Button>
@@ -88,7 +88,7 @@ export default function GpuPriceHistorySection({ model, onModelChange, refreshTo
     <div aria-busy={loading} data-price-history-state={loading ? "loading" : populated ? "chart" : error ? "error" : "empty"} className={`min-w-0 transition-[height] duration-200 motion-reduce:transition-none ${loading || populated ? "h-[320px] sm:h-72" : "h-40"}`}>
       {loading ? <GpuPriceHistoryPlaceholder state="loading" />
         : !platforms.length ? <GpuPriceHistoryPlaceholder state="unselected" />
-        : !populated ? <GpuPriceHistoryPlaceholder state={error ? "error" : "empty"} message={error || `${label}近 ${period} 天暂无已核对记录，缺失日期不补价。`} />
+        : !populated ? <GpuPriceHistoryPlaceholder state={error ? "error" : "empty"} message={error || `${label}近 ${period} 天暂无有效采集记录，缺失日期不补价。`} />
         : <Suspense fallback={<GpuPriceHistoryPlaceholder state="loading" />}><PriceChart key={`${model}:${period}:${history!.series[0]?.date}`} history={history!} platforms={platforms} /></Suspense>}
     </div>
     <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 text-[11px] leading-5 text-slate-500">
@@ -99,11 +99,11 @@ export default function GpuPriceHistorySection({ model, onModelChange, refreshTo
     {history && history.source_status !== "ready" && <p className="mt-2 text-xs leading-6 text-amber-800">当前报价源{history.source_status === "expired" ? "已过期" : "暂不可用"}，历史记录不代表今日售价。</p>}
     <p className="mt-2 text-xs leading-5 text-slate-500">采样挂牌价，非成交价；不同商家、SKU 与优惠条件会影响价格。</p>
     {showTable && <div id="gpu-history-table" role="region" aria-label="历史报价明细" tabIndex={0} className="relative mt-5 max-w-full overflow-x-auto border-t border-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600">
-      <table className="w-full min-w-[580px] text-left text-sm"><caption className="py-3 text-left font-semibold text-slate-800">{label} · 已核对历史报价</caption>
+      <table className="w-full min-w-[580px] text-left text-sm"><caption className="py-3 text-left font-semibold text-slate-800">{label} · 有效历史报价</caption>
         <thead className="text-xs text-slate-500"><tr><th className="py-3 pr-4 font-medium">日期 / 北京时间</th><th className="pr-4 font-medium">平台</th><th className="pr-4 text-right font-medium">采样最低价</th><th className="pl-4 font-medium">商家 / 优惠条件</th><th><span className="sr-only">商品链接</span></th></tr></thead>
         <tbody className="divide-y divide-slate-100">{rows.map(({ date, offer }) => <tr key={`${date}-${offer.platform}`}><td className="whitespace-nowrap py-3 pr-4 tabular-nums">{date}<span className="ml-2 text-xs text-slate-500">{time(offer.observed_at)}</span></td><td className="pr-4">{offer.platform_name}</td><td className="pr-4 text-right font-semibold tabular-nums">{priceHistoryMoney(offer.price_cents)}</td><td className="max-w-80 py-3 pl-4"><span className="block break-words">{offer.merchant}</span><span className="mt-1 block break-words text-xs text-slate-500">{offer.title}</span><span className="mt-1 block break-words text-xs text-slate-500">{offer.conditions.length ? offer.conditions.join("；") : "优惠、运费及供货情况以商家为准"}{offer.terms ? `；${offer.terms}` : ""}</span></td><td className="pl-4"><a href={offer.url} target="_blank" rel="noopener noreferrer nofollow" aria-label={`${date} ${offer.platform_name} ${offer.merchant}商品页面`} title="查看商品页面" className="inline-flex h-10 w-10 items-center justify-center text-blue-700"><ExternalLink className="h-4 w-4" aria-hidden="true" /></a></td></tr>)}</tbody>
       </table>
-      {!rows.length && <p className="py-6 text-sm text-slate-500">当前范围没有已核对的报价记录。</p>}
+      {!rows.length && <p className="py-6 text-sm text-slate-500">当前范围没有有效报价记录。</p>}
     </div>}
   </section>;
 }

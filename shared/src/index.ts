@@ -69,5 +69,6 @@ export * from "./seoPages.js";
 export * from "./prlMarket.js";
 export * from "./gpuCatalog.js";
 export * from "./gpuDailyPrices.js";
+export * from "./gpuLaunchPrices.js";
 export * from "./gpuPriceHistory.js";
 export * from "./contact.js";

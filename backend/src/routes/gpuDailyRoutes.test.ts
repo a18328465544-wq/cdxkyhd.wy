@@ -33,6 +33,22 @@ test("publishes allowlisted offers and recomputes minima, ignoring private field
   assert.equal(result.total_models, 10);
 });
 
+test("automatic valid feed is accepted and official launch MSRP stays separate from merchant data", () => {
+  const raw=fixture();raw.publication_policy="validated_new_retail_auto";
+  const result=normalizeDailyGpuPrices(raw,now);
+  assert.equal(result.available_models,1);
+  assert.equal(result.rows[1].launch_price?.amount_cents,249900);
+  assert.equal(result.rows[2].launch_price?.amount_cents,319900);
+  assert.equal(result.rows[3].launch_price?.amount_cents,359900);
+  assert.equal(result.rows[7].launch_price?.currency,"USD");
+  assert.equal(result.rows[7].launch_price?.amount_cents,199900);
+  assert.equal(result.rows[8].launch_price?.currency,"CNY");
+  const malicious={...raw,rows:raw.rows.map(row=>({...row,launch_price:{amount_cents:1,source_url:"https://attacker.invalid"}}))};
+  assert.equal(normalizeDailyGpuPrices(malicious,now).rows[1].launch_price?.amount_cents,249900);
+  const expired=normalizeDailyGpuPrices(raw,Date.parse("2026-10-22T00:00:00+08:00"));
+  assert.equal(expired.available_models,0);assert.equal(expired.rows[1].launch_price?.amount_cents,249900);
+});
+
 test("crossing Beijing midnight hides old prices on both server and browser", () => {
   const before = normalizeDailyGpuPrices(fixture(), now);
   assert.equal(before.rows[1].status, "available");

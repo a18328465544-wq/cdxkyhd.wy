@@ -24,7 +24,15 @@ test("missing and pending prices have no zero-price placeholder or merchant purc
   const row = emptyDailyGpuPrices().rows[0];
   for (const status of ["unavailable", "awaiting_review"] as const) {
     const html = renderToStaticMarkup(createElement(DailyPriceCard, { row: { ...row, status } }));
-    assert.doesNotMatch(html, /href=|¥0|前往商家/);
-    assert.match(html, status === "awaiting_review" ? /今日报价核对中/ : /今日待更新/);
+    assert.doesNotMatch(html, /¥0|前往商家|goods_id=/);
+    assert.match(html, status === "awaiting_review" ? /今日报价信息待完善/ : /今日待更新/);
+    assert.match(html,/官方首发建议零售价/);assert.match(html,/2,099/);assert.match(html,/nvidia\.cn/);
   }
+});
+
+test("USD launch MSRP is labelled and never compared directly against a CNY offer",()=>{
+  const row=emptyDailyGpuPrices().rows[7];
+  const offer:DailyGpuOffer={platform:"pdd",platform_name:"拼多多",merchant:"合成商家",title:"全新RTX5090 32GB",price_cents:5350000,currency:"CNY",url:"https://mobile.yangkeduo.com/goods.html?goods_id=123",observed_at:"2026-10-29T10:00:00+08:00",conditions:[],terms:"合成测试"};
+  const html=renderToStaticMarkup(createElement(DailyPriceCard,{row:{...row,status:"available",offers:[offer],lowest:offer}}));
+  assert.match(html,/US\$1,999/);assert.match(html,/美国/);assert.match(html,/未做汇率换算/);assert.doesNotMatch(html,/较官方首发建议价/);
 });
