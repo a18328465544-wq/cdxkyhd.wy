@@ -1,10 +1,5 @@
-import { Suspense, lazy } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import FloatingContactButton from "../components/FloatingContactButton";
-import { SectionFallback } from "../components/PageLoading";
+import { lazy } from "react";
 import type { StandalonePageRoute } from "./pageRoutes";
-import PageQuestions from "../components/PageQuestions";
 
 const GpuSnLookupSection = lazy(() => import("../components/GpuSnLookupSection"));
 const CommunityPage = lazy(() => import("../components/CommunityPage"));
@@ -35,36 +30,12 @@ export default function StandalonePage({ route, onOpenContact }: StandalonePageP
       case "build":
         return (
           <main className="flex-1 pt-16 sm:pt-20">
-            <Suspense fallback={<SectionFallback label="在线装机" minHeight="980px" />}>
-              <div id="pc-builder"><PcBuilderSection /></div>
-            </Suspense>
-            <Suspense fallback={<SectionFallback label="AI 工作站" minHeight="720px" />}>
-              <div id="workstation"><AiWorkstationSection onOpenContact={onOpenContact} /></div>
-            </Suspense>
+            <div id="pc-builder"><PcBuilderSection /></div>
+            <div id="workstation"><AiWorkstationSection onOpenContact={onOpenContact} /></div>
           </main>
         );
     }
   })();
 
-  const pageContent = route.id === "build" ? content : route.id === "gpu-sn" ? (
-    <main className="flex-1">
-      <Suspense fallback={<SectionFallback label={route.fallbackLabel} minHeight={route.fallbackHeight} />}>
-        {content}
-      </Suspense>
-    </main>
-  ) : (
-    <Suspense fallback={<SectionFallback label={route.fallbackLabel} minHeight={route.fallbackHeight} />}>
-      {content}
-    </Suspense>
-  );
-
-  return (
-    <div className={`flex min-h-screen flex-col font-sans text-slate-800 antialiased ${route.id === "build" ? "bg-white pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0 selection:bg-blue-500/25 selection:text-blue-900" : "bg-slate-50"}`}>
-      <Header onOpenContact={onOpenContact} />
-      {pageContent}
-      <PageQuestions pathname={window.location.pathname} />
-      <Footer compact={route.id !== "build"} />
-      {route.id === "build" && <FloatingContactButton onOpenContact={onOpenContact} />}
-    </div>
-  );
+  return route.id === "gpu-sn" ? <main className="flex-1">{content}</main> : content;
 }

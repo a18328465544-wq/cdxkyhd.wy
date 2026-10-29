@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ArrowLeft, AudioLines, Calculator, Gem, Keyboard, Monitor, Mouse } from "lucide-react";
 
 const TOOL_LINKS = [
@@ -16,6 +17,7 @@ type ReusedToolPageProps = {
 };
 
 export function ReusedToolPage({ title, src }: ReusedToolPageProps) {
+  const { pathname } = useLocation();
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [frameHeight, setFrameHeight] = useState(420);
   const [loaded, setLoaded] = useState(false);
@@ -50,7 +52,7 @@ export function ReusedToolPage({ title, src }: ReusedToolPageProps) {
         </a>
         <span className="mx-1 h-5 w-px shrink-0 bg-slate-200" aria-hidden="true" />
         {TOOL_LINKS.map(({ href, title: linkTitle, icon: Icon }) => {
-          const isActive = window.location.pathname === href;
+          const isActive = pathname === href;
           return (
             <a
               key={href}

@@ -1,8 +1,16 @@
 import { Suspense, lazy, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ContactModalFallback, SectionFallback } from "./components/PageLoading";
 import { resolveStandalonePage } from "./routes/pageRoutes";
 import StandalonePage from "./routes/StandalonePage";
 import { resolveSeoPage } from "@cdxkyhd/shared";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import FloatingContactButton from "./components/FloatingContactButton";
+import PageQuestions from "./components/PageQuestions";
+import RouteViewport from "./routes/RouteViewport";
+import RouteErrorBoundary from "./routes/RouteErrorBoundary";
+import { useSiteNavigation } from "./routes/SiteNavigation";
 
 const loadContactModal = () => import("./components/ContactModal");
 const ContactModal = lazy(loadContactModal);
@@ -11,15 +19,43 @@ const HomePage = lazy(() => import("./components/HomePage"));
 export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [hasOpenedContactModal, setHasOpenedContactModal] = useState(false);
-  const pageRoute = resolveStandalonePage(window.location.pathname);
-  const pageSeo = resolveSeoPage(window.location.pathname);
+  const { pathname, search } = useLocation();
+  const { pending } = useSiteNavigation();
+  const pageRoute = resolveStandalonePage(pathname);
+  const pageSeo = resolveSeoPage(pathname);
 
   useEffect(() => {
     if (!pageSeo && !pageRoute) return;
-    const previousTitle = document.title;
     document.title = pageSeo?.title ?? pageRoute!.title;
-    return () => { document.title = previousTitle; };
-  }, [pageRoute, pageSeo]);
+    const canonicalPath = pathname.replace(/\/+$/, "") || "/";
+    const canonicalUrl = `https://cdgpu.cn${canonicalPath === "/gpu-sn" ? "/gpu-sn.php" : canonicalPath}`;
+    const description = pageSeo?.description ?? "显卡选购、装机配置、二手检测与故障排查交流。";
+    const metadata = [
+      ['meta[name="description"]', "name", "description", description],
+      ['meta[property="og:title"]', "property", "og:title", document.title],
+      ['meta[property="og:description"]', "property", "og:description", description],
+      ['meta[property="og:url"]', "property", "og:url", canonicalUrl],
+    ];
+    for (const [selector, attribute, name, content] of metadata) {
+      const element = document.querySelector(selector) ?? document.head.appendChild(document.createElement("meta"));
+      element.setAttribute(attribute, name);
+      element.setAttribute("content", content);
+    }
+    const canonical = document.querySelector('link[rel="canonical"]') ?? document.head.appendChild(document.createElement("link"));
+    canonical.setAttribute("rel", "canonical");
+    canonical.setAttribute("href", canonicalUrl);
+    // Preserve the initial server schema; replace it only when it belongs to another page.
+    document.querySelectorAll('script[data-seo-page]').forEach(element => {
+      const sourcePath = element.getAttribute("data-seo-page") ?? "";
+      if ((sourcePath.startsWith("/") ? sourcePath : `/${sourcePath}`) === canonicalPath) return;
+      element.setAttribute("data-seo-page", canonicalPath);
+      element.textContent = JSON.stringify({
+        "@context": "https://schema.org", "@type": "WebPage", url: canonicalUrl,
+        name: document.title, description,
+        isPartOf: { "@type": "WebSite", name: "成都显卡一号店", url: "https://cdgpu.cn/" },
+      });
+    });
+  }, [pageRoute, pageSeo, pathname]);
 
   const handleOpenContact = () => {
     setHasOpenedContactModal(true);
@@ -28,13 +64,22 @@ export default function App() {
 
   return (
     <>
-      {pageRoute ? (
-        <StandalonePage route={pageRoute} onOpenContact={handleOpenContact} />
-      ) : (
-        <Suspense fallback={<SectionFallback label="首页" minHeight="780px" />}>
-          <HomePage onOpenContact={handleOpenContact} />
-        </Suspense>
-      )}
+      <div className={`min-h-screen flex flex-col font-sans text-slate-800 antialiased ${!pageRoute || pageRoute.id === "build" ? "bg-white pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0 selection:bg-blue-500/25 selection:text-blue-900" : "bg-slate-50"}`}>
+        <Header onOpenContact={handleOpenContact} />
+        {pending && <div role="status" aria-live="polite" className="fixed inset-x-0 top-16 z-50 h-0.5 bg-blue-600 sm:top-20"><span className="sr-only">正在切换页面</span></div>}
+        <RouteErrorBoundary resetKey={pathname + search}>
+          <Suspense fallback={<div className="flex-1 pt-16 sm:pt-20"><SectionFallback label={pageRoute?.fallbackLabel ?? "首页"} minHeight="calc(100dvh - 80px)" /></div>}>
+            <RouteViewport>
+              {pageRoute ? (
+                <StandalonePage key={pageRoute.id === "community" ? pageRoute.id : pathname + search} route={pageRoute} onOpenContact={handleOpenContact} />
+              ) : <HomePage onOpenContact={handleOpenContact} />}
+              <PageQuestions pathname={pathname} />
+              <Footer compact={!!pageRoute && pageRoute.id !== "build"} />
+              {(!pageRoute || pageRoute.id === "build") && <FloatingContactButton onOpenContact={handleOpenContact} />}
+            </RouteViewport>
+          </Suspense>
+        </RouteErrorBoundary>
+      </div>
       {hasOpenedContactModal && (
         <Suspense fallback={<ContactModalFallback />}>
           <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />

@@ -128,16 +128,28 @@
 .inventory-categories[data-erp-control="segmented"] { width: 100%; flex-wrap: wrap; gap: 4px; overflow: visible; padding: 0; background: transparent; }
 .inventory-categories [data-erp-control="segment"][aria-selected="true"] { background: #eff6ff; box-shadow: none; }
 
+.gpu-price-history-toolbar [data-erp-control="segmented"] { height: 40px; }
+.gpu-price-history-toolbar [data-erp-control="segment"] { min-height: 34px; font-size: 13px; }
+
 @media (min-width: 640px) {
   .site-mobile-menu { max-height: calc(100dvh - 80px); }
   .page-title { font-size: 32px; }
 }
 
 @media (max-width: 639px) {
-  [data-erp-control="input"], [data-erp-control="select"], [data-erp-control="combobox"] { min-height: 44px; }
+  /* Keep mobile form text at 16px to prevent focus zoom in iOS Safari. */
+  [data-erp-control="input"], [data-erp-control="select"], [data-erp-control="combobox"], [data-erp-control="textarea"] { min-height: 44px; font-size: 16px; }
+  [data-erp-control="combobox"] input { font-size: 16px; }
   [data-erp-control="button"][data-size="sm"], [data-erp-control="segment"] { min-height: 40px; }
   [data-erp-control="button"][data-size="icon"] { width: 44px; height: 44px; }
   .ranking-resolution [data-erp-control="segment"] { padding-inline: 8px; font-size: 13px; }
+  .gpu-price-history-toolbar [data-erp-control="segmented"] { height: 44px; }
+  .gpu-price-history-toolbar [data-erp-control="segment"] { min-height: 38px; }
+  .gpu-ranking-page .page-heading { gap: 8px; margin-bottom: 16px; padding-bottom: 16px; }
+  .gpu-ranking-page .page-title { font-size: 24px; }
+  .gpu-ranking-page .page-description { max-width: 24ch; margin-top: 4px; font-size: 12px; }
+  .gpu-ranking-page [data-erp-control="segmented"][aria-label="成绩分类"] { width: 100%; }
+  .gpu-ranking-page [data-erp-control="segmented"][aria-label="成绩分类"] [data-erp-control="segment"] { flex: 1; padding-inline: 6px; }
 }
 
 @media (max-width: 639px) {
@@ -155,6 +167,11 @@
     white-space: normal;
     line-height: 1.2;
   }
+}
+
+@media (max-width: 360px) {
+  .gpu-ranking-page .page-title { font-size: 20px; gap: 8px; }
+  .gpu-ranking-page .page-title > svg { width: 20px; height: 20px; flex-shrink: 0; }
 }
 
 html {

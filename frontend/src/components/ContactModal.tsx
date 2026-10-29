@@ -42,21 +42,21 @@ export default function ContactModal({
           {/* Close button */}
           <BaseDialog.Close render={<Button id="close-modal-btn" size="icon" variant="ghost" aria-label="关闭" className="absolute right-4 top-4"><X className="h-5 w-5" /></Button>} />
 
-          <div className="p-6 md:p-8">
-            <div className="text-center mb-6">
+          <div className="p-4 sm:p-6 md:p-8">
+            <div className="mb-4 px-7 text-center sm:mb-6 sm:px-0">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 mb-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
                 客服在线时间 10:00 - 20:00
               </span>
               <BaseDialog.Title className="text-xl font-semibold text-slate-900">{title}</BaseDialog.Title>
-              <p className="mt-2 text-sm text-slate-500 leading-relaxed">{subtitle}</p>
+              <p className="mt-2 text-sm text-slate-500 leading-relaxed"><span className="sm:hidden">复制微信号添加好友，或保存二维码到微信识别。</span><span className="hidden sm:inline">{subtitle}</span></p>
             </div>
 
             {/* Content Details */}
             <div className="space-y-6">
               {/* WeChat QR Area and Info */}
-              <div className="flex flex-col sm:flex-row gap-6 items-center justify-center p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                <div className="relative flex h-56 w-44 sm:h-64 sm:w-52 items-center justify-center overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-slate-200">
+              <div className="flex flex-col-reverse gap-4 items-center justify-center p-4 rounded-2xl bg-slate-50 border border-slate-100 sm:flex-row sm:gap-6 sm:p-5">
+                <div className="relative flex h-48 w-40 sm:h-64 sm:w-52 items-center justify-center overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-slate-200">
                   <img
                     src={wechatQrPath}
                     alt={`微信二维码 ${wechatId}`}
@@ -93,14 +93,14 @@ export default function ContactModal({
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 leading-normal">
+                  <p className="hidden text-xs text-slate-500 leading-normal sm:block">
                     截图显卡外观、烤机性能、型号，添加微信后专家将在3分钟内发出确切收购报价方案。
                   </p>
                 </div>
               </div>
 
               {/* Direct Call & Map Action Buttons */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <a
                   href={phoneHref}
                   className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50/55 py-3 text-sm font-semibold text-blue-700 hover:bg-blue-100/50 transition active:scale-98"

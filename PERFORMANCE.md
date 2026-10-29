@@ -43,3 +43,11 @@ Inspect private daily samples with `node scripts/report-vitals.mjs /private/path
 5. Repeat the cold mobile test and read-only ERP paging/detail/builder checks. Publishing and accepting production results are separate from local tests.
 
 No production release, credential change or database migration is performed by these scripts.
+
+## Page Transitions (2026-10-28)
+
+Same-origin site links now use React Router history instead of reloading the document. The shared header stays mounted; a single revealed Suspense boundary retains the previous page while the destination code loads, then changes the page, questions and footer together. Initial direct requests still use the existing server SEO HTML; that rendering contract is unchanged.
+
+Modified clicks, new tabs, downloads, phone links, third-party links and unknown paths retain native browser behavior. Community post navigation uses the same history owner; ranking query updates preserve history state. Page commits reset scroll without a smooth flight through the previous page. Home anchors observe layout changes before paint and stop following after user input, route changes or 20 seconds.
+
+`npm run test:routes -w frontend` includes DOM regressions for delayed page imports, persistent header/content, back navigation and scroll restoration, anchors, user interruption, failed chunks and error recovery. Browser testing must still cover real nested tools, mobile menus, rapid navigation and metadata updates. Existing Web Vitals remain document-entry measurements, not per-soft-navigation field scores.

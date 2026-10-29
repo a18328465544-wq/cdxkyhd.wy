@@ -1,13 +1,9 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
-import Header from "./Header";
 import HeroSection from "./HeroSection";
 import PriceSection from "./PriceSection";
 import InventorySection from "./InventorySection";
-import Footer from "./Footer";
-import FloatingContactButton from "./FloatingContactButton";
 import { SectionFallback } from "./PageLoading";
 import { scrollToSectionTarget } from "../lib/navigation";
-import PageQuestions from "./PageQuestions";
 
 const homeSectionLoaders = {
   process: () => import("./ProcessSection"),
@@ -73,14 +69,6 @@ interface HomePageProps {
 export default function HomePage({ onOpenContact }: HomePageProps) {
   const [estimateModel, setEstimateModel] = useState("NVIDIA RTX 4090");
 
-  useEffect(() => {
-    try {
-      const id = decodeURIComponent(window.location.hash.slice(1));
-      const target = id && document.getElementById(id);
-      if (target) scrollToSectionTarget(target, 80);
-    } catch { /* Ignore malformed external anchor links. */ }
-  }, []);
-
   const handleScrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) scrollToSectionTarget(element, 80);
@@ -93,8 +81,6 @@ export default function HomePage({ onOpenContact }: HomePageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 antialiased font-sans flex flex-col justify-between selection:bg-blue-500/25 selection:text-blue-900 pb-[calc(3.75rem+env(safe-area-inset-bottom))] sm:pb-0">
-      <Header onOpenContact={onOpenContact} />
       <main className="flex-1 overflow-hidden">
         <HeroSection
           onOpenContact={onOpenContact}
@@ -115,10 +101,6 @@ export default function HomePage({ onOpenContact }: HomePageProps) {
         <LazySection id="contact" label="联系我们" minHeight="760px">
           <ContactSection onOpenContact={onOpenContact} />
         </LazySection>
-        <PageQuestions pathname="/" />
       </main>
-      <Footer />
-      <FloatingContactButton onOpenContact={onOpenContact} />
-    </div>
   );
 }

@@ -1,4 +1,5 @@
 import { lazy } from "react";
+import { useLocation } from "react-router-dom";
 import { ReusedToolPage } from "./ReusedToolPage";
 
 const ToolCenterPage = lazy(() => import("./ToolCenterPage"));
@@ -25,7 +26,7 @@ const ROUTES = {
 } as const;
 
 export default function HardwareToolsRouter() {
-  const path = window.location.pathname.replace(/\/$/, "") || "/tools";
+  const path = useLocation().pathname.replace(/\/$/, "") || "/tools";
   if (path === "/tools/hashrate-rental") return <HashrateRentalCalculatorPage />;
   if (path === "/tools/prl-mining") return <PrlMiningCalculatorPage />;
   const route = ROUTES[path as keyof typeof ROUTES];

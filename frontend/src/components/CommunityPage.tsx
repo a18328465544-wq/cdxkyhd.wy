@@ -1,4 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { useLocation } from "react-router-dom";
+import { useSiteNavigation } from "../routes/SiteNavigation";
 import {Dialog as BaseDialog} from "@base-ui/react/dialog";
 import {
   ArrowLeft,
@@ -79,8 +81,8 @@ function categoryLabel(key: string): string {
   return CATEGORY_LABELS[key] || key;
 }
 
-function readPostIdFromPath(): string | null {
-  const match = window.location.pathname.match(/^\/community\/post\/([\w-]+)$/);
+function readPostIdFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/community\/post\/([\w-]+)$/);
   return match?.[1] || null;
 }
 
@@ -98,6 +100,8 @@ function ImageStrip({images, compact = false}: {images: string[]; compact?: bool
 }
 
 export default function CommunityPage() {
+  const { pathname } = useLocation();
+  const { navigate } = useSiteNavigation();
   const [meta, setMeta] = useState<ForumMeta | null>(null);
   const [user, setUser] = useState<ForumUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -111,7 +115,7 @@ export default function CommunityPage() {
   const [reloadIndex, setReloadIndex] = useState(0);
   const [pageError, setPageError] = useState("");
   const [notice, setNotice] = useState("");
-  const [postId, setPostId] = useState<string | null>(() => readPostIdFromPath());
+  const postId = readPostIdFromPath(pathname);
   const [postDetail, setPostDetail] = useState<PostDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState("");
@@ -123,7 +127,7 @@ export default function CommunityPage() {
   const [queue, setQueue] = useState<QueueData>({posts: [], replies: [], reports: []});
   const [queueLoading, setQueueLoading] = useState(false);
   const [queueError, setQueueError] = useState("");
-  const isManagePage = window.location.pathname === "/community/manage";
+  const isManagePage = pathname === "/community/manage";
   const isHomePage = !postId && !isManagePage;
 
   const refreshSession = useCallback(async () => {
@@ -187,21 +191,12 @@ export default function CommunityPage() {
       .finally(() => setDetailLoading(false));
   }, [postId]);
 
-  useEffect(() => {
-    const onPopState = () => setPostId(readPostIdFromPath());
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-
   const openPost = (id: string) => {
-    window.history.pushState({}, "", `/community/post/${encodeURIComponent(id)}`);
-    setPostId(id);
-    window.scrollTo({top: 0, behavior: "smooth"});
+    navigate(`/community/post/${encodeURIComponent(id)}`);
   };
 
   const closePost = () => {
-    window.history.pushState({}, "", "/community");
-    setPostId(null);
+    navigate("/community");
   };
 
   const loadQueue = useCallback(async () => {

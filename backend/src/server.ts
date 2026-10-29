@@ -18,6 +18,8 @@ import { registerMiniprogramRoutes } from "./routes/miniprogramRoutes.js";
 import { mockCatalogStore } from "./services/mockCatalogStore.js";
 import { registerPrlMarketRoutes } from "./routes/prlMarketRoutes.js";
 import { registerGpuDailyRoutes } from "./routes/gpuDailyRoutes.js";
+import { registerGpuPriceHistoryRoutes } from "./routes/gpuPriceHistoryRoutes.js";
+import { GpuPriceHistoryService } from "./services/gpuPriceHistoryService.js";
 import { registerHealthRoutes } from "./routes/healthRoutes.js";
 import { registerGpuRankingRoutes } from "./routes/gpuRankingRoutes.js";
 import { registerGpuSnRoutes } from "./routes/gpuSnRoutes.js";
@@ -131,9 +133,16 @@ async function startServer() {
   registerPerformanceRoutes(app, process.env.PERFORMANCE_DATA_DIR || path.resolve(currentDir, "../../data/performance"), process.env.PERFORMANCE_SITE_ORIGIN);
   registerMiniprogramRoutes(app, { erpConnected: Boolean(ERP_BASE_URL), erp: erpCatalog });
   registerPrlMarketRoutes(app);
-  registerGpuDailyRoutes(app, process.env.GPU_DAILY_PRICE_FILE
+  const dailyPriceFile = process.env.GPU_DAILY_PRICE_FILE
     ? path.resolve(process.env.GPU_DAILY_PRICE_FILE)
-    : path.resolve(currentDir, "../../data/gpu-daily/prices.json"));
+    : path.resolve(currentDir, "../../data/gpu-daily/prices.json");
+  registerGpuDailyRoutes(app, dailyPriceFile);
+  const priceHistory = await GpuPriceHistoryService.open({ feedFile: dailyPriceFile,
+    archiveFile: process.env.GPU_DAILY_HISTORY_FILE ? path.resolve(process.env.GPU_DAILY_HISTORY_FILE) : path.join(path.dirname(dailyPriceFile), "history.json") });
+  registerGpuPriceHistoryRoutes(app, priceHistory);
+  void priceHistory.refresh();
+  const priceHistoryTimer = setInterval(() => void priceHistory.refresh(), 60_000);
+  priceHistoryTimer.unref();
 
   registerGpuRankingRoutes(app, {
     gpu: gpuRankingService,

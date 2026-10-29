@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, MessageSquare, Phone, ScanLine, ArrowUpRight, ChevronDown, Wrench, BarChart3 } from 'lucide-react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Menu, X, MessageSquare, Phone, ScanLine, Newspaper, ChevronDown, Wrench, BarChart3 } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
 import { scrollToSectionTarget } from '../lib/navigation';
 import { Button } from './ui/controls';
+import { useSiteNavigation } from '../routes/SiteNavigation';
 
 interface HeaderProps {
   onOpenContact: () => void;
 }
 
 export default function Header({ onOpenContact }: HeaderProps) {
+  const { pathname } = useLocation();
+  const { navigate } = useSiteNavigation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const isGpuSnPage = window.location.pathname === '/gpu-sn.php' || window.location.pathname === '/gpu-sn';
-  const isCommunityPage = window.location.pathname === '/community' || window.location.pathname.startsWith('/community/');
-  const isBuildPage = window.location.pathname === '/build' || window.location.pathname === '/build/';
-  const isHardwareToolsPage = window.location.pathname === '/tools' || window.location.pathname.startsWith('/tools/');
-  const isGpuRankingPage = window.location.pathname === '/gpu-ranking' || window.location.pathname === '/gpu-ranking/';
-  const isGpuDailyPage = window.location.pathname.replace(/\/$/, '') === '/gpu-daily';
+  const isGpuSnPage = pathname === '/gpu-sn.php' || pathname === '/gpu-sn';
+  const isCommunityPage = pathname === '/community' || pathname.startsWith('/community/');
+  const isBuildPage = pathname === '/build' || pathname === '/build/';
+  const isHardwareToolsPage = pathname === '/tools' || pathname.startsWith('/tools/');
+  const isGpuRankingPage = pathname === '/gpu-ranking' || pathname === '/gpu-ranking/';
+  const isGpuDailyPage = pathname.replace(/\/$/, '') === '/gpu-daily';
   const isSubPage = isGpuSnPage || isCommunityPage || isBuildPage || isHardwareToolsPage || isGpuRankingPage || isGpuDailyPage;
   const [activeSection, setActiveSection] = useState(isGpuDailyPage ? 'gpu-daily' : isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
   const { phoneDisplay, phoneHref } = CONTACT_INFO;
@@ -32,6 +36,13 @@ export default function Header({ onOpenContact }: HeaderProps) {
   const primaryNavItems = navItems.filter((item) => item.id !== 'cases');
   const moreIsActive = isHardwareToolsPage || isGpuRankingPage || isGpuSnPage || activeSection === 'cases';
   const toolLabel = isGpuRankingPage ? '显卡天梯' : isGpuSnPage ? 'SN 日期查询' : activeSection === 'cases' ? '客户案例' : '硬件工具';
+
+  useLayoutEffect(() => {
+    setMobileMenuOpen(false);
+    setIsScrolled(window.scrollY > 20);
+    setActiveSection(isGpuDailyPage ? 'gpu-daily' : isGpuSnPage ? 'gpu-sn-lookup' : isCommunityPage ? 'community' : isBuildPage ? 'build' : isHardwareToolsPage ? 'tools' : isGpuRankingPage ? 'gpu-ranking' : 'home');
+    document.querySelectorAll('#desktop-navbar details[open]').forEach(element => element.removeAttribute('open'));
+  }, [pathname]);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -58,6 +69,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
       setIsScrolled(window.scrollY > 20);
 
       // Simple active link highlight by position
+      if (isSubPage) return;
       const scrollPosition = window.scrollY + 120;
       for (const item of navItems) {
         const el = document.getElementById(item.id);
@@ -73,20 +85,20 @@ export default function Header({ onOpenContact }: HeaderProps) {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isSubPage]);
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     if (id === 'gpu-sn-lookup') {
-      if (!isGpuSnPage) window.location.href = '/gpu-sn.php';
+      if (!isGpuSnPage) navigate('/gpu-sn.php');
       return;
     }
     if (id === 'build') {
-      if (!isBuildPage) window.location.href = '/build';
+      if (!isBuildPage) navigate('/build');
       return;
     }
     if (isSubPage) {
-      window.location.href = id === 'home' ? '/' : `/#${id}`;
+      navigate(id === 'home' ? '/' : `/#${id}`);
       return;
     }
     const element = document.getElementById(id);
@@ -214,7 +226,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               onClick={onOpenContact}
               aria-label="微信估价"
               title="微信估价"
-              className="flex h-10 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white max-[360px]:w-10 max-[360px]:px-0"
+              className="flex h-11 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white max-[360px]:w-10 max-[360px]:px-0"
             >
               <MessageSquare className="h-3.5 w-3.5" />
               <span className="max-[360px]:sr-only">微信估价</span>
@@ -237,12 +249,25 @@ export default function Header({ onOpenContact }: HeaderProps) {
 
       {/* Mobile Drawer Navigation Panels */}
       {mobileMenuOpen && (
-        <nav id="mobile-navbar-drawer" aria-label="手机导航" className="site-mobile-menu xl:hidden bg-white border-y border-slate-200 shadow-lg divide-y divide-slate-200">
+        <nav id="mobile-navbar-drawer" aria-label="手机导航" className="site-mobile-menu xl:hidden bg-white border-y border-slate-200 shadow-lg">
+          <div className="px-4 pt-3 pb-2">
+            <p className="mb-2 text-xs font-semibold text-slate-500">常用功能</p>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { href: '/gpu-daily', name: '显卡日报', icon: Newspaper, active: isGpuDailyPage },
+                { href: '/gpu-ranking', name: '性能天梯', icon: BarChart3, active: isGpuRankingPage },
+                { href: '/tools', name: '硬件工具', icon: Wrench, active: isHardwareToolsPage },
+                { href: '/gpu-sn.php', name: 'SN 日期查询', icon: ScanLine, active: isGpuSnPage },
+              ].map(({ href, name, icon: Icon, active }) => <a key={href} href={href} aria-current={active ? 'page' : undefined} onClick={() => setMobileMenuOpen(false)} className={`flex min-h-12 min-w-0 items-center gap-2 rounded-lg border px-3 text-sm font-medium ${active ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-700 hover:bg-slate-50'}`}><Icon className="h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />{name}</a>)}
+            </div>
+          </div>
+          <div className="border-t border-slate-100 px-4 pt-3"><p className="text-xs font-semibold text-slate-500">门店服务与交流</p></div>
           <div className="grid grid-cols-2 gap-1 px-3 py-3">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
+                aria-current={activeSection === item.id ? 'location' : undefined}
                 className={`min-h-11 w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   activeSection === item.id
                     ? 'text-blue-600 bg-blue-50'
@@ -253,14 +278,6 @@ export default function Header({ onOpenContact }: HeaderProps) {
               </button>
             ))}
             <a
-              href="/gpu-daily"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-current={isGpuDailyPage ? 'page' : undefined}
-              className={`flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm font-medium ${isGpuDailyPage ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
-            >
-              显卡日报
-            </a>
-            <a
               href="/community"
               onClick={() => setMobileMenuOpen(false)}
               aria-current={isCommunityPage ? 'page' : undefined}
@@ -269,39 +286,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
               交流社区
             </a>
           </div>
-          <div className="border-y border-slate-100 bg-slate-50/70 px-4 py-3">
-            <p className="mb-2 px-1 text-xs font-semibold text-slate-600">硬件查询与检测</p>
-            <a
-              href="/gpu-ranking"
-              aria-current={isGpuRankingPage ? 'page' : undefined}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`mb-2 flex min-h-11 items-center justify-between rounded-lg border px-3.5 text-sm font-semibold transition ${isGpuRankingPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
-            >
-              <span className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-blue-600" />显卡性能天梯</span>
-              <ArrowUpRight className="h-4 w-4 text-slate-400" />
-            </a>
-            <a
-              href="/tools"
-              aria-current={isHardwareToolsPage ? 'page' : undefined}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`mb-2 flex min-h-11 items-center justify-between rounded-lg border px-3.5 text-sm font-semibold transition ${isHardwareToolsPage ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
-            >
-              <span className="flex items-center gap-2"><Wrench className="h-4 w-4 text-blue-600" />硬件工具</span>
-              <ArrowUpRight className="h-4 w-4 text-slate-400" />
-            </a>
-            <a
-              href="/gpu-sn.php"
-              aria-current={isGpuSnPage ? 'page' : undefined}
-              onClick={() => setMobileMenuOpen(false)}
-              className={isGpuSnPage
-                ? 'flex min-h-11 items-center justify-between rounded-lg border border-blue-200 bg-blue-50 px-3.5 text-sm font-semibold text-blue-700 transition'
-                : 'flex min-h-11 items-center justify-between rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700'}
-            >
-              <span className="flex items-center gap-2"><ScanLine className="h-4 w-4 text-blue-600" />显卡 SN 出厂日期</span>
-              <ArrowUpRight className="h-4 w-4 text-slate-400" />
-            </a>
-          </div>
-          <div className="grid grid-cols-2 items-center gap-3 bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="grid grid-cols-2 items-center gap-3 border-t border-slate-100 bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <Button
               id="mobile-drawer-contact-btn"
               onClick={() => {

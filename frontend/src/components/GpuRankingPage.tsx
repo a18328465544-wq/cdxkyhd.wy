@@ -404,7 +404,7 @@ export default function GpuRankingPage({
   }
 
   return (
-    <main className="min-h-screen flex-1 bg-slate-50 pt-24 sm:pt-28">
+    <main className="gpu-ranking-page min-h-screen flex-1 bg-slate-50 pt-20 sm:pt-28">
       <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <header className="page-heading">
           <div className="min-w-0 flex-1">
@@ -491,7 +491,7 @@ export default function GpuRankingPage({
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="w-[calc(50%-4px)] sm:w-36"><Select
+            <div id="ranking-catalog-type" className={`${filtersOpen ? '' : 'hidden sm:block'} w-[calc(50%-4px)] sm:w-36`}><Select
               aria-label="显卡类型"
               options={Object.entries(KIND_NAMES).map(([value, label]) => ({
                 value,
@@ -500,7 +500,7 @@ export default function GpuRankingPage({
               value={kind}
               onValueChange={setKind}
             /></div>
-            <div className="w-[calc(50%-4px)] sm:w-36"><Select
+            <div id="ranking-catalog-brand" className={`${filtersOpen ? '' : 'hidden sm:block'} w-[calc(50%-4px)] sm:w-36`}><Select
               aria-label="显卡品牌"
               options={[
                 { value: "all", label: "全部品牌" },
@@ -512,7 +512,7 @@ export default function GpuRankingPage({
               value={brand}
               onValueChange={setBrand}
             /></div>
-            <Button variant="ghost" size="sm" aria-expanded={filtersOpen} aria-controls="ranking-advanced-filters" onClick={() => setFiltersOpen(open => !open)}>
+            <Button variant="ghost" size="sm" aria-expanded={filtersOpen} aria-controls="ranking-catalog-type ranking-catalog-brand ranking-advanced-filters" onClick={() => setFiltersOpen(open => !open)}>
               <SlidersHorizontal className="h-4 w-4" />更多筛选{Number(memory !== '0') + Number(budget !== '0') > 0 && <span className="rounded bg-blue-50 px-1.5 text-xs text-blue-700">{Number(memory !== '0') + Number(budget !== '0')}</span>}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
             </Button>
