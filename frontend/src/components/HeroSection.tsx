@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, ChevronDown, Clock, MapPin, MessageSquare, Wallet } from 'lucide-react';
+import { ArrowRight, BarChart3, ChevronDown, Clock, MapPin, MessageSquare, Newspaper, ScanLine, Wallet, Wrench } from 'lucide-react';
 import { Button, Select } from './ui/controls';
 import { BRAND_OPTIONS, CONDITION_OPTIONS, estimatePayout, formatYuan, type BrandTier, type Condition } from '../lib/pricing';
 import { useGpuPrices } from '../lib/useGpuPrices';
@@ -37,7 +37,7 @@ export default function HeroSection({ onOpenContact, onScrollToSection, estimate
   );
 
   return (
-    <section id="home" className="relative overflow-hidden bg-white pb-10 pt-24 sm:pb-14 sm:pt-28 lg:pb-16 lg:pt-32">
+    <section id="home" className="relative overflow-hidden bg-white pb-8 pt-20 sm:pb-14 sm:pt-28 lg:pb-16 lg:pt-32">
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
         <div className="lg:col-span-7">
           <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
@@ -45,16 +45,28 @@ export default function HeroSection({ onOpenContact, onScrollToSection, estimate
             成都武侯 · 实体门店 · {storeOpen ? '营业中' : '已打烊，可微信留言'}
           </p>
 
-          <h1 className="mt-5 font-display text-4xl font-bold leading-[1.15] text-slate-950 sm:text-5xl lg:text-[3.5rem]">
+          <h1 className="mt-4 font-display text-[clamp(1.65rem,8vw,2rem)] font-bold leading-[1.2] text-slate-950 sm:mt-5 sm:text-5xl sm:leading-[1.15] lg:text-[3.5rem]">
             显卡回收
             <span className="block text-blue-600">当面检测，当场到账</span>
           </h1>
 
-          <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8">
-            RTX 50 / 40 / 30 系与 A 系列专业卡都收。成都可到店现场烤机，外地顺丰到付、视频验卡，确认无误立即转账。
+          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8">
+            <span className="sm:hidden">RTX 50 / 40 / 30 系、专业卡回收。成都当面验卡，外地顺丰到付。</span>
+            <span className="hidden sm:inline">RTX 50 / 40 / 30 系与 A 系列专业卡都收。成都可到店现场烤机，外地顺丰到付、视频验卡，确认无误立即转账。</span>
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-2 sm:flex sm:gap-3">
+          <nav aria-label="常用功能" className="mt-4 grid grid-cols-4 gap-1 border-y border-slate-100 py-2 sm:hidden">
+            {[
+              { href: '/gpu-daily', label: '显卡日报', icon: Newspaper },
+              { href: '/gpu-ranking', label: '性能天梯', icon: BarChart3 },
+              { href: '/gpu-sn.php', label: 'SN 查询', icon: ScanLine },
+              { href: '/tools', label: '硬件工具', icon: Wrench },
+            ].map(({ href, label, icon: Icon }) => <a key={href} href={href} className="flex min-h-16 min-w-0 flex-col items-center justify-center gap-1.5 rounded-lg text-xs font-medium text-slate-700 active:bg-blue-50">
+              <Icon className="h-5 w-5 text-blue-600" aria-hidden="true" />{label}
+            </a>)}
+          </nav>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:flex sm:gap-3">
             <Button id="hero-primary-cta" onClick={onOpenContact} variant="primary" size="lg" className="group px-3! sm:px-7!">
               <MessageSquare className="h-5 w-5" />
               微信估价
