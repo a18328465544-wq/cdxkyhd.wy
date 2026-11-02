@@ -9,7 +9,6 @@ interface InventoryItem {
   id: string;
   name: string;
   category: string;
-  price: number;
   quantity: number;
   condition: string;
   categoryLabel?: string;
@@ -202,13 +201,8 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
                     </ul>
                   </div>
 
-                  <div className="flex items-end justify-between gap-3 border-t border-slate-100 px-5 py-4">
-                    <div className="min-w-0">
-                      <span className="block text-xs text-slate-600">{Number.isFinite(item.price) && item.price > 0 ? '到店自提价' : '价格待确认'}</span>
-                      <span className="mt-1 block font-display text-2xl font-bold tabular-nums tracking-tight text-slate-950">
-                        {Number.isFinite(item.price) && item.price > 0 ? `¥${item.price.toLocaleString("zh-CN")}` : '微信询价'}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-5 py-4">
+                    <span className="text-sm text-slate-600">微信询价</span>
                     <Button size="sm" onClick={onOpenContact} className="shrink-0">
                       <MessageSquare className="h-4 w-4 text-blue-600" />
                       咨询商品

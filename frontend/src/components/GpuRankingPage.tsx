@@ -44,7 +44,6 @@ interface InventoryItem {
   id: string;
   name: string;
   category: string;
-  price: number | string;
   quantity: number;
   specs?: string;
   status: string;
@@ -157,7 +156,6 @@ export default function GpuRankingPage({
   const [brand, setBrand] = useState("all");
   const [kind, setKind] = useState("desktop");
   const [memory, setMemory] = useState("0");
-  const [budget, setBudget] = useState("0");
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -279,7 +277,6 @@ export default function GpuRankingPage({
     brand,
     kind,
     memory,
-    budget,
     search,
     inStockOnly,
     scoredOnly,
@@ -310,14 +307,10 @@ export default function GpuRankingPage({
                 `${item.name} ${item.specs ?? ""}`,
               ),
           );
-          const prices = available
-            .map((item) => Number(item.price))
-            .filter((price) => Number.isFinite(price) && price > 0);
           return {
             entry,
             ...metric,
             count: available.reduce((sum, item) => sum + item.quantity, 0),
-            price: prices.length ? Math.min(...prices) : null,
           };
         })
         .sort(
@@ -356,13 +349,6 @@ export default function GpuRankingPage({
     .filter(
       (row) =>
         Number(memory) === 0 || (row.entry.memoryGb ?? 0) >= Number(memory),
-    )
-    .filter(
-      (row) =>
-        Number(budget) === 0 ||
-        (inventoryState === "ready" &&
-          row.price !== null &&
-          row.price <= Number(budget)),
     )
     .filter(
       (row) => !inStockOnly || (inventoryState === "ready" && row.count > 0),
@@ -513,7 +499,7 @@ export default function GpuRankingPage({
               onValueChange={setBrand}
             /></div>
             <Button variant="ghost" size="sm" aria-expanded={filtersOpen} aria-controls="ranking-catalog-type ranking-catalog-brand ranking-advanced-filters" onClick={() => setFiltersOpen(open => !open)}>
-              <SlidersHorizontal className="h-4 w-4" />更多筛选{Number(memory !== '0') + Number(budget !== '0') > 0 && <span className="rounded bg-blue-50 px-1.5 text-xs text-blue-700">{Number(memory !== '0') + Number(budget !== '0')}</span>}
+              <SlidersHorizontal className="h-4 w-4" />更多筛选{memory !== '0' && <span className="rounded bg-blue-50 px-1.5 text-xs text-blue-700">1</span>}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
             </Button>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600 sm:ml-auto">
@@ -521,7 +507,7 @@ export default function GpuRankingPage({
               <label className="flex min-h-10 items-center gap-2"><input type="checkbox" className="h-4 w-4 accent-blue-600" disabled={inventoryState !== 'ready'} checked={inStockOnly} onChange={event => setInStockOnly(event.target.checked)} />只看有货</label>
             </div>
           </div>
-          <div id="ranking-advanced-filters" className={filtersOpen ? 'grid grid-cols-1 gap-3 border-t border-slate-200 pt-3 sm:grid-cols-2 lg:max-w-xl' : 'hidden'}>
+          <div id="ranking-advanced-filters" className={filtersOpen ? 'grid grid-cols-1 gap-3 border-t border-slate-200 pt-3 sm:max-w-xs' : 'hidden'}>
             <label className="min-w-0 space-y-1.5"><span className="text-xs font-medium text-slate-600">最低显存</span>
             <Select
               aria-label="最低显存"
@@ -536,28 +522,12 @@ export default function GpuRankingPage({
               onValueChange={setMemory}
             />
             </label>
-            <label className="min-w-0 space-y-1.5"><span className="text-xs font-medium text-slate-600">门店预算</span>
-            <Select
-              aria-label="门店预算"
-              disabled={inventoryState !== "ready"}
-              options={[
-                { value: "0", label: "不限门店价格" },
-                ...[1000, 2000, 3000, 5000, 10000].map((value) => ({
-                  value: String(value),
-                  label: `门店 ¥${value.toLocaleString()} 以内`,
-                })),
-              ]}
-              value={budget}
-              onValueChange={setBudget}
-            />
-            </label>
           </div>
-          {(kind !== 'desktop' || brand !== 'all' || memory !== '0' || budget !== '0' || inStockOnly || !scoredOnly) && <div aria-label="已选筛选条件" className="flex flex-wrap items-center gap-2 pt-1">
+          {(kind !== 'desktop' || brand !== 'all' || memory !== '0' || inStockOnly || !scoredOnly) && <div aria-label="已选筛选条件" className="flex flex-wrap items-center gap-2 pt-1">
             {[
               ...(kind !== 'desktop' ? [{ label: KIND_NAMES[kind as keyof typeof KIND_NAMES], clear: () => setKind('desktop') }] : []),
               ...(brand !== 'all' ? [{ label: brand, clear: () => setBrand('all') }] : []),
               ...(memory !== '0' ? [{ label: `${memory}GB 及以上`, clear: () => setMemory('0') }] : []),
-              ...(budget !== '0' ? [{ label: `¥${Number(budget).toLocaleString()} 以内`, clear: () => setBudget('0') }] : []),
               ...(inStockOnly ? [{ label: '仅看有货', clear: () => setInStockOnly(false) }] : []),
               ...(!scoredOnly ? [{ label: '包含待收录型号', clear: () => setScoredOnly(true) }] : []),
             ].map(filter => <span key={filter.label} className="inline-flex items-center gap-1 rounded-md bg-blue-50 py-1 pl-2.5 pr-1 text-xs text-blue-800">{filter.label}<button type="button" onClick={filter.clear} aria-label={`清除筛选：${filter.label}`} title="清除筛选" className="flex h-7 w-7 items-center justify-center rounded hover:bg-blue-100"><X className="h-3.5 w-3.5" /></button></span>)}
@@ -709,17 +679,15 @@ export default function GpuRankingPage({
                   </tr>
                   <tr>
                     <th className="px-3 py-2 text-xs font-normal text-slate-500">
-                      门店在售起价
+                      门店库存
                     </th>
                     {selectedRows.map((row) => (
                       <td key={row.entry.id} className="px-3 py-2 text-xs">
                         {inventoryState !== "ready"
                           ? "库存暂不可用"
-                          : row.price
-                            ? `¥${row.price.toLocaleString()} · ${row.count}件`
-                            : row.count
-                              ? "有货，价格待确认"
-                              : "暂无现货"}
+                          : row.count
+                            ? `有货 ${row.count}件 · 微信询价`
+                            : "暂无现货"}
                       </td>
                     ))}
                   </tr>
@@ -866,9 +834,6 @@ export default function GpuRankingPage({
                       {inventoryState === "ready" && row.count > 0 && (
                         <a href="/#inventory" className="text-emerald-700">
                           有货 {row.count}件
-                          {row.price
-                            ? ` · ¥${row.price.toLocaleString()} 起`
-                            : ""}
                         </a>
                       )}
                     </div>
@@ -1053,7 +1018,7 @@ export default function GpuRankingPage({
               </p>
               <p className="mt-2">
                 D 版、笔记本版及明确区分的显存容量不混用成绩。样本少于 5
-                次的结果仅供参考；功耗为已核实型号的官方参考值，不代表整机功耗。门店起价不是市场均价，成色与配件以库存页为准。
+                次的结果仅供参考；功耗为已核实型号的官方参考值，不代表整机功耗。成色与配件以库存页为准。
               </p>
             </div>
           </div>

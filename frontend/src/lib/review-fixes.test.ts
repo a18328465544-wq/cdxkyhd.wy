@@ -13,6 +13,7 @@ const homePage = readFileSync(join(root, "src/components/HomePage.tsx"), "utf8")
 const data = readFileSync(join(root, "src/data.ts"), "utf8");
 const gallery = readFileSync(join(root, "src/components/GallerySection.tsx"), "utf8");
 const inventory = readFileSync(join(root, "src/components/InventorySection.tsx"), "utf8");
+const ranking = readFileSync(join(root, "src/components/GpuRankingPage.tsx"), "utf8");
 const builder = readFileSync(join(root, "src/components/PcBuilderSection.tsx"), "utf8");
 const anchorIds = ["pricing", "inventory", "pc-builder", "process", "advantages", "workstation", "cases", "gallery", "faq", "contact"];
 
@@ -26,6 +27,9 @@ assert(inventory.includes("{item.status}"), "inventory cards should show the ERP
 assert(inventory.includes("item.warehouseLocation"), "inventory cards should show the ERP warehouse location");
 assert(!inventory.includes("库存紧急"), "inventory cards should not invent a low-stock marker for a single SN item");
 assert(!inventory.includes("门店现货"), "inventory cards should not replace the ERP status with a generic marker");
+assert(!inventory.includes("item.price"), "inventory cards and details should not render inventory prices");
+assert(inventory.includes("微信询价") && inventory.includes("咨询商品"), "inventory should retain its inquiry entry");
+assert(!ranking.includes("row.price") && !ranking.includes("item.price"), "ranking should not display or derive inventory prices");
 assert(builder.includes("SearchablePartSelect"), "builder should use searchable hardware selectors");
 assert(!builder.includes("<select"), "builder should not use native hardware selects");
 assert(!builder.includes("<option"), "builder should render options through the combobox");
