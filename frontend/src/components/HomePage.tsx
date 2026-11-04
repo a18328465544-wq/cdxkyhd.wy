@@ -76,8 +76,6 @@ export default function HomePage({ onOpenContact }: HomePageProps) {
 
   const handleEstimate = (model: string) => {
     setEstimateModel(model);
-    const estimator = document.getElementById("quick-estimator");
-    if (estimator) scrollToSectionTarget(estimator, 96);
   };
 
   return (

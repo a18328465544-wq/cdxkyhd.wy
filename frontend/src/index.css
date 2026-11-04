@@ -128,6 +128,20 @@
 .inventory-categories[data-erp-control="segmented"] { width: 100%; flex-wrap: wrap; gap: 4px; overflow: visible; padding: 0; background: transparent; }
 .inventory-categories [data-erp-control="segment"][aria-selected="true"] { background: #eff6ff; box-shadow: none; }
 
+.recycling-series[data-erp-control="segmented"] { max-width: 100%; gap: 6px; padding: 0 0 2px; background: transparent; border-radius: 0; scrollbar-width: thin; }
+.recycling-series [data-erp-control="segment"] { flex-shrink: 0; min-height: 32px; border: 1px solid var(--erp-color-border); border-radius: 6px; background: white; padding-inline: 10px; font-size: 13px; }
+.recycling-series [data-erp-control="segment"][aria-selected="true"] { border-color: var(--erp-color-primary); background: var(--erp-color-primary); color: white; box-shadow: none; }
+.recycling-trend { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; font-size: 12px; line-height: 18px; }
+.recycling-trend svg { width: 14px; height: 14px; }
+.recycling-prices [data-erp-control="search-field"] { min-height: 36px; }
+.recycling-prices [data-erp-control="search-field"] input { min-height: 34px; }
+@media (max-width: 639px) {
+  .recycling-prices [data-erp-control="search-field"] { min-height: 40px; }
+  .recycling-prices [data-erp-control="search-field"] input { min-height: 38px; }
+  .recycling-series[data-erp-control="segmented"] { gap: 4px; }
+  .recycling-series [data-erp-control="segment"] { padding-inline: 8px; font-size: 12px; }
+}
+
 .gpu-price-history-toolbar [data-erp-control="segmented"] { height: 40px; }
 .gpu-price-history-toolbar [data-erp-control="segment"] { min-height: 34px; font-size: 13px; }
 

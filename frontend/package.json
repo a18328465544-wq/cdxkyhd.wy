@@ -18,7 +18,7 @@
     "test:controls": "node --import tsx --test src/components/ui/controls.test.tsx",
     "test:contact": "node --import tsx src/lib/contact.test.ts",
     "test:gpu-ranking": "node --import tsx src/data/gpuRanking.test.ts && node --import tsx --test src/components/gpuRankingRender.test.tsx",
-    "test:pricing": "node --import tsx --test src/lib/pricing.test.ts",
+    "test:pricing": "node --import tsx --test src/lib/pricing.test.ts src/lib/recyclingPrices.test.ts src/components/recyclingPriceRender.test.tsx",
     "test:routes": "node --import tsx --test src/routes/pageRoutes.test.ts src/routes/clientNavigation.test.ts src/routes/routeTransition.test.tsx",
     "test:rental-calculator": "node --import tsx --test src/lib/rentalCalculator.test.ts",
     "test:gpu-daily": "node --import tsx --test src/components/gpuDailyRender.test.tsx src/lib/gpuPriceHistory.test.ts",

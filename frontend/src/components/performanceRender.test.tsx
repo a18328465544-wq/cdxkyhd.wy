@@ -6,10 +6,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import PriceSection from "./PriceSection";
 import InventorySection from "./InventorySection";
 
-test("price loading reserves eight rows and never substitutes static quotes", () => {
+test("price loading reserves two compact columns and never substitutes static quotes", () => {
   const html = renderToStaticMarkup(<PriceSection onOpenContact={() => {}} onEstimate={() => {}} />);
   assert.match(html, /aria-busy="true"/);
-  assert.equal((html.match(/<tr aria-hidden="true"/g) ?? []).length, 8);
+  assert.equal((html.match(/<tr aria-hidden="true"/g) ?? []).length, 16);
   assert.doesNotMatch(html, /28xxx|82xx|¥47,000/);
 });
 
