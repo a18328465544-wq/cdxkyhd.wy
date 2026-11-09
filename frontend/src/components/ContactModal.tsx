@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { X, Copy, Check, Phone, MapPin, Clock } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
+import { trackConversion } from '../lib/conversionAnalytics';
 import { Button } from './ui/controls';
 
 interface ContactModalProps {
@@ -103,6 +104,7 @@ export default function ContactModal({
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <a
                   href={phoneHref}
+                  onClick={() => trackConversion('phone_click')}
                   className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50/55 py-3 text-sm font-semibold text-blue-700 hover:bg-blue-100/50 transition active:scale-98"
                   title={`拨打 ${phoneDisplay}`}
                 >

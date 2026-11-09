@@ -3,6 +3,7 @@ import {Dialog as BaseDialog} from "@base-ui/react/dialog";
 import {ArrowUpRight, BadgeCheck, CalendarDays, Check, CircleAlert, Clock3, Copy, ExternalLink, Fingerprint, Headphones, Info, ScanLine, Search, ShieldCheck, X} from "lucide-react";
 import {GPU_SN_RULES, type ApiEnvelope, type GpuSnDateResult, type GpuSnRule} from "@cdxkyhd/shared";
 import {apiFetch} from "../lib/api";
+import {trackConversion} from "../lib/conversionAnalytics";
 import {Button, Input} from "./ui/controls";
 
 const confidenceLabel = {high: "较高", medium: "中等", low: "较低"} as const;
@@ -166,7 +167,7 @@ export default function GpuSnLookupSection() {
             </div>
             <p className="mt-3 min-h-[60px] text-sm leading-5 text-slate-600">{rule.description}</p>
             <div className="mt-3 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-xs">
-              <div><span className="flex items-center gap-1 text-slate-500"><Headphones className="h-3 w-3" />客服电话</span>{service?.hotline && /^[0-9-]+$/.test(service.hotline) ? <a href={`tel:${service.hotline.replace(/[^0-9+]/g, "")}`} className="mt-1 block font-semibold text-blue-700 hover:underline">{service.hotline}</a> : <span className="mt-1 block font-semibold text-slate-800">{service?.hotline || "官网服务"}</span>}</div>
+              <div><span className="flex items-center gap-1 text-slate-500"><Headphones className="h-3 w-3" />客服电话</span>{service?.hotline && /^[0-9-]+$/.test(service.hotline) ? <a href={`tel:${service.hotline.replace(/[^0-9+]/g, "")}`} onClick={() => trackConversion("phone_click")} className="mt-1 block font-semibold text-blue-700 hover:underline">{service.hotline}</a> : <span className="mt-1 block font-semibold text-slate-800">{service?.hotline || "官网服务"}</span>}</div>
               <div><span className="flex items-center gap-1 text-slate-500"><ShieldCheck className="h-3 w-3" />个人送保</span><span className="mt-1 block font-semibold text-slate-800">{service?.personalSend || "以官网为准"}</span></div>
             </div>
             <div className="mt-auto flex items-center gap-2 pt-3">

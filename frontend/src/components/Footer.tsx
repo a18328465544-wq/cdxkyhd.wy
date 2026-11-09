@@ -12,7 +12,6 @@ const FOOTER_LINKS = [
   { label: '交流社区', href: '/community' },
   { label: '硬件工具', href: '/tools' },
   { label: '算力租赁计算器', href: '/tools/hashrate-rental' },
-  { label: 'PRL 珍珠币挖矿计算器', href: '/tools/prl-mining' },
   { label: '到店指引', href: '/#contact' },
 ];
 

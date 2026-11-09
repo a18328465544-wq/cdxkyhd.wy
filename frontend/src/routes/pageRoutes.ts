@@ -55,7 +55,8 @@ export function resolveStandalonePage(pathname: string): StandalonePageRoute | n
   if (pathname === "/gpu-sn.php" || pathname === "/gpu-sn") return standalonePages["gpu-sn"];
   if (pathname === "/community" || pathname.startsWith("/community/")) return standalonePages.community;
   if (pathname === "/build" || pathname === "/build/") return standalonePages.build;
-  if (pathname === "/tools" || pathname.startsWith("/tools/")) return standalonePages["hardware-tools"];
+  const toolPath = pathname.replace(/\/+$/, "") || "/";
+  if (["/tools", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/hashrate-rental"].includes(toolPath)) return standalonePages["hardware-tools"];
   if (pathname === "/gpu-ranking" || pathname === "/gpu-ranking/") return standalonePages["gpu-ranking"];
   return null;
 }

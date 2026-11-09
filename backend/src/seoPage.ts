@@ -8,6 +8,7 @@ const { title, description } = resolveSeoPage("/gpu-ranking")!;
 type SearchablePagePath =
   | "/gpu-daily"
   | "/"
+  | "/community"
   | "/gpu-sn.php"
   | "/build"
   | "/tools"
@@ -15,8 +16,7 @@ type SearchablePagePath =
   | "/tools/mouse"
   | "/tools/audio"
   | "/tools/monitor"
-  | "/tools/hashrate-rental"
-  | "/tools/prl-mining";
+  | "/tools/hashrate-rental";
 
 type SearchablePage = {
   path: SearchablePagePath;
@@ -37,7 +37,6 @@ const toolLinks = [
   { text: "鼠标状态检测", href: "/tools/mouse" },
   { text: "耳机与音响检测", href: "/tools/audio" },
   { text: "显示器画面检测", href: "/tools/monitor" },
-  { text: "PRL 珍珠币挖矿计算器", href: "/tools/prl-mining" },
 ];
 
 const searchablePages: Record<SearchablePagePath, SearchablePage> = {
@@ -73,6 +72,31 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
       },
     ],
     related: [{ text: "联系成都门店", href: "/#contact" }, { text: "显卡与装机交流社区", href: "/community" }],
+  },
+  "/community": {
+    path: "/community",
+    heading: "显卡与装机交流",
+    intro: "围绕显卡选购、电脑配置、二手硬件检测与故障排查，分享真实使用经验和解决思路。",
+    about: "显卡与电脑装机经验交流",
+    sections: [
+      {
+        heading: "交流话题",
+        items: [
+          { text: "显卡型号选择、显存需求与游戏性能对比" },
+          { text: "CPU、主板、内存与电源的装机搭配" },
+          { text: "二手硬件成色核对、检测与故障排查" },
+          { text: "成都本地门店体验与售后交流" },
+        ],
+      },
+      {
+        heading: "发帖与隐私",
+        paragraphs: [
+          "社区帖子和回复经过审核后公开。手机号仅用于账号登录验证，不会公开展示；请勿在正文、图片或附件中填写手机号、完整订单信息或其他敏感资料。",
+          "讨论硬件问题时，建议写明型号、使用环境、故障表现和已尝试的排查步骤，便于其他用户提供有针对性的建议。",
+        ],
+      },
+    ],
+    related: [{ text: "显卡性能天梯", href: "/gpu-ranking" }, { text: "在线装机", href: "/build" }, { text: "硬件工具", href: "/tools" }],
   },
   "/gpu-sn.php": {
     path: "/gpu-sn.php",
@@ -151,10 +175,7 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
       },
       {
         heading: "成本计算",
-        items: [
-          { ...toolLinks[0], text: "算力租赁计算器：核算租金、电费、净收益与保本报价" },
-          { ...toolLinks[5], text: "PRL 珍珠币挖矿计算器：测算产币、电费与设备回本" },
-        ],
+        items: [{ ...toolLinks[0], text: "算力租赁计算器：核算租金、电费、净收益与保本报价" }],
       },
       {
         heading: "检测结果说明",
@@ -229,18 +250,6 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
     ],
     related: [{ text: "其他硬件自检工具", href: "/tools" }, { text: "显示器检测", href: "/tools/monitor" }],
   },
-  "/tools/prl-mining": {
-    path: "/tools/prl-mining",
-    heading: "PRL 珍珠币挖矿计算器",
-    intro: "通过实测算力和单位算力日产出，或整组设备实际到账量，测算 PRL 日产量、电费、经营净收益与设备回本周期。",
-    about: "PRL 产出、经营成本与静态回本测算",
-    sections: [
-      { heading: "选择产出计算方式", paragraphs: ["按算力推算时，总算力等于单卡算力乘显卡数量；按运行小时、有效算力比例、软件抽水和矿池费折算净产出。", "实际到账模式填写整组设备一个自然日的净产币量，不再乘数量、时长或重复扣除矿池与软件费用。"] },
-      { heading: "费用与回本", paragraphs: ["运行时功耗包括显卡和整组配套设备；停挖时段使用整机停挖功耗。每日净收益等于产币折算金额减折算费、电费及其他每日费用。", "初始投入为整组设备的一次性总投入，除以正的每日经营净收益得到静态回本天数。计划期结余扣除一次初始投入，净收益不为正时无法回本。"] },
-      { heading: "数据口径", paragraphs: ["币价默认使用 CoinGecko 的 Pearl 最新人民币参考价并每分钟刷新，显示报价时间，支持手动改价。行情失败或过期时不自动用于测算；单位算力产出仍由用户填写。固定输入外推不计设备残值或未来产出、价格变化。"] },
-    ],
-    related: [{ text: "算力租赁计算器", href: "/tools/hashrate-rental" }, { text: "全部硬件工具", href: "/tools" }],
-  },
   "/tools/hashrate-rental": {
     path: "/tools/hashrate-rental",
     heading: "算力租赁计算器",
@@ -282,6 +291,7 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
 
 export const SEARCHABLE_SEO_PAGE_PATHS = [
   "/gpu-daily",
+  "/community",
   "/",
   "/gpu-sn.php",
   "/gpu-sn",
@@ -292,7 +302,6 @@ export const SEARCHABLE_SEO_PAGE_PATHS = [
   "/tools/audio",
   "/tools/monitor",
   "/tools/hashrate-rental",
-  "/tools/prl-mining",
 ] as const;
 
 function normalizeSearchablePath(pathname: string): SearchablePagePath | null {
@@ -395,6 +404,29 @@ export function renderSearchablePageSeoHtml(appShell: string, pathname: string) 
   });
   main.append(related);
 
+  root.empty().append(main);
+  return $.html();
+}
+
+export function renderStatusSeoHtml(appShell: string, status: 404 | 410) {
+  const $ = load(appShell);
+  const head = $("head").first();
+  const root = $("#root").first();
+  if (!head.length || !root.length) throw new Error("Frontend app shell is missing head or #root");
+  const title = status === 410 ? "工具已下线 - 成都显卡一号店" : "页面未找到 - 成都显卡一号店";
+  const description = status === 410 ? "该工具已从成都显卡一号店网站下线。" : "你访问的页面不存在或地址已变更。";
+  $("title").first().text(title);
+  const descriptionTag = head.find('meta[name="description"]').first();
+  if (descriptionTag.length) descriptionTag.attr("content", description);
+  else head.append($("<meta>").attr({ name: "description", content: description }));
+  const robots = head.find('meta[name="robots"]').first();
+  if (robots.length) robots.attr("content", "noindex,follow");
+  else head.append($("<meta>").attr({ name: "robots", content: "noindex,follow" }));
+  head.find('link[rel="canonical"]').remove();
+  const main = $("<main>").attr({ id: "page-status", "aria-label": status === 410 ? "工具已下线" : "页面未找到" });
+  main.append($("<h1>").text(status === 410 ? "该计算器已下线" : "没有找到这个页面"));
+  main.append($("<p>").text(status === 410 ? "本站已移除相关计算与行情服务。" : "链接可能已失效，或页面地址输入有误。"));
+  main.append($("<nav>").append($("<a>").attr("href", "/").text("返回首页")).append(" · ").append($("<a>").attr("href", "/tools").text("查看硬件工具")));
   root.empty().append(main);
   return $.html();
 }

@@ -40,8 +40,8 @@ test("tools are grouped by customer task, with real routes and a single SN entry
   assert.deepEqual(sections.map(section => section.getAttribute("aria-label")), ["选购与对比", "查询与检测", "成本计算"]);
   assert.deepEqual([...sections[0].querySelectorAll("a")].map(link => link.getAttribute("href")), ["/build", "/gpu-ranking", "/gpu-daily"]);
   assert.equal(dom.window.document.querySelectorAll('a[href="/gpu-sn.php"]').length, 1);
-  assert.equal(dom.window.document.querySelectorAll("main a").length, 10);
-  assert.equal(sections[2].querySelectorAll("a").length, 2);
+  assert.equal(dom.window.document.querySelectorAll("main a").length, 9);
+  assert.equal(sections[2].querySelectorAll("a").length, 1);
   dom.window.close();
 });
 

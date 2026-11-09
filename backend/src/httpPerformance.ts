@@ -2,6 +2,7 @@ import compression from "compression";
 import express, { type Express } from "express";
 
 export function registerHttpPerformance(app: Express) {
+  app.disable("x-powered-by");
   app.use(compression({
     threshold: 1024,
     level: 6,

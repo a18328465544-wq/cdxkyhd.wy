@@ -11,6 +11,7 @@ import PageQuestions from "./components/PageQuestions";
 import RouteViewport from "./routes/RouteViewport";
 import RouteErrorBoundary from "./routes/RouteErrorBoundary";
 import { useSiteNavigation } from "./routes/SiteNavigation";
+import { trackConversion, type ConversionEvent } from "./lib/conversionAnalytics";
 
 const loadContactModal = () => import("./components/ContactModal");
 const ContactModal = lazy(loadContactModal);
@@ -25,11 +26,21 @@ export default function App() {
   const pageSeo = resolveSeoPage(pathname);
 
   useEffect(() => {
-    if (!pageSeo && !pageRoute) return;
+    if (!pageSeo && !pageRoute) {
+      document.title = pathname === "/tools/prl-mining" ? "计算器已下线 - 成都显卡一号店" : "页面未找到 - 成都显卡一号店";
+      const robots = document.querySelector('meta[name="robots"]') ?? document.head.appendChild(document.createElement("meta"));
+      robots.setAttribute("name", "robots");
+      robots.setAttribute("content", "noindex,follow");
+      document.querySelector('link[rel="canonical"]')?.remove();
+      return;
+    }
     document.title = pageSeo?.title ?? pageRoute!.title;
     const canonicalPath = pathname.replace(/\/+$/, "") || "/";
     const canonicalUrl = `https://cdgpu.cn${canonicalPath === "/gpu-sn" ? "/gpu-sn.php" : canonicalPath}`;
     const description = pageSeo?.description ?? "显卡选购、装机配置、二手检测与故障排查交流。";
+    const robots = document.querySelector('meta[name="robots"]') ?? document.head.appendChild(document.createElement("meta"));
+    robots.setAttribute("name", "robots");
+    robots.setAttribute("content", "index,follow");
     const metadata = [
       ['meta[name="description"]', "name", "description", description],
       ['meta[property="og:title"]', "property", "og:title", document.title],
@@ -57,10 +68,12 @@ export default function App() {
     });
   }, [pageRoute, pageSeo, pathname]);
 
-  const handleOpenContact = () => {
+  const handleOpenContact = (event: ConversionEvent = "wechat_estimate") => {
+    trackConversion(event);
     setHasOpenedContactModal(true);
     setIsContactOpen(true);
   };
+  const isKnownPage = pathname === "/" || Boolean(pageSeo || pageRoute);
 
   return (
     <>
@@ -72,7 +85,17 @@ export default function App() {
             <RouteViewport>
               {pageRoute ? (
                 <StandalonePage key={pageRoute.id === "community" ? pageRoute.id : pathname + search} route={pageRoute} onOpenContact={handleOpenContact} />
-              ) : <HomePage onOpenContact={handleOpenContact} />}
+              ) : isKnownPage ? <HomePage onOpenContact={handleOpenContact} /> : (
+                <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+                  <p className="text-sm font-semibold text-blue-700">{pathname === "/tools/prl-mining" ? "工具已下线" : "404"}</p>
+                  <h1 className="mt-3 text-2xl font-bold text-slate-950">{pathname === "/tools/prl-mining" ? "该计算器已下线" : "没有找到这个页面"}</h1>
+                  <p className="mt-2 max-w-lg text-sm leading-6 text-slate-600">{pathname === "/tools/prl-mining" ? "本站已移除相关计算与行情服务。" : "链接可能已失效，或页面地址输入有误。"}</p>
+                  <div className="mt-6 flex gap-3">
+                    <a href="/" className="inline-flex min-h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white">返回首页</a>
+                    <a href="/tools" className="inline-flex min-h-10 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700">查看硬件工具</a>
+                  </div>
+                </main>
+              )}
               <PageQuestions pathname={pathname} />
               <Footer compact={!!pageRoute && pageRoute.id !== "build"} />
               {(!pageRoute || pageRoute.id === "build") && <FloatingContactButton onOpenContact={handleOpenContact} />}

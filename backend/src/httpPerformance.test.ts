@@ -38,6 +38,7 @@ test("compresses public text, keeps private APIs no-store, and caches only finge
     const api = await fetch(`${base}/api/public`, { headers: { "accept-encoding": "gzip" } });
     assert.equal(api.headers.get("content-encoding"), "gzip");
     assert.equal(api.headers.get("cache-control"), "no-store");
+    assert.equal(api.headers.get("x-powered-by"), null);
     const privateApi = await fetch(`${base}/api/forum/me`);
     assert.equal(privateApi.headers.get("content-encoding"), null);
     assert.equal(privateApi.headers.get("cache-control"), "no-store");

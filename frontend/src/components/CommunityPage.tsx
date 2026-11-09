@@ -58,6 +58,7 @@ type ModerationReply = {id: string; postId: string; postTitle: string; body: str
 type ModerationReport = {id: string; targetType: "post" | "reply"; targetId: string; reporterName: string; targetTitle: string; reason: string; details: string; createdAt: string};
 type QueueData = {posts: ModerationPost[]; replies: ModerationReply[]; reports: ModerationReport[]};
 type DraftImage = {file: File; preview: string};
+type ConversionCounts = {wechat_estimate: number; product_inquiry: number; phone_click: number};
 
 const FALLBACK_CATEGORIES: ForumCategory[] = [
   {key: "all", label: "全部话题"},
@@ -127,6 +128,10 @@ export default function CommunityPage() {
   const [queue, setQueue] = useState<QueueData>({posts: [], replies: [], reports: []});
   const [queueLoading, setQueueLoading] = useState(false);
   const [queueError, setQueueError] = useState("");
+  const [conversionDays, setConversionDays] = useState("30");
+  const [conversionCounts, setConversionCounts] = useState<ConversionCounts | null>(null);
+  const [conversionLoading, setConversionLoading] = useState(false);
+  const [conversionError, setConversionError] = useState("");
   const isManagePage = pathname === "/community/manage";
   const isHomePage = !postId && !isManagePage;
 
@@ -212,9 +217,26 @@ export default function CommunityPage() {
     }
   }, []);
 
+  const loadConversionCounts = useCallback(async () => {
+    setConversionLoading(true);
+    setConversionError("");
+    try {
+      const data = await apiFetch<{counts: ConversionCounts}>(`/api/conversions/summary?days=${conversionDays}`);
+      setConversionCounts(data.counts);
+    } catch (error) {
+      setConversionError(error instanceof Error ? error.message : "统计数据暂时无法读取");
+    } finally {
+      setConversionLoading(false);
+    }
+  }, [conversionDays]);
+
   useEffect(() => {
     if (isManagePage && adminAuthenticated) void loadQueue();
   }, [adminAuthenticated, isManagePage, loadQueue]);
+
+  useEffect(() => {
+    if (isManagePage && adminAuthenticated) void loadConversionCounts();
+  }, [adminAuthenticated, conversionDays, isManagePage, loadConversionCounts]);
 
   const categories = useMemo(() => {
     if (!meta?.categories?.length) return FALLBACK_CATEGORIES;
@@ -320,7 +342,7 @@ export default function CommunityPage() {
                 <h1 id="moderation-title" className="text-2xl font-bold text-slate-950">内容审核</h1>
                 <p className="mt-1 text-sm text-slate-600">审核帖子、回复和顾客举报</p>
               </div>
-              {adminAuthenticated && <Button onClick={() => void loadQueue()} loading={queueLoading}>刷新</Button>}
+              {adminAuthenticated && <Button onClick={() => { void loadQueue(); void loadConversionCounts(); }} loading={queueLoading || conversionLoading}>刷新</Button>}
             </div>
             {!adminAuthenticated ? (
               <form onSubmit={(event) => void handleAdminLogin(event)} className="max-w-md border-y border-slate-200 bg-white px-4 py-6 sm:px-6">
@@ -332,6 +354,25 @@ export default function CommunityPage() {
               </form>
             ) : (
               <>
+                <section aria-label="咨询点击统计" className="mb-8 border-y border-slate-200 bg-white px-4 py-4 sm:px-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-base font-semibold text-slate-950">咨询点击统计</h2>
+                      <p className="mt-1 text-xs text-slate-500">仅统计按钮点击次数，不代表去重访客数</p>
+                    </div>
+                    <SegmentedControl label="统计周期" options={["7", "30", "90"].map(days => ({value: days, label: `${days} 天`}))} value={conversionDays} onChange={setConversionDays} />
+                  </div>
+                  {conversionError ? <p role="alert" className="mt-4 text-sm text-rose-700">{conversionError}</p> : (
+                    <div aria-busy={conversionLoading} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      {([ ["微信估价", conversionCounts?.wechat_estimate], ["商品咨询", conversionCounts?.product_inquiry], ["电话点击", conversionCounts?.phone_click] ] as const).map(([label, count]) => (
+                        <div key={label} className="border-l-2 border-blue-500 pl-3">
+                          <p className="text-sm text-slate-600">{label}</p>
+                          <p className="mt-1 text-2xl font-semibold tabular-nums text-slate-950">{conversionLoading && !conversionCounts ? "…" : count ?? 0}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
                 {queueError && <p role="alert" className="mb-4 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{queueError}</p>}
                 {queueLoading ? <LoadingState label="正在读取待审核内容" /> : (
                   <div className="space-y-10">

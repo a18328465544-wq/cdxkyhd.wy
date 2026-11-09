@@ -1,6 +1,5 @@
 const calculators = [
   { href: "/tools/hashrate-rental", label: "算力租赁计算器" },
-  { href: "/tools/prl-mining", label: "PRL 珍珠币挖矿计算器" },
 ];
 
 export function CalculatorNav({ active }: { active: string }) {

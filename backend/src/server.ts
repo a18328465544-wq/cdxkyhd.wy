@@ -16,7 +16,6 @@ import {ForumStore} from "./forumStore.js";
 import { createErpCatalogService } from "./services/erpCatalogService.js";
 import { registerMiniprogramRoutes } from "./routes/miniprogramRoutes.js";
 import { mockCatalogStore } from "./services/mockCatalogStore.js";
-import { registerPrlMarketRoutes } from "./routes/prlMarketRoutes.js";
 import { registerGpuDailyRoutes } from "./routes/gpuDailyRoutes.js";
 import { registerGpuPriceHistoryRoutes } from "./routes/gpuPriceHistoryRoutes.js";
 import { GpuPriceHistoryService } from "./services/gpuPriceHistoryService.js";
@@ -27,7 +26,8 @@ import { registerCatalogRoutes } from "./routes/catalogRoutes.js";
 import { registerPcBuilderRoutes } from "./routes/pcBuilderRoutes.js";
 import { registerHttpPerformance, registerStaticFiles } from "./httpPerformance.js";
 import { registerPerformanceRoutes } from "./routes/performanceRoutes.js";
-import { renderGpuRankingSeoHtml, renderSearchablePageSeoHtml, SEARCHABLE_SEO_PAGE_PATHS } from "./seoPage.js";
+import { registerConversionRoutes } from "./routes/conversionRoutes.js";
+import { renderGpuRankingSeoHtml, renderSearchablePageSeoHtml, renderStatusSeoHtml, SEARCHABLE_SEO_PAGE_PATHS } from "./seoPage.js";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -63,6 +63,7 @@ const {
 
 async function startServer() {
   const app = express();
+  app.disable("x-powered-by");
   registerHttpPerformance(app);
   const PORT = Number(process.env.PORT ?? 3001);
   const gpuRankingCacheFile = process.env.GPU_RANKING_CACHE_FILE
@@ -131,8 +132,8 @@ async function startServer() {
 
   registerHealthRoutes(app, ERP_BASE_URL ? "connected" : "mock-fallback");
   registerPerformanceRoutes(app, process.env.PERFORMANCE_DATA_DIR || path.resolve(currentDir, "../../data/performance"), process.env.PERFORMANCE_SITE_ORIGIN);
+  registerConversionRoutes(app, process.env.PERFORMANCE_DATA_DIR || path.resolve(currentDir, "../../data/performance"), forumSessionSecret);
   registerMiniprogramRoutes(app, { erpConnected: Boolean(ERP_BASE_URL), erp: erpCatalog });
-  registerPrlMarketRoutes(app);
   const dailyPriceFile = process.env.GPU_DAILY_PRICE_FILE
     ? path.resolve(process.env.GPU_DAILY_PRICE_FILE)
     : path.resolve(currentDir, "../../data/gpu-daily/prices.json");
@@ -227,6 +228,14 @@ async function startServer() {
   ].find((candidate) => existsSync(path.join(candidate, "index.html")));
 
   if (frontendDist) {
+    app.get("/tools/prl-mining", async (_req, res, next) => {
+      try {
+        const appShell = await readFile(path.join(frontendDist, "index.html"), "utf8");
+        res.status(410).set("Cache-Control", "no-cache").type("html").send(renderStatusSeoHtml(appShell, 410));
+      } catch (error) {
+        next(error);
+      }
+    });
     app.get("/gpu-ranking", async (_req, res, next) => {
       try {
         const appShell = await readFile(path.join(frontendDist, "index.html"), "utf8");
@@ -251,13 +260,23 @@ async function startServer() {
         next(error);
       }
     });
+    app.get(/^\/community\/(?:manage|post\/[\w-]+)\/?$/, async (_req, res, next) => {
+      try {
+        const appShell = await readFile(path.join(frontendDist, "index.html"), "utf8");
+        res.status(200).set("Cache-Control", "no-cache").type("html").send(appShell);
+      } catch (error) {
+        next(error);
+      }
+    });
     registerStaticFiles(app, frontendDist, process.env.STATIC_ASSET_FALLBACK_DIR);
     app.get("*", (req, res, next) => {
       if (req.path.startsWith("/api/")) {
         next();
         return;
       }
-      res.set("Cache-Control", "no-cache").sendFile(path.join(frontendDist, "index.html"));
+      void readFile(path.join(frontendDist, "index.html"), "utf8")
+        .then((appShell) => res.status(404).set("Cache-Control", "no-cache").type("html").send(renderStatusSeoHtml(appShell, 404)))
+        .catch(next);
     });
   }
 

@@ -1,6 +1,6 @@
 import { onCLS, onINP, onLCP, type Metric } from "web-vitals";
 
-const publicPaths = new Set(["/", "/build", "/gpu-ranking", "/gpu-daily", "/gpu-sn.php", "/gpu-sn", "/tools", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/prl-mining", "/tools/hashrate-rental"]);
+const publicPaths = new Set(["/", "/build", "/gpu-ranking", "/gpu-daily", "/gpu-sn.php", "/gpu-sn", "/community", "/tools", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/hashrate-rental"]);
 
 export function startPerformanceMetrics() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";

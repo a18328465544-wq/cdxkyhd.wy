@@ -13,6 +13,8 @@ test("resolves the existing standalone page paths and aliases", () => {
   assert.equal(resolveStandalonePage("/tools/keyboard")?.id, "hardware-tools");
   assert.equal(resolveStandalonePage("/gpu-ranking/")?.id, "gpu-ranking");
   assert.equal(resolveStandalonePage("/tools/hashrate-rental/")?.id, "hardware-tools");
+  assert.equal(resolveStandalonePage("/tools/not-a-tool"), null);
+  assert.equal(resolveStandalonePage("/tools/prl-mining"), null);
 });
 
 test("standalone tools never prefetch unrelated homepage sections", () => {

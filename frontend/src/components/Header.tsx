@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, X, MessageSquare, Phone, ScanLine, Newspaper, ChevronDown, Wrench, BarChart3 } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
+import { trackConversion } from '../lib/conversionAnalytics';
 import { scrollToSectionTarget } from '../lib/navigation';
 import { Button } from './ui/controls';
 import { useSiteNavigation } from '../routes/SiteNavigation';
@@ -202,6 +203,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
           <div id="header-actions" className="hidden shrink-0 items-center gap-2 xl:flex xl:gap-3">
             <a
               href={phoneHref}
+              onClick={() => trackConversion('phone_click')}
               title={phoneDisplay}
               className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-600 xl:px-3"
             >
@@ -304,6 +306,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
             </Button>
             <a
               href={phoneHref}
+              onClick={() => trackConversion('phone_click')}
               className="flex min-h-11 items-center justify-center gap-1.5 text-sm font-medium text-slate-700"
             >
               <Phone className="h-4 w-4 text-blue-600" />

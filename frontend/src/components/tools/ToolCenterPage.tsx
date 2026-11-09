@@ -1,4 +1,4 @@
-import { ArrowRight, AudioLines, Calculator, ChartNoAxesColumnIncreasing, Cpu, Gem, Keyboard, Mouse, Monitor, Newspaper, ScanLine } from "lucide-react";
+import { ArrowRight, AudioLines, Calculator, ChartNoAxesColumnIncreasing, Cpu, Keyboard, Mouse, Monitor, Newspaper, ScanLine } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const TOOLS = [
@@ -35,13 +35,6 @@ const TOOLS = [
     title: "算力租赁计算器",
     description: "核算租金、服务费与电费，查看回本天数、资金缺口与不同运营时长的回报。",
     icon: Calculator,
-    group: "成本计算",
-  },
-  {
-    href: "/tools/prl-mining",
-    title: "PRL 珍珠币挖矿计算器",
-    description: "结合 PRL 价格测算产币、电费、回本天数与计划期资金回收情况。",
-    icon: Gem,
     group: "成本计算",
   },
   {

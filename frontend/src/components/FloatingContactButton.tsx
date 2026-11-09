@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Phone, ArrowUp } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
+import { trackConversion } from '../lib/conversionAnalytics';
 
 interface FloatingContactButtonProps {
   onOpenContact: () => void;
@@ -48,6 +49,7 @@ export default function FloatingContactButton({ onOpenContact }: FloatingContact
       >
         <a
           href={phoneHref}
+          onClick={() => trackConversion('phone_click')}
           tabIndex={showMobileDock ? 0 : -1}
           className="min-h-10 flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-2 py-2 text-xs font-bold text-blue-700 active:scale-97"
         >
@@ -85,6 +87,7 @@ export default function FloatingContactButton({ onOpenContact }: FloatingContact
         <a
           id="desktop-floating-call"
           href={phoneHref}
+          onClick={() => trackConversion('phone_click')}
           className="h-11 w-11 rounded-full bg-white hover:bg-slate-100 text-blue-600 border border-slate-200 shadow-md flex items-center justify-center transition active:scale-95 group relative"
           title="电话询价"
         >

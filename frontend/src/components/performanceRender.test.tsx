@@ -26,7 +26,7 @@ test("inventory keeps details, inquiry and pagination but never displays ERP pri
   const win = dom.window;
   const originals = new Map<string, PropertyDescriptor | undefined>();
   const requests: string[] = [];
-  let inquiries = 0;
+  const inquiries: string[] = [];
   const item = { id: "test-gpu-1", name: "TEST RTX 5070", category: "GPU", categoryLabel: "显卡", price: 123456, quantity: 1, condition: "九成新", fullBox: true, inWarranty: true, repaired: false, status: "已上架", specs: "测试规格", warehouseLocation: "测试库位" };
   const mockFetch = async (input: string | URL | Request) => {
     const url = new URL(String(input), win.location.href);
@@ -45,7 +45,7 @@ test("inventory keeps details, inquiry and pagination but never displays ERP pri
   };
   const assertHidden = () => assert.doesNotMatch(win.document.body.textContent ?? "", /123,?456|¥|到店自提价|价格待确认/);
   try {
-    await act(async () => root.render(<InventorySection onOpenContact={() => { inquiries++; }} />));
+    await act(async () => root.render(<InventorySection onOpenContact={(event) => { inquiries.push(event ?? "wechat_estimate"); }} />));
     await settle();
     assert.equal(win.document.querySelectorAll("article").length, 1);
     assert.match(win.document.body.textContent ?? "", /九成新.*箱说齐全.*在保.*无维修史/s);
@@ -53,7 +53,7 @@ test("inventory keeps details, inquiry and pagination but never displays ERP pri
     assertHidden();
     const inquiry = [...win.document.querySelectorAll("button")].find(button => button.textContent?.includes("咨询商品"))!;
     await act(async () => inquiry.click());
-    assert.equal(inquiries, 1);
+    assert.deepEqual(inquiries, ["product_inquiry"]);
     const details = win.document.querySelector("details")!;
     await act(async () => { details.open = true; details.dispatchEvent(new win.Event("toggle")); });
     await settle();

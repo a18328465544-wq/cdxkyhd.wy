@@ -4,6 +4,7 @@ import { apiFetch } from "../lib/api";
 import { buildInventoryCategoryTabs, InventoryCategoryTab } from "../lib/inventoryCategories";
 import { Button, SearchInput, Select, SegmentedControl } from "./ui/controls";
 import SectionHeader from "./ui/SectionHeader";
+import type { ConversionEvent } from "../lib/conversionAnalytics";
 
 interface InventoryItem {
   id: string;
@@ -50,7 +51,7 @@ function InventoryDetails({ item: preview }: { item: InventoryItem }) {
   </details>;
 }
 
-export default function InventorySection({ onOpenContact }: { onOpenContact: () => void }) {
+export default function InventorySection({ onOpenContact }: { onOpenContact: (event?: ConversionEvent) => void }) {
   const PAGE_SIZE = 9;
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,7 +164,7 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
             <Package className="mx-auto h-8 w-8 text-slate-300" />
             <p className="mt-3 text-base font-medium text-slate-900">这个分类暂时没有符合条件的商品</p>
             <p className="mt-1 text-sm text-slate-500">
-              可以<button type="button" onClick={onOpenContact} className="mx-1 font-medium text-blue-700 hover:underline">微信问问</button>到货或调货情况。
+              可以<button type="button" onClick={() => onOpenContact("product_inquiry")} className="mx-1 font-medium text-blue-700 hover:underline">微信问问</button>到货或调货情况。
             </p>
           </div>
         ) : (
@@ -208,7 +209,7 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
 
                   <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-1.5 sm:px-5 sm:py-4">
                     <span className="text-xs text-slate-600 sm:text-sm">微信询价</span>
-                    <Button size="sm" onClick={onOpenContact} className="shrink-0">
+                    <Button size="sm" onClick={() => onOpenContact("product_inquiry")} className="shrink-0">
                       <MessageSquare className="h-4 w-4 text-blue-600" />
                       咨询商品
                     </Button>

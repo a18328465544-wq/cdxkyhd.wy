@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Check, Clock, Copy, MapPin, MessageSquare, Navigation, Phone, Store } from 'lucide-react';
 import { CONTACT_INFO } from '../lib/contact';
+import { trackConversion } from '../lib/conversionAnalytics';
 import { storeLinks } from '../lib/storeLinks';
 import { Button } from './ui/controls';
 import SectionHeader from './ui/SectionHeader';
@@ -69,7 +70,7 @@ export default function ContactSection({ onOpenContact }: ContactSectionProps) {
                   <Phone className="h-5 w-5" /><span className="sr-only">联系电话</span>
                 </dt>
                 <dd>
-                  <a href={phoneHref} className="block text-base font-medium tabular-nums text-slate-950 hover:text-blue-700">{phoneDisplay}</a>
+                  <a href={phoneHref} onClick={() => trackConversion('phone_click')} className="block text-base font-medium tabular-nums text-slate-950 hover:text-blue-700">{phoneDisplay}</a>
                   <span className="mt-1 block text-sm text-slate-500">营业时间外也可以来电或微信留言</span>
                 </dd>
               </div>
@@ -105,6 +106,7 @@ export default function ContactSection({ onOpenContact }: ContactSectionProps) {
               </Button>
               <a
                 href={phoneHref}
+                onClick={() => trackConversion('phone_click')}
                 data-erp-control="button"
                 data-variant="secondary"
                 data-size="lg"

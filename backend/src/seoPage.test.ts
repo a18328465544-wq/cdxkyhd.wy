@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { load } from "cheerio";
 import test from "node:test";
-import { renderGpuRankingSeoHtml, renderSearchablePageSeoHtml, SEARCHABLE_SEO_PAGE_PATHS } from "./seoPage.js";
+import { renderGpuRankingSeoHtml, renderSearchablePageSeoHtml, renderStatusSeoHtml, SEARCHABLE_SEO_PAGE_PATHS } from "./seoPage.js";
 import type { GpuRankingSnapshot } from "./gpuRankingService.js";
 import { resolveSeoPage } from "@cdxkyhd/shared";
 import { readFileSync } from "node:fs";
@@ -72,13 +72,25 @@ test("searchable tool pages expose unique metadata, canonical URLs, and readable
   const tools = load(renderSearchablePageSeoHtml(appShell, "/tools"));
   assert.deepEqual(
     tools('#root a[href^="/tools/"]').map((_, link) => tools(link).attr("href")).get(),
-    ["/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/hashrate-rental", "/tools/prl-mining"],
+    ["/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/hashrate-rental"],
   );
   const headings = tools("#root h2").map((_, node) => tools(node).text()).get();
   assert.deepEqual(headings.slice(0, 3), ["选购与对比", "查询与检测", "成本计算"]);
   for (const href of ["/build", "/gpu-ranking", "/gpu-daily", "/gpu-sn.php"]) {
     assert(tools(`#root a[href="${href}"]`).length > 0);
   }
+});
+
+test("unknown and retired pages are crawl-excluded and return dedicated status content", () => {
+  const missing = load(renderStatusSeoHtml(appShell, 404));
+  assert.equal(missing("title").text(), "页面未找到 - 成都显卡一号店");
+  assert.equal(missing('meta[name="robots"]').attr("content"), "noindex,follow");
+  assert.equal(missing("#root h1").text(), "没有找到这个页面");
+  assert.equal(missing('link[rel="canonical"]').length, 0);
+
+  const retired = load(renderStatusSeoHtml(appShell, 410));
+  assert.equal(retired("title").text(), "工具已下线 - 成都显卡一号店");
+  assert.equal(retired("#root h1").text(), "该计算器已下线");
 });
 
 test("GPU SN alias and trailing slash keep the canonical URL stable", () => {

@@ -23,8 +23,7 @@
     "test:pricing": "node --import tsx --test src/lib/pricing.test.ts src/lib/recyclingPrices.test.ts src/components/recyclingPriceRender.test.tsx",
     "test:routes": "node --import tsx --test src/routes/pageRoutes.test.ts src/routes/clientNavigation.test.ts src/routes/routeTransition.test.tsx",
     "test:rental-calculator": "node --import tsx --test src/lib/rentalCalculator.test.ts",
-    "test:gpu-daily": "node --import tsx --test src/components/gpuDailyRender.test.tsx src/lib/gpuPriceHistory.test.ts",
-    "test:prl": "node --import tsx --test src/lib/prlCalculator.test.ts"
+    "test:gpu-daily": "node --import tsx --test src/components/gpuDailyRender.test.tsx src/lib/gpuPriceHistory.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

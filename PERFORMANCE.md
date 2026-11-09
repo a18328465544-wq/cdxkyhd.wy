@@ -11,7 +11,7 @@ Scope: website gateway and frontend only. ERP schema, inventory markers, benchma
 - `view=availability&category=GPU` serves the ranking stock join; `/api/pc-parts?view=picker` serves the builder. Legacy API envelopes remain available.
 - Pagination is in the website gateway. The ERP adapter still reads its existing upstream pages; no claim is made that the ERP database now executes native 9-row paging.
 - ERP GETs share only in-flight requests. Settled reads and writes are not cached. Browser requests time out at 15 seconds, ERP calls at 8 seconds. UI changes cancel stale reads/calculations; writes are never automatically retried.
-- Ranking, price and PRL polls pause while hidden. Daily prices no longer rerender every second; a timer still invalidates them exactly at Beijing midnight, including after a suspended tab resumes.
+- Ranking and price polls pause while hidden. Daily prices no longer rerender every second; a timer still invalidates them exactly at Beijing midnight, including after a suspended tab resumes.
 - Price consumers share a live read, not a permanently cached promise or static fallback quote. Price lists initially render 8 entries; search covers every entry and one action expands the complete list. Loading skeletons reserve card/row space.
 
 ## Checks

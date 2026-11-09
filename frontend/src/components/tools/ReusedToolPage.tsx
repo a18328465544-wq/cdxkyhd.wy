@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ArrowLeft, AudioLines, Calculator, Gem, Keyboard, Monitor, Mouse } from "lucide-react";
+import { ArrowLeft, AudioLines, Calculator, Keyboard, Monitor, Mouse } from "lucide-react";
 
 const TOOL_LINKS = [
   { href: "/tools/hashrate-rental", title: "算力租赁", icon: Calculator },
-  { href: "/tools/prl-mining", title: "PRL 挖矿计算", icon: Gem },
   { href: "/tools/keyboard", title: "键盘", icon: Keyboard },
   { href: "/tools/mouse", title: "鼠标", icon: Mouse },
   { href: "/tools/audio", title: "音频", icon: AudioLines },

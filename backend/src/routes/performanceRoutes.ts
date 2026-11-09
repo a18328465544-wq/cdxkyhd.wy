@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { appendFile, mkdir, readdir, stat, unlink } from "node:fs/promises";
 import path from "node:path";
 
-const publicPaths = new Set(["/", "/build", "/gpu-ranking", "/gpu-daily", "/gpu-sn.php", "/gpu-sn", "/tools", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/prl-mining", "/tools/hashrate-rental"]);
+const publicPaths = new Set(["/", "/build", "/gpu-ranking", "/gpu-daily", "/gpu-sn.php", "/gpu-sn", "/community", "/tools", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/hashrate-rental"]);
 export function performanceSample(body: unknown) {
   if (!body || typeof body !== "object") return null;
   const { path: page, name, value, device } = body as Record<string, unknown>;
