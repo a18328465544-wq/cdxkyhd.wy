@@ -127,19 +127,33 @@ const searchablePages: Record<SearchablePagePath, SearchablePage> = {
   },
   "/tools": {
     path: "/tools",
-    heading: "硬件工具与收益计算器",
-    intro: "提供算力租赁和 PRL 珍珠币挖矿两类独立计算器，分别计算成本、净收益与设备回本，也提供键盘、鼠标、音频和显示器检测。",
-    about: "算力成本测算与电脑外设在线检测",
+    heading: "硬件工具",
+    intro: "按选购与对比、查询与检测、成本计算三类用途查找工具，提供在线装机、显卡天梯、价格日报、SN 查询、外设检测与成本收益计算。",
+    about: "硬件选购对比、信息查询、外设检测与成本计算",
     sections: [
       {
-        heading: "选择工具",
+        heading: "选购与对比",
         items: [
-          { ...toolLinks[0], text: "算力租赁计算器：核算租金、电费、净收益与保本报价" },
-          { ...toolLinks[5], text: "PRL 珍珠币挖矿计算器：测算产币、电费与设备回本" },
+          { href: "/build", text: "在线装机：按用途选配并查看预算与基础兼容性" },
+          { href: "/gpu-ranking", text: "显卡性能天梯：比较游戏帧数、3DMark 与渲染成绩" },
+          { href: "/gpu-daily", text: "显卡日报：查看有效采样报价与历史走势" },
+        ],
+      },
+      {
+        heading: "查询与检测",
+        items: [
+          { href: "/gpu-sn.php", text: "SN 生产日期查询：核对品牌日期规则与结果依据" },
           { ...toolLinks[1], text: "键盘按键检测：检查按键响应与输入状态" },
           { ...toolLinks[2], text: "鼠标状态检测：检查按键、滚轮、拖动与回报率" },
           { ...toolLinks[3], text: "耳机与音响检测：播放声道与频率测试音" },
           { ...toolLinks[4], text: "显示器画面检测：查看纯色、灰阶、渐变与运动图案" },
+        ],
+      },
+      {
+        heading: "成本计算",
+        items: [
+          { ...toolLinks[0], text: "算力租赁计算器：核算租金、电费、净收益与保本报价" },
+          { ...toolLinks[5], text: "PRL 珍珠币挖矿计算器：测算产币、电费与设备回本" },
         ],
       },
       {

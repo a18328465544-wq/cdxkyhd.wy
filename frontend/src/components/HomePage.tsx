@@ -9,6 +9,7 @@ const homeSectionLoaders = {
   process: () => import("./ProcessSection"),
   advantage: () => import("./AdvantageSection"),
   cases: () => import("./CaseSection"),
+  about: () => import("./AboutUsSection"),
   faq: () => import("./FAQSection"),
   contact: () => import("./ContactSection"),
 };
@@ -16,6 +17,7 @@ const homeSectionLoaders = {
 const ProcessSection = lazy(homeSectionLoaders.process);
 const AdvantageSection = lazy(homeSectionLoaders.advantage);
 const CaseSection = lazy(homeSectionLoaders.cases);
+const AboutUsSection = lazy(homeSectionLoaders.about);
 const FAQSection = lazy(homeSectionLoaders.faq);
 const ContactSection = lazy(homeSectionLoaders.contact);
 
@@ -95,6 +97,7 @@ export default function HomePage({ onOpenContact }: HomePageProps) {
         <LazySection id="process" label="服务流程" minHeight="420px"><ProcessSection /></LazySection>
         <LazySection id="advantages" label="门店优势" minHeight="560px"><AdvantageSection /></LazySection>
         <LazySection id="cases" label="客户案例" minHeight="520px"><CaseSection /></LazySection>
+        <LazySection id="about" label="关于我们" minHeight="260px"><AboutUsSection /></LazySection>
         <LazySection id="faq" label="常见问题" minHeight="520px"><FAQSection /></LazySection>
         <LazySection id="contact" label="联系我们" minHeight="760px">
           <ContactSection onOpenContact={onOpenContact} />

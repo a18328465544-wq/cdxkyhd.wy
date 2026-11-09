@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Battery, Check, AlertCircle, Send, Trash2, CheckCircle2, ChevronDown, X } from "lucide-react";
+import { ArrowRight, Battery, BriefcaseBusiness, Check, Cpu, Gamepad2, AlertCircle, Send, Trash2, CheckCircle2, ChevronDown, X } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import { scrollToSectionTarget } from "../lib/navigation";
 import { type PartSearchItem } from "../lib/partSearch";
+import { BUILD_STARTERS, resolveBuildStarter, type BuildStarterId } from "../lib/buildStarters";
 import SearchablePartSelect from "./SearchablePartSelect";
-import { Button, Input } from "./ui/controls";
+import { Button, Input, SegmentedControl } from "./ui/controls";
 
 interface PartItem extends PartSearchItem {
   category: string;
@@ -27,6 +28,11 @@ interface BuildResults {
 export default function PcBuilderSection() {
   const [parts, setParts] = useState<PartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState("");
+  const [catalogRevision, setCatalogRevision] = useState(0);
+  const [starterId, setStarterId] = useState<BuildStarterId>("gaming");
+  const [pendingStarter, setPendingStarter] = useState<BuildStarterId | null>(null);
+  const [starterNotice, setStarterNotice] = useState("");
 
   // Selected Parts IDs state
   const [selectedCpuId, setSelectedCpuId] = useState("");
@@ -56,11 +62,14 @@ export default function PcBuilderSection() {
   const fetchParts = async (signal: AbortSignal) => {
     try {
       const data = await apiFetch<{ success: boolean; parts: PartItem[] }>("/api/pc-parts?view=picker", { signal });
-      if (data.success && !signal.aborted) {
+      if (data.success && Array.isArray(data.parts) && !signal.aborted) {
         setParts(data.parts);
+        setCatalogError("");
+      } else if (!signal.aborted) {
+        setCatalogError("配件目录暂不可用，请稍后重试。");
       }
     } catch (err) {
-      if (!signal.aborted) console.error("加载配件数据失败:", err);
+      if (!signal.aborted) setCatalogError("配件目录暂时无法读取，请稍后重试。");
     } finally {
       if (!signal.aborted) setLoading(false);
     }
@@ -68,9 +77,10 @@ export default function PcBuilderSection() {
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
     void fetchParts(controller.signal);
     return () => controller.abort();
-  }, []);
+  }, [catalogRevision]);
 
   // Recalculate build when selections modify
   useEffect(() => {
@@ -170,6 +180,8 @@ export default function PcBuilderSection() {
   };
 
   const handleClearAll = () => {
+    setPendingStarter(null);
+    setStarterNotice("");
     setQuoteOpen(false);
     setSelectedCpuId("");
     setSelectedGpuId("");
@@ -194,11 +206,41 @@ export default function PcBuilderSection() {
   const selectedCount = categories.filter(category => category.state).length;
   const hasSelection = selectedCount > 0;
   const canRequestQuote = Boolean(selectedCpuId && selectedGpuId && buildData && !calculating);
+  const starter = resolveBuildStarter(parts, starterId);
+  const starterIcons = { gaming: Gamepad2, productivity: BriefcaseBusiness, ai: Cpu };
+  const applyStarter = (id: BuildStarterId) => {
+    const next = resolveBuildStarter(parts, id);
+    if (!next.available) return;
+    setSelectedCpuId(next.cpu!.id);
+    setSelectedGpuId(next.gpu!.id);
+    setBuildData(null);
+    setQuoteOpen(false);
+    setQuoteError("");
+    setQuoteResponse(null);
+    setPendingStarter(null);
+    setStarterNotice(`已采用${BUILD_STARTERS.find(item => item.id === id)!.title}起步配置。仅包含处理器与显卡，非完整整机；其他配件、接口、散热和机箱空间仍需确认。`);
+  };
 
   return (
     <section className="bg-white py-6 sm:py-8" aria-labelledby="pc-builder-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <header className="page-heading"><div><h1 id="pc-builder-title" className="page-title">在线装机</h1><p className="page-description">按需选配，实时查看预算、功耗与兼容性。</p></div><span className="text-sm tabular-nums text-slate-600">已选 {selectedCount} / {categories.length} 项</span></header>
+
+        <section aria-label="装机起步配置" className="mb-6 border-b border-slate-200 pb-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold text-slate-900">按用途开始</h2>
+            <SegmentedControl label="装机用途" value={starterId} onChange={id => { setStarterId(id); setPendingStarter(null); }} className="build-starter-tabs" options={BUILD_STARTERS.map(profile => { const Icon = starterIcons[profile.id]; return { value: profile.id, label: <><Icon className="h-4 w-4 shrink-0" aria-hidden="true" />{profile.title}</> }; })} />
+          </div>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 text-sm leading-6 text-slate-700">
+              <p className="mb-1 text-xs text-slate-500">{BUILD_STARTERS.find(profile => profile.id === starterId)!.description} · 核心配件参考，非完整整机</p>
+              {loading ? <p role="status">正在匹配门店配件…</p> : catalogError ? <p role="alert" className="text-amber-700">{catalogError}</p> : <dl className="grid grid-cols-[48px_minmax(0,1fr)] gap-x-2"><dt className="text-slate-500">处理器</dt><dd className="break-words font-medium">{starter.cpu?.name ?? "暂无匹配现货"}</dd><dt className="text-slate-500">显卡</dt><dd className="break-words font-medium">{starter.gpu?.name ?? "暂无匹配现货"}</dd></dl>}
+            </div>
+            {catalogError ? <Button size="sm" onClick={() => setCatalogRevision(value => value + 1)} className="self-start">重新读取配件</Button> : <Button size="sm" disabled={loading || !starter.available} onClick={() => { if (hasSelection) setPendingStarter(starterId); else applyStarter(starterId); }} className="self-start sm:self-center"><ArrowRight className="h-4 w-4" />使用起步配置</Button>}
+          </div>
+          {pendingStarter && <div role="group" aria-label="确认替换核心配件" className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-sm"><p className="mr-auto text-slate-700">将替换当前处理器和显卡，其他配件保留。</p><Button size="sm" variant="primary" onClick={() => applyStarter(pendingStarter)}>确认替换</Button><Button size="sm" onClick={() => setPendingStarter(null)}>取消</Button></div>}
+          {starterNotice && <p role="status" className="mt-3 text-xs leading-5 text-blue-700">{starterNotice}</p>}
+        </section>
 
         <div className="sticky top-16 z-20 mb-4 flex min-h-14 items-center justify-between gap-3 border-b border-slate-200 bg-white/95 py-2 backdrop-blur-sm sm:top-20 xl:hidden">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1"><span className="text-xs text-slate-600">当前预算</span><strong className="text-lg font-semibold tabular-nums text-slate-950" aria-live="polite">{hasSelection ? calculating ? '计算中…' : buildData ? `¥${buildData.totalPrice.toLocaleString()}` : '待计算' : '待选配'}</strong></div>
@@ -270,11 +312,11 @@ export default function PcBuilderSection() {
               </div>
 
               <div className="mt-5 border-b border-slate-100 pb-5">
-                <span className="text-xs font-medium text-slate-500">当前方案预算</span>
+                  <span className="text-xs font-medium text-slate-500">已选配件参考合计</span>
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
                   {hasSelection && <span className="text-base font-semibold text-slate-700">¥</span>}
                   <span className="text-3xl font-bold tabular-nums text-slate-950 sm:text-4xl">{hasSelection ? buildData ? buildData.totalPrice.toLocaleString() : '计算中' : '待选配'}</span>
-                  {hasSelection && <span className="text-xs text-slate-600">含装工理线</span>}
+                  {hasSelection && <span className="text-xs text-slate-600">{selectedCount} 项配件，非整机报价</span>}
                 </div>
               </div>
 
@@ -302,8 +344,8 @@ export default function PcBuilderSection() {
 
               {selectedGpuId && buildData && (
                 <div className="mt-4 border-l-2 border-blue-500 pl-3">
-                  <p className="text-sm font-semibold text-blue-900">AI 算力参考：{buildData.aiRating}</p>
-                  <p className="mt-1.5 text-sm leading-5 text-blue-900/80">{buildData.aiRatingDesc}</p>
+                  <p className="text-sm font-semibold text-blue-900">AI 部署参考</p>
+                  <p className="mt-1.5 text-sm leading-5 text-blue-900/80">需结合显存、模型规模、量化精度、上下文长度与软件支持评估；仅凭显卡型号不能保证模型可运行或出图速度。多卡显存不自动合并。</p>
                 </div>
               )}
 

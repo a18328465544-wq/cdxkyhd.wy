@@ -92,8 +92,8 @@ const seoPages: Record<string, SeoPageContent> = {
     ],
   },
   "/tools": {
-    title: "硬件工具：算力租赁、PRL 挖矿计算与外设检测 - 成都显卡一号店",
-    description: "免费硬件工具，提供算力租赁与 PRL 珍珠币挖矿两类计算器，分别测算成本、净收益和回本周期；也支持键盘、鼠标、耳机和显示器在线检测，无需安装软件。",
+    title: "硬件工具：选购对比、查询检测与成本计算 - 成都显卡一号店",
+    description: "按用途查找硬件工具：在线装机、显卡性能天梯与显卡日报；SN 生产日期查询与键盘、鼠标、耳机、显示器检测；算力租赁与 PRL 成本收益计算。",
     questionHeading: "电脑硬件自检常见问题",
     questions: [
       {

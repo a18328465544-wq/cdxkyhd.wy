@@ -31,11 +31,12 @@ export default function Header({ onOpenContact }: HeaderProps) {
     { id: 'inventory', name: '现货库存' },
     { id: 'build', name: '装机方案' },
     { id: 'cases', name: '客户案例' },
+    { id: 'about', name: '关于我们' },
     { id: 'contact', name: '到店指引' }
   ];
-  const primaryNavItems = navItems.filter((item) => item.id !== 'cases');
-  const moreIsActive = isHardwareToolsPage || isGpuRankingPage || isGpuSnPage || activeSection === 'cases';
-  const toolLabel = isGpuRankingPage ? '显卡天梯' : isGpuSnPage ? 'SN 日期查询' : activeSection === 'cases' ? '客户案例' : '硬件工具';
+  const primaryNavItems = navItems.filter((item) => item.id !== 'cases' && item.id !== 'about');
+  const moreIsActive = isHardwareToolsPage || isGpuRankingPage || isGpuSnPage || activeSection === 'cases' || activeSection === 'about';
+  const toolLabel = isGpuRankingPage ? '显卡天梯' : isGpuSnPage ? 'SN 日期查询' : activeSection === 'cases' ? '客户案例' : activeSection === 'about' ? '关于我们' : '硬件工具';
 
   useLayoutEffect(() => {
     setMobileMenuOpen(false);
@@ -191,6 +192,7 @@ export default function Header({ onOpenContact }: HeaderProps) {
                 </a>
                 <div className="mx-2 mt-1 border-t border-slate-200 pt-1">
                   <button type="button" onClick={event => { scrollToSection('cases'); event.currentTarget.closest('details')?.removeAttribute('open'); }} aria-current={!isCommunityPage && activeSection === 'cases' ? 'location' : undefined} className={`block min-h-11 w-full rounded-md px-1 py-2.5 text-left text-sm ${!isCommunityPage && activeSection === 'cases' ? 'font-medium text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>客户案例</button>
+                  <button type="button" onClick={event => { scrollToSection('about'); event.currentTarget.closest('details')?.removeAttribute('open'); }} aria-current={!isCommunityPage && activeSection === 'about' ? 'location' : undefined} className={`block min-h-11 w-full rounded-md px-1 py-2.5 text-left text-sm ${!isCommunityPage && activeSection === 'about' ? 'font-medium text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>关于我们</button>
                 </div>
               </div>
             </details>

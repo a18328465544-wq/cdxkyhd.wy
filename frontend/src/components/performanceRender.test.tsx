@@ -16,7 +16,8 @@ test("price loading reserves two compact columns and never substitutes static qu
 test("inventory loading reserves a full page of cards without inventing inventory", () => {
   const html = renderToStaticMarkup(<InventorySection onOpenContact={() => {}} />);
   assert.match(html, /正在读取门店库存/);
-  assert.equal((html.match(/h-\[302px\]/g) ?? []).length, 9);
+  assert.equal((html.match(/h-\[208px\]/g) ?? []).length, 9);
+  assert.equal((html.match(/sm:h-\[302px\]/g) ?? []).length, 9);
   assert.doesNotMatch(html, /已入库|已上架/);
 });
 
@@ -48,6 +49,7 @@ test("inventory keeps details, inquiry and pagination but never displays ERP pri
     await settle();
     assert.equal(win.document.querySelectorAll("article").length, 1);
     assert.match(win.document.body.textContent ?? "", /九成新.*箱说齐全.*在保.*无维修史/s);
+    assert.match(win.document.querySelector("article")!.className, /min-h-\[208px\]/);
     assertHidden();
     const inquiry = [...win.document.querySelectorAll("button")].find(button => button.textContent?.includes("咨询商品"))!;
     await act(async () => inquiry.click());

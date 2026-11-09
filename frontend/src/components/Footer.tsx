@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { storeLinks } from '../lib/storeLinks';
 
 const FOOTER_LINKS = [
@@ -31,6 +32,15 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
               成都市武侯区天府三街新希望国际 B 座 2507<br />
               每天 10:00 – 20:00
             </p>
+            <a
+              href="https://guoxin.cdgpu.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-blue-200 transition-colors hover:text-white"
+            >
+              关于我们 · 创始人郭鑫
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </a>
           </div>
 
           <nav aria-label="页脚导航" className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3 sm:gap-x-8">

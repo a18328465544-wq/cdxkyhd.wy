@@ -23,7 +23,8 @@ interface InventoryItem {
   ramType?: string;
 }
 
-function InventoryDetails({ id }: { id: string }) {
+function InventoryDetails({ item: preview }: { item: InventoryItem }) {
+  const { id } = preview;
   const [open, setOpen] = useState(false);
   const [item, setItem] = useState<InventoryItem | null>(null);
   const [error, setError] = useState("");
@@ -35,8 +36,12 @@ function InventoryDetails({ id }: { id: string }) {
       .catch(() => { if (!controller.signal.aborted) setError("详情暂时无法读取，请关闭后重试。"); });
     return () => controller.abort();
   }, [id, open, item]);
-  return <details className="group border-t border-slate-100 px-5" onToggle={event => setOpen(event.currentTarget.open)}>
-    <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between text-xs font-medium text-slate-600 [&::-webkit-details-marker]:hidden">商品详情<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></summary>
+  return <details className="group border-t border-slate-100 px-4 sm:px-5" onToggle={event => setOpen(event.currentTarget.open)}>
+    <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between text-xs font-medium text-slate-600 sm:min-h-10 [&::-webkit-details-marker]:hidden">商品详情<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></summary>
+    <dl className="space-y-1 pb-2 text-xs leading-5 text-slate-600">
+      <div className="flex gap-2"><dt>箱说</dt><dd>{typeof preview.fullBox === "boolean" ? preview.fullBox ? "齐全" : "不齐" : "待确认"}</dd><dt>维修</dt><dd>{typeof preview.repaired === "boolean" ? preview.repaired ? "有维修史" : "无维修史" : "待确认"}</dd></div>
+      {(preview.pinCode || preview.ramType) && <div className="flex gap-2"><dt>接口 / 内存</dt><dd>{[preview.pinCode, preview.ramType].filter(Boolean).join(" · ")}</dd></div>}
+    </dl>
     {item ? <dl className="space-y-2 pb-4 text-sm leading-6 text-slate-600">
       <div><dt className="font-medium text-slate-800">规格信息</dt><dd className="break-words">{item.specs || '暂未提供'}</dd></div>
       {item.warehouseLocation && <div className="flex flex-wrap gap-x-3"><dt className="font-medium text-slate-800">库位</dt><dd>{item.warehouseLocation}</dd></div>}
@@ -141,7 +146,7 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
         {loading && items.length === 0 ? (
           <div aria-busy="true" aria-label="正在读取门店库存">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
-              {Array.from({ length: PAGE_SIZE }, (_, index) => <div key={index} className="h-[302px] rounded-lg border border-slate-200 bg-white p-5"><div className="h-4 w-24 animate-pulse rounded bg-slate-100" /><div className="mt-5 h-14 w-4/5 animate-pulse rounded bg-slate-100" /><div className="mt-4 h-6 w-3/5 animate-pulse rounded bg-slate-100" /><div className="mt-12 h-8 w-28 animate-pulse rounded bg-slate-100" /></div>)}
+              {Array.from({ length: PAGE_SIZE }, (_, index) => <div key={index} className="h-[208px] rounded-lg border border-slate-200 bg-white p-4 sm:h-[302px] sm:p-5"><div className="h-3 w-24 animate-pulse rounded bg-slate-100" /><div className="mt-2 h-10 w-4/5 animate-pulse rounded bg-slate-100" /><div className="mt-2 h-5 w-3/5 animate-pulse rounded bg-slate-100" /><div className="mt-3 h-9 w-28 animate-pulse rounded bg-slate-100" /></div>)}
             </div>
             <div className="mt-8 h-10" aria-hidden="true" />
             <span role="status" className="sr-only">正在读取门店库存…</span>
@@ -167,31 +172,31 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
               {items.map(item => (
                 <article
                   key={item.id}
-                  className="flex min-h-[302px] flex-col rounded-lg border border-slate-200 bg-white transition-colors hover:border-slate-300"
+                  className="inventory-card flex min-h-[208px] flex-col rounded-lg border border-slate-200 bg-white transition-colors hover:border-slate-300 sm:min-h-[302px]"
                 >
-                  <div className="flex-1 p-5">
+                  <div className="flex-1 p-4 pb-3 sm:p-5">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm text-slate-500">{item.categoryLabel || item.category}</span>
+                      <span className="text-xs text-slate-500 sm:text-sm">{item.categoryLabel || item.category}</span>
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusTone(item.status)}`}>
                         {item.status}
                       </span>
                     </div>
 
-                    <h3 className="mt-3 min-h-14 break-words text-lg font-semibold leading-7 text-slate-950">
+                    <h3 className="mt-2 min-h-10 break-words text-base font-semibold leading-5 text-slate-950 sm:mt-3 sm:min-h-14 sm:text-lg sm:leading-7">
                       {item.name}
                     </h3>
-                    {(item.pinCode || item.ramType) && <p className="mt-1 text-sm text-slate-600">{[item.pinCode, item.ramType].filter(Boolean).join(' · ')}</p>}
+                    {(item.pinCode || item.ramType) && <p className="mt-1 hidden text-sm text-slate-600 sm:block">{[item.pinCode, item.ramType].filter(Boolean).join(' · ')}</p>}
 
-                    <ul className="mt-3 flex flex-wrap gap-1.5 text-xs font-medium">
-                      <li className="rounded-md bg-blue-50 px-2 py-1 text-blue-700">成色 {item.condition}</li>
+                    <ul className="mt-2 flex flex-wrap gap-1.5 text-xs font-medium sm:mt-3">
+                      <li className="rounded bg-blue-50 px-2 py-0.5 text-blue-700 sm:py-1">成色 {item.condition}</li>
                       {typeof item.fullBox === "boolean" && (
-                        <li className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">{item.fullBox ? "箱说齐全" : "箱说不齐"}</li>
+                        <li className="hidden rounded-md bg-slate-100 px-2 py-1 text-slate-600 sm:list-item">{item.fullBox ? "箱说齐全" : "箱说不齐"}</li>
                       )}
                       {typeof item.inWarranty === "boolean" && (
-                        <li className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">{item.inWarranty ? "在保" : "已过保"}</li>
+                        <li className="rounded bg-slate-100 px-2 py-0.5 text-slate-600 sm:py-1">{item.inWarranty ? "在保" : "已过保"}</li>
                       )}
                       {typeof item.repaired === "boolean" && (
-                        <li className={`rounded-md px-2 py-1 ${item.repaired ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"}`}>
+                        <li className={`rounded px-2 py-0.5 sm:py-1 ${item.repaired ? "bg-amber-50 text-amber-700" : "hidden bg-slate-100 text-slate-600 sm:list-item"}`}>
                           {item.repaired ? "有维修史" : "无维修史"}
                         </li>
                       )}
@@ -201,14 +206,14 @@ export default function InventorySection({ onOpenContact }: { onOpenContact: () 
                     </ul>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-5 py-4">
-                    <span className="text-sm text-slate-600">微信询价</span>
+                  <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-1.5 sm:px-5 sm:py-4">
+                    <span className="text-xs text-slate-600 sm:text-sm">微信询价</span>
                     <Button size="sm" onClick={onOpenContact} className="shrink-0">
                       <MessageSquare className="h-4 w-4 text-blue-600" />
                       咨询商品
                     </Button>
                   </div>
-                  <InventoryDetails id={item.id} />
+                  <InventoryDetails item={item} />
                 </article>
               ))}
             </div>

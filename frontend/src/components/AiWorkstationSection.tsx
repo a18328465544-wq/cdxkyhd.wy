@@ -23,7 +23,7 @@ export default function AiWorkstationSection({ onOpenContact }: AiWorkstationSec
           {AI_STATIONS_DATA.map((tier) => (
             <div
               key={tier.id}
-              className={`flex flex-col justify-between rounded-2xl bg-white p-6 sm:p-7 ${
+              className={`flex flex-col justify-between rounded-lg bg-white p-5 sm:p-6 ${
                 tier.popular
                   ? 'ring-2 ring-blue-600 shadow-[0_24px_60px_-30px_rgba(37,99,235,0.45)]'
                   : 'ring-1 ring-slate-200'
@@ -61,8 +61,8 @@ export default function AiWorkstationSection({ onOpenContact }: AiWorkstationSec
 
                   {/* Budget box */}
                   <div className="flex items-baseline justify-between gap-2 border-b border-slate-100 py-2">
-                    <span className="text-sm font-medium text-slate-600">整机预算区间</span>
-                    <span className="font-display text-2xl font-bold tabular-nums tracking-tight text-slate-950">
+                    <span className="text-sm font-medium text-slate-600">方案预算参考</span>
+                    <span className="font-display text-2xl font-bold tabular-nums text-slate-950">
                       {tier.budgetRange}
                     </span>
                   </div>
@@ -106,7 +106,7 @@ export default function AiWorkstationSection({ onOpenContact }: AiWorkstationSec
           <div className="space-y-1">
           <span className="block font-semibold text-slate-900">门店装机与环境调校</span>
           <p className="leading-6">
-            每台 AI 主机都由门店工程师装机理线，交付前做 Furmark / AIDA64 长时间压力测试，并装好 CUDA 驱动和常用环境，开机即可使用，售后在成都本地处理。
+            可按约定提供装机理线、驱动与环境部署，并结合实际工作负载测试。软件版本、模型规模、量化精度和上下文长度会影响显存占用与速度；具体配置、测试结果及售后以交付清单为准。
           </p>
           </div>
         </div>

@@ -36,7 +36,7 @@ const standalonePages: Record<StandalonePageId, StandalonePageRoute> = {
   },
   "hardware-tools": {
     id: "hardware-tools",
-    title: "硬件工具与收益计算器 - 成都显卡一号店",
+    title: "硬件工具：选购对比、查询检测与成本计算 - 成都显卡一号店",
     fallbackLabel: "硬件工具",
     fallbackHeight: "760px",
     prefetchHomeSections: false,

@@ -3,12 +3,10 @@ import { startVisiblePolling } from "../lib/visiblePolling";
 import {
   ArrowUpRight,
   BarChart3,
-  Check,
   ChevronDown,
   ChevronUp,
   CircleHelp,
   MessageSquare,
-  Plus,
   RefreshCw,
   Share2,
   SlidersHorizontal,
@@ -467,16 +465,19 @@ export default function GpuRankingPage({
                 className="ranking-resolution"
               />
             )}
-            <div className={gameMode ? 'col-span-2 min-w-0 sm:col-span-1' : 'min-w-0'}>
+            <div className={`${gameMode ? 'col-span-2 sm:col-span-1' : ''} flex min-w-0 items-center gap-2`}>
+              <div className="min-w-0 flex-1">
               <SearchInput
                 aria-label="搜索显卡型号"
                 placeholder="搜索型号，如 4080S、GTX 1080"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
+              </div>
+              <Button variant="ghost" size="icon" className="sm:hidden!" title="更多筛选" aria-label="更多筛选" aria-expanded={filtersOpen} aria-controls="ranking-catalog-type ranking-catalog-brand ranking-advanced-filters ranking-score-filters" onClick={() => setFiltersOpen(open => !open)}><SlidersHorizontal className="h-4 w-4" /></Button>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className={`${filtersOpen ? 'flex' : 'hidden sm:flex'} flex-wrap items-center gap-2`}>
             <div id="ranking-catalog-type" className={`${filtersOpen ? '' : 'hidden sm:block'} w-[calc(50%-4px)] sm:w-36`}><Select
               aria-label="显卡类型"
               options={Object.entries(KIND_NAMES).map(([value, label]) => ({
@@ -498,11 +499,11 @@ export default function GpuRankingPage({
               value={brand}
               onValueChange={setBrand}
             /></div>
-            <Button variant="ghost" size="sm" aria-expanded={filtersOpen} aria-controls="ranking-catalog-type ranking-catalog-brand ranking-advanced-filters" onClick={() => setFiltersOpen(open => !open)}>
+            <Button className="hidden! sm:inline-flex!" variant="ghost" size="sm" aria-expanded={filtersOpen} aria-controls="ranking-catalog-type ranking-catalog-brand ranking-advanced-filters" onClick={() => setFiltersOpen(open => !open)}>
               <SlidersHorizontal className="h-4 w-4" />更多筛选{memory !== '0' && <span className="rounded bg-blue-50 px-1.5 text-xs text-blue-700">1</span>}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
             </Button>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600 sm:ml-auto">
+            <div id="ranking-score-filters" className={`${filtersOpen ? 'flex' : 'hidden sm:flex'} w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600 sm:ml-auto sm:w-auto`}>
               <label className="flex min-h-10 items-center gap-2"><input type="checkbox" className="h-4 w-4 accent-blue-600" checked={scoredOnly} onChange={event => setScoredOnly(event.target.checked)} />仅看已有成绩</label>
               <label className="flex min-h-10 items-center gap-2"><input type="checkbox" className="h-4 w-4 accent-blue-600" disabled={inventoryState !== 'ready'} checked={inStockOnly} onChange={event => setInStockOnly(event.target.checked)} />只看有货</label>
             </div>
@@ -532,7 +533,20 @@ export default function GpuRankingPage({
               ...(!scoredOnly ? [{ label: '包含待收录型号', clear: () => setScoredOnly(true) }] : []),
             ].map(filter => <span key={filter.label} className="inline-flex items-center gap-1 rounded-md bg-blue-50 py-1 pl-2.5 pr-1 text-xs text-blue-800">{filter.label}<button type="button" onClick={filter.clear} aria-label={`清除筛选：${filter.label}`} title="清除筛选" className="flex h-7 w-7 items-center justify-center rounded hover:bg-blue-100"><X className="h-3.5 w-3.5" /></button></span>)}
           </div>}
-          <p className="text-xs leading-5 text-slate-600">已收录 {catalog.length} 款 · 当前类型有成绩 {measuredCount} 款</p>
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs leading-5 text-slate-600">
+            <p>已收录 {catalog.length} 款 · 有成绩 {measuredCount} 款</p>
+            <details className="ranking-source-info">
+              <summary className="flex min-h-8 cursor-pointer list-none items-center gap-1 font-medium text-blue-700 [&::-webkit-details-marker]:hidden">数据来源与更新<ChevronDown className="h-3.5 w-3.5" /></summary>
+              <div className="space-y-1 border-l-2 border-slate-200 py-1 pl-3 text-slate-600">
+                <p>{sourceName}</p>
+                <p>源站更新：{sourceDate(sourceSnapshot?.sourceUpdatedAt)}</p>
+                <p>本站数据更新：{sourceDate(sourceSnapshot?.updatedAt)}</p>
+                <p>最近成功检查：{sourceDate(sourceSnapshot?.checkedAt)}</p>
+                <a href={sourceUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-8 items-center gap-1 text-blue-700 underline underline-offset-2">查看测试来源<ArrowUpRight className="h-3 w-3" /></a>
+                <p>各测试独立比较，缺项不推算。<button type="button" className="inline-flex min-h-8 cursor-pointer items-center text-blue-700 underline underline-offset-2" onClick={() => { const details = document.getElementById('ranking-source-methodology'); if (details instanceof HTMLDetailsElement) { details.open = true; details.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }}>完整测试口径</button></p>
+              </div>
+            </details>
+          </div>
         </section>
 
         {selected.length > 0 && (
@@ -800,13 +814,13 @@ export default function GpuRankingPage({
                 key={row.entry.id}
                 className="border-b border-slate-100 last:border-0"
               >
-                <div className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-2 px-3 py-4 lg:grid-cols-[36px_minmax(180px,1.5fr)_minmax(120px,1fr)_120px_90px_80px] lg:gap-3 lg:px-4">
-                  <span className="text-xs tabular-nums text-slate-400">
+                <div className="ranking-row grid grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-x-1.5 px-2 py-2.5 sm:gap-x-2 sm:px-3 sm:py-3 lg:grid-cols-[36px_minmax(180px,1.5fr)_minmax(120px,1fr)_120px_90px_80px] lg:gap-3 lg:px-4">
+                  <span className="hidden text-xs tabular-nums text-slate-400 lg:block">
                     {row.value === null
                       ? "—"
                       : String(index + 1).padStart(2, "0")}
                   </span>
-                  <div className="min-w-0">
+                  <div className="col-start-2 row-start-1 min-w-0 lg:col-start-auto lg:row-start-auto">
                     <button
                       type="button"
                       className="flex w-full items-start gap-1 text-left"
@@ -867,22 +881,11 @@ export default function GpuRankingPage({
                   <span className="hidden text-right text-sm tabular-nums text-slate-600 lg:block">
                     {ratio !== null ? `${ratio.toFixed(1)}%` : "—"}
                   </span>
-                  <div className="col-span-3 flex justify-end lg:col-span-1 lg:justify-center">
-                    <Button
-                      size="sm"
-                      variant={isSelected ? "choice" : "ghost"}
-                      aria-pressed={isSelected}
-                      aria-label={`${isSelected ? "取消对比" : "加入对比"} ${row.entry.model}`}
-                      onClick={() => toggleCompare(row.entry.id)}
-                      disabled={!isSelected && selected.length >= 4}
-                    >
-                      {isSelected ? (
-                        <Check className="h-3.5 w-3.5" />
-                      ) : (
-                        <Plus className="h-3.5 w-3.5" />
-                      )}
-                      {isSelected ? "已选" : "对比"}
-                    </Button>
+                  <div className="col-start-1 row-start-1 flex justify-center lg:col-start-auto lg:row-start-auto">
+                    <label className="flex min-h-11 w-8 cursor-pointer items-center justify-center gap-2 text-xs text-slate-600 lg:w-auto" title={`${isSelected ? "取消对比" : "加入对比"} ${row.entry.model}`}>
+                      <input type="checkbox" className="h-4 w-4 shrink-0 accent-blue-600 disabled:cursor-not-allowed" aria-label={`对比 ${row.entry.model}`} checked={isSelected} onChange={() => toggleCompare(row.entry.id)} disabled={!isSelected && selected.length >= 4} />
+                      <span className="hidden lg:inline">对比</span>
+                    </label>
                   </div>
                 </div>
                 {expanded === row.entry.id && (
@@ -967,7 +970,7 @@ export default function GpuRankingPage({
           </div>
         )}
 
-        <details className="mt-5 border-y border-slate-200 py-4 text-sm text-slate-600">
+        <details id="ranking-source-methodology" className="mt-5 scroll-mt-24 border-y border-slate-200 py-4 text-sm text-slate-600">
           <summary className="cursor-pointer select-none font-medium text-slate-700">
             数据来源与口径{" "}
             <span className="mt-1 block text-xs font-normal leading-5 text-slate-500">

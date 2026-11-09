@@ -72,8 +72,13 @@ test("searchable tool pages expose unique metadata, canonical URLs, and readable
   const tools = load(renderSearchablePageSeoHtml(appShell, "/tools"));
   assert.deepEqual(
     tools('#root a[href^="/tools/"]').map((_, link) => tools(link).attr("href")).get(),
-    ["/tools/hashrate-rental", "/tools/prl-mining", "/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor"],
+    ["/tools/keyboard", "/tools/mouse", "/tools/audio", "/tools/monitor", "/tools/hashrate-rental", "/tools/prl-mining"],
   );
+  const headings = tools("#root h2").map((_, node) => tools(node).text()).get();
+  assert.deepEqual(headings.slice(0, 3), ["选购与对比", "查询与检测", "成本计算"]);
+  for (const href of ["/build", "/gpu-ranking", "/gpu-daily", "/gpu-sn.php"]) {
+    assert(tools(`#root a[href="${href}"]`).length > 0);
+  }
 });
 
 test("GPU SN alias and trailing slash keep the canonical URL stable", () => {

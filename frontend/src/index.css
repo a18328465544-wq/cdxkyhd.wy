@@ -127,6 +127,7 @@
 .page-description { margin-top: 8px; color: var(--erp-color-text-secondary); font-size: 14px; line-height: 1.75; }
 .inventory-categories[data-erp-control="segmented"] { width: 100%; flex-wrap: wrap; gap: 4px; overflow: visible; padding: 0; background: transparent; }
 .inventory-categories [data-erp-control="segment"][aria-selected="true"] { background: #eff6ff; box-shadow: none; }
+.build-starter-tabs [data-erp-control="segment"] { gap: 6px; }
 
 .recycling-series[data-erp-control="segmented"] { max-width: 100%; gap: 6px; padding: 0 0 2px; background: transparent; border-radius: 0; scrollbar-width: thin; }
 .recycling-series [data-erp-control="segment"] { flex-shrink: 0; min-height: 32px; border: 1px solid var(--erp-color-border); border-radius: 6px; background: white; padding-inline: 10px; font-size: 13px; }
@@ -164,6 +165,8 @@
   .gpu-ranking-page .page-description { max-width: 24ch; margin-top: 4px; font-size: 12px; }
   .gpu-ranking-page [data-erp-control="segmented"][aria-label="成绩分类"] { width: 100%; }
   .gpu-ranking-page [data-erp-control="segmented"][aria-label="成绩分类"] [data-erp-control="segment"] { flex: 1; padding-inline: 6px; }
+  .build-starter-tabs[data-erp-control="segmented"] { width: 100%; }
+  .build-starter-tabs [data-erp-control="segment"] { flex: 1; padding-inline: 6px; font-size: 13px; }
 }
 
 @media (max-width: 639px) {
